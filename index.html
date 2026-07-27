@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dinz Chat — AI Chat pakai Groq</title>
-<meta name="description" content="Web chat AI cepat pakai Groq API (Llama 3.3).">
+<title>Dinz Chat — AI Chat Cepat</title>
+<meta name="description" content="Web chat AI cepat, bisa kirim teks dan foto.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -14,11 +14,17 @@
     --line:#E4E3E0; --accent:#4F46E5; --accent-soft:#EEF0FF; --accent-ink:#3730A3;
     --danger:#DC2626;
   }
+  html[data-theme="dark"]{
+    --bg:#15161A; --bg-alt:#1F2025; --ink:#F2F1EF; --muted:#94959E;
+    --line:#2E2F36; --accent:#6C63FF; --accent-soft:#252449; --accent-ink:#C7C4FF;
+    --danger:#F87171;
+  }
   *{box-sizing:border-box;}
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font-family:'Inter',sans-serif; font-size:15.5px;
     height:100vh; display:flex; flex-direction:column; overflow:hidden;
+    transition:background .2s,color .2s;
   }
   .mono{font-family:'JetBrains Mono',monospace;}
   button{font-family:'Inter',sans-serif;}
@@ -88,9 +94,32 @@
   .typing span:nth-child(3){animation-delay:.3s;}
   @keyframes bounce{0%,60%,100%{transform:translateY(0); opacity:.5;} 30%{transform:translateY(-4px); opacity:1;}}
 
+  .bubble img.msg-img{
+    max-width:220px; max-height:220px; border-radius:10px; display:block; margin-top:6px; cursor:pointer;
+  }
+  .bubble .msg-text + img.msg-img{margin-top:8px;}
+
   /* INPUT BAR */
-  .input-bar{flex:none; border-top:1px solid var(--line); background:var(--bg); padding:14px 20px 18px; display:flex; justify-content:center;}
+  .input-bar{flex:none; border-top:1px solid var(--line); background:var(--bg); padding:14px 20px 18px; display:flex; justify-content:center; flex-direction:column; align-items:center;}
   .input-inner{width:100%; max-width:760px; display:flex; gap:10px; align-items:flex-end;}
+  .attach-btn{
+    background:none; border:1px solid var(--line); border-radius:12px;
+    width:44px; height:44px; flex:none; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--muted); transition:all .15s;
+  }
+  .attach-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .img-preview-wrap{width:100%; max-width:760px; display:none; padding:0 0 10px;}
+  .img-preview-wrap.show{display:flex;}
+  .img-preview{
+    position:relative; width:60px; height:60px; border-radius:10px; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .img-preview img{width:100%; height:100%; object-fit:cover;}
+  .img-preview .rm{
+    position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%;
+    background:rgba(21,22,26,.7); color:#fff; border:none; font-size:11px; line-height:1;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
   textarea{
     flex:1; resize:none; border:1px solid var(--line); border-radius:14px;
     padding:12px 16px; font-family:'Inter',sans-serif; font-size:14.5px; line-height:1.5;
@@ -149,6 +178,7 @@
   <div class="logo"><span class="logo-dot"></span>Dinz Chat</div>
   <div class="header-right">
     <span class="status" id="statusPill"><span class="dot"></span><span id="statusText">connected</span></span>
+    <button class="icon-btn" id="themeBtn" title="Ganti tema">🌙</button>
     <button class="icon-btn" id="clearBtn" title="Hapus percakapan">🗑</button>
   </div>
 </header>
@@ -157,7 +187,7 @@
   <div class="chat-col" id="chatCol">
     <div class="empty-state" id="emptyState">
       <h2>Mulai ngobrol</h2>
-      <p>Chat ini jalan langsung ke Groq API (Llama 3.3 70B). Masukin API key kamu dulu buat mulai.</p>
+      <p>Tanya apa aja, atau kirim foto buat dibahas bareng AI.</p>
       <div class="suggestions">
         <button class="sugg-btn" data-sugg="Jelasin apa itu REST API buat pemula">Jelasin apa itu REST API buat pemula</button>
         <button class="sugg-btn" data-sugg="Kasih ide command unik buat WhatsApp bot">Kasih ide command unik buat WhatsApp bot</button>
@@ -168,29 +198,92 @@
 </main>
 
 <div class="input-bar">
+  <div class="img-preview-wrap" id="imgPreviewWrap"></div>
   <div class="input-inner">
+    <button class="attach-btn" id="attachBtn" title="Kirim foto">📎</button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
     <textarea id="userInput" rows="1" placeholder="Tulis pesan..."></textarea>
     <button class="send-btn" id="sendBtn" title="Kirim">➤</button>
   </div>
 </div>
-<div class="hint">Groq · llama-3.3-70b-versatile</div>
+<div class="hint">Dinz Chat</div>
 
 <script>
   // ==== GANTI DI SINI ====
   const apiKey = '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';
-  const model = 'llama-3.3-70b-versatile';
+  const model = 'llama-3.3-70b-versatile';   // model buat chat teks biasa
+  const visionModel = 'qwen/qwen3.6-27b';    // model buat chat yang ada fotonya
   // ========================
   let history = [];
+  let pendingImage = null; // {dataUrl}
 
   const chatCol = document.getElementById('chatCol');
   const emptyState = document.getElementById('emptyState');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
   const statusText = document.getElementById('statusText');
-  statusText.textContent = 'connected · ' + model;
+  const themeBtn = document.getElementById('themeBtn');
+  const attachBtn = document.getElementById('attachBtn');
+  const fileInput = document.getElementById('fileInput');
+  const imgPreviewWrap = document.getElementById('imgPreviewWrap');
+  statusText.textContent = 'connected';
+
+  // ---- Theme (dark/terang) ----
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('dinzchat-theme', t);
+  }
+  applyTheme(localStorage.getItem('dinzchat-theme') || 'light');
+  themeBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(current);
+  });
+
+  // ---- Lampiran foto ----
+  attachBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if(!file) return;
+    if(!file.type.startsWith('image/')){
+      addMessage('error', 'File yang dipilih bukan gambar.');
+      fileInput.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      pendingImage = { dataUrl: reader.result };
+      renderImgPreview();
+    };
+    reader.readAsDataURL(file);
+    fileInput.value = '';
+  });
+
+  function renderImgPreview(){
+    imgPreviewWrap.innerHTML = '';
+    if(!pendingImage){
+      imgPreviewWrap.classList.remove('show');
+      return;
+    }
+    imgPreviewWrap.classList.add('show');
+    const box = document.createElement('div');
+    box.className = 'img-preview';
+    const img = document.createElement('img');
+    img.src = pendingImage.dataUrl;
+    const rm = document.createElement('button');
+    rm.className = 'rm';
+    rm.textContent = '✕';
+    rm.title = 'Batal kirim foto';
+    rm.addEventListener('click', () => { pendingImage = null; renderImgPreview(); });
+    box.appendChild(img);
+    box.appendChild(rm);
+    imgPreviewWrap.appendChild(box);
+  }
 
   document.getElementById('clearBtn').addEventListener('click', () => {
     history = [];
+    pendingImage = null;
+    renderImgPreview();
     chatCol.innerHTML = '';
     chatCol.appendChild(emptyState);
   });
@@ -214,7 +307,7 @@
   });
   sendBtn.addEventListener('click', sendMessage);
 
-  function addMessage(role, text){
+  function addMessage(role, text, imageUrl){
     if(emptyState.parentNode) emptyState.remove();
     const msg = document.createElement('div');
     msg.className = 'msg ' + role;
@@ -223,7 +316,19 @@
     av.textContent = role === 'user' ? 'ME' : 'AI';
     const bub = document.createElement('div');
     bub.className = 'bubble';
-    bub.textContent = text;
+    if(text){
+      const t = document.createElement('div');
+      t.className = 'msg-text';
+      t.textContent = text;
+      bub.appendChild(t);
+    }
+    if(imageUrl){
+      const img = document.createElement('img');
+      img.className = 'msg-img';
+      img.src = imageUrl;
+      img.addEventListener('click', () => window.open(imageUrl, '_blank'));
+      bub.appendChild(img);
+    }
     msg.appendChild(av);
     msg.appendChild(bub);
     chatCol.appendChild(msg);
@@ -255,7 +360,8 @@
 
   async function sendMessage(){
     const text = userInput.value.trim();
-    if(!text) return;
+    const image = pendingImage;
+    if(!text && !image) return;
     if(!apiKey || apiKey.includes('ISI_API_KEY')){
       addMessage('error', 'API key belum diisi — buka file HTML, ganti nilai `apiKey` di bagian atas script.');
       return;
@@ -263,10 +369,26 @@
 
     userInput.value = '';
     userInput.style.height = 'auto';
-    addMessage('user', text);
-    history.push({role:'user', content:text});
+    addMessage('user', text, image ? image.dataUrl : null);
+
+    // Susun isi pesan user: kalau ada foto, kirim sebagai konten multi-part
+    let userContent;
+    if(image){
+      userContent = [];
+      if(text) userContent.push({type:'text', text:text});
+      userContent.push({type:'image_url', image_url:{url:image.dataUrl}});
+    } else {
+      userContent = text;
+    }
+    history.push({role:'user', content:userContent});
+    pendingImage = null;
+    renderImgPreview();
+
     sendBtn.disabled = true;
     addTyping();
+
+    // Pakai model vision kalau ada foto di riwayat pesan yang baru dikirim, kalau tidak pakai model teks biasa
+    const usedModel = image ? visionModel : model;
 
     try{
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -276,7 +398,7 @@
           'Authorization':'Bearer ' + apiKey
         },
         body: JSON.stringify({
-          model: model,
+          model: usedModel,
           messages: [
             {role:'system', content:'Kamu asisten AI yang ramah, jawab dalam Bahasa Indonesia yang natural dan singkat.'},
             ...history
