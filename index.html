@@ -99,6 +99,16 @@
   }
   .bubble .msg-text + img.msg-img{margin-top:8px;}
 
+  .photo-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin-top:8px; max-width:320px;
+  }
+  .photo-grid img{
+    width:100%; height:110px; object-fit:cover; border-radius:8px; cursor:pointer;
+    border:1px solid var(--line);
+  }
+  .photo-credit{font-size:10.5px; color:var(--muted); margin-top:4px; font-family:'JetBrains Mono',monospace;}
+  .searching{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted); padding:4px 2px;}
+
   /* INPUT BAR */
   .input-bar{flex:none; border-top:1px solid var(--line); background:var(--bg); padding:14px 20px 18px; display:flex; justify-content:center; flex-direction:column; align-items:center;}
   .input-inner{width:100%; max-width:760px; display:flex; gap:10px; align-items:flex-end;}
@@ -192,6 +202,7 @@
         <button class="sugg-btn" data-sugg="Jelasin apa itu REST API buat pemula">Jelasin apa itu REST API buat pemula</button>
         <button class="sugg-btn" data-sugg="Kasih ide command unik buat WhatsApp bot">Kasih ide command unik buat WhatsApp bot</button>
         <button class="sugg-btn" data-sugg="Bantu aku bikin caption buat produk digital">Bantu aku bikin caption buat produk digital</button>
+        <button class="sugg-btn" data-sugg="Carikan foto kucing lucu">Carikan foto kucing lucu</button>
       </div>
     </div>
   </div>
@@ -213,6 +224,7 @@
   const apiKey = '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';
   const model = 'llama-3.3-70b-versatile';   // model buat chat teks biasa
   const visionModel = 'qwen/qwen3.6-27b';    // model buat chat yang ada fotonya
+  const pexelsApiKey = 'ISI_PEXELS_API_KEY'; // API key gratis dari https://www.pexels.com/api/ buat fitur cari foto
   // ========================
   let history = [];
   let pendingImage = null; // {dataUrl}
@@ -307,7 +319,7 @@
   });
   sendBtn.addEventListener('click', sendMessage);
 
-  function addMessage(role, text, imageUrl){
+  function addMessage(role, text, imageUrl, photos){
     if(emptyState.parentNode) emptyState.remove();
     const msg = document.createElement('div');
     msg.className = 'msg ' + role;
@@ -329,11 +341,44 @@
       img.addEventListener('click', () => window.open(imageUrl, '_blank'));
       bub.appendChild(img);
     }
+    if(photos && photos.length){
+      const grid = document.createElement('div');
+      grid.className = 'photo-grid';
+      photos.forEach(p => {
+        const img = document.createElement('img');
+        img.src = p.thumb;
+        img.title = p.photographer ? ('Foto oleh ' + p.photographer) : '';
+        img.addEventListener('click', () => window.open(p.full, '_blank'));
+        grid.appendChild(img);
+      });
+      bub.appendChild(grid);
+      const credit = document.createElement('div');
+      credit.className = 'photo-credit';
+      credit.textContent = 'via Pexels — klik foto buat lihat ukuran penuh';
+      bub.appendChild(credit);
+    }
     msg.appendChild(av);
     msg.appendChild(bub);
     chatCol.appendChild(msg);
     chatCol.parentElement.scrollTop = chatCol.parentElement.scrollHeight;
     return bub;
+  }
+
+  // ---- Cari foto (Pexels API) ----
+  async function searchPhotos(query, perPage){
+    if(!pexelsApiKey || pexelsApiKey.includes('ISI_PEXELS_API_KEY')){
+      throw new Error('Pexels API key belum diisi — buka file HTML, ganti nilai `pexelsApiKey` di bagian atas script. Daftar gratis di https://www.pexels.com/api/');
+    }
+    const res = await fetch('https://api.pexels.com/v1/search?query=' + encodeURIComponent(query) + '&per_page=' + (perPage || 4), {
+      headers: { Authorization: pexelsApiKey }
+    });
+    if(!res.ok) throw new Error('Pexels HTTP ' + res.status);
+    const data = await res.json();
+    return (data.photos || []).map(p => ({
+      thumb: p.src.medium,
+      full: p.src.large2x || p.src.original,
+      photographer: p.photographer
+    }));
   }
 
   function addTyping(){
@@ -390,38 +435,90 @@
     // Pakai model vision kalau ada foto di riwayat pesan yang baru dikirim, kalau tidak pakai model teks biasa
     const usedModel = image ? visionModel : model;
 
-    try{
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer ' + apiKey
-        },
-        body: JSON.stringify({
-          model: usedModel,
-          messages: [
-            {role:'system', content:'Kamu asisten AI yang ramah, jawab dalam Bahasa Indonesia yang natural dan singkat.'},
-            ...history
-          ]
-        })
-      });
-
-      removeTyping();
-
-      if(!res.ok){
-        const errData = await res.json().catch(() => ({}));
-        const errMsg = (errData.error && errData.error.message) || ('HTTP ' + res.status);
-        addMessage('error', 'Gagal: ' + errMsg);
-        sendBtn.disabled = false;
-        return;
+    const tools = [{
+      type: 'function',
+      function: {
+        name: 'search_photo',
+        description: 'Cari foto/gambar asli di internet untuk ditampilkan ke user. Panggil ini kalau user minta dicariin foto/gambar sesuatu.',
+        parameters: {
+          type: 'object',
+          properties: {
+            query: { type: 'string', description: 'Kata kunci pencarian foto, sebaiknya dalam Bahasa Inggris, singkat dan spesifik' }
+          },
+          required: ['query']
+        }
       }
+    }];
 
-      const data = await res.json();
-      const reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content
-        ? data.choices[0].message.content
-        : '(respons kosong)';
-      addMessage('ai', reply);
-      history.push({role:'assistant', content:reply});
+    try{
+      let foundPhotos = null;
+      let safety = 0;
+
+      while(true){
+        safety++;
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + apiKey
+          },
+          body: JSON.stringify({
+            model: usedModel,
+            messages: [
+              {role:'system', content:'Kamu asisten AI yang ramah, jawab dalam Bahasa Indonesia yang natural dan singkat. Kalau user minta foto/gambar, panggil fungsi search_photo dengan kata kunci yang tepat.'},
+              ...history
+            ],
+            tools: image ? undefined : tools, // tool calling belum didukung bareng gambar di sebagian model vision
+            tool_choice: image ? undefined : 'auto'
+          })
+        });
+
+        if(!res.ok){
+          removeTyping();
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = (errData.error && errData.error.message) || ('HTTP ' + res.status);
+          addMessage('error', 'Gagal: ' + errMsg);
+          sendBtn.disabled = false;
+          return;
+        }
+
+        const data = await res.json();
+        const choice = data.choices && data.choices[0];
+        const msgOut = choice && choice.message;
+        const toolCalls = msgOut && msgOut.tool_calls;
+
+        if(toolCalls && toolCalls.length && safety < 4){
+          history.push({role:'assistant', content: msgOut.content || null, tool_calls: toolCalls});
+
+          for(const call of toolCalls){
+            let args = {};
+            try{ args = JSON.parse(call.function.arguments || '{}'); }catch(e){}
+            const query = args.query || text || 'photo';
+
+            let toolResultText;
+            try{
+              const photos = await searchPhotos(query, 4);
+              if(photos.length){
+                foundPhotos = photos;
+                toolResultText = 'Ditemukan ' + photos.length + ' foto untuk "' + query + '". Foto sudah ditampilkan ke user, jangan tampilkan URL, cukup komentari singkat.';
+              } else {
+                toolResultText = 'Tidak ada foto ditemukan untuk "' + query + '".';
+              }
+            }catch(err){
+              toolResultText = 'Gagal cari foto: ' + err.message;
+            }
+
+            history.push({role:'tool', tool_call_id: call.id, content: toolResultText});
+          }
+          continue; // panggil lagi API buat dapetin jawaban akhir dari AI
+        }
+
+        removeTyping();
+        const reply = (msgOut && msgOut.content) ? msgOut.content : (foundPhotos ? 'Nih foto yang ketemu 👇' : '(respons kosong)');
+        addMessage('ai', reply, null, foundPhotos);
+        history.push({role:'assistant', content: reply});
+        break;
+      }
     }catch(err){
       removeTyping();
       addMessage('error', 'Gagal konek ke Groq API: ' + err.message);
