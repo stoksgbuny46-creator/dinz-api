@@ -220,11 +220,9 @@
 <div class="hint">Dinz Chat</div>
 
 <script>
-  // ==== GANTI DI SINI ====
-  const apiKey = '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';
-  const model = 'llama-3.3-70b-versatile';   // model buat chat teks biasa
-  const visionModel = 'qwen/qwen3.6-27b';    // model buat chat yang ada fotonya
-  // ========================
+  // ==== KONFIGURASI API ====
+  const AI_API_URL = 'https://api.nexray.eu.cc/ai/claude'; // GET ?text=... , tanpa API key
+  // ==========================
   let history = [];
   let pendingImage = null; // {dataUrl}
 
@@ -398,153 +396,85 @@
     if(t) t.remove();
   }
 
+  // Deteksi sederhana kalau user minta dicariin foto (API Nexray/Claude ini tidak
+  // punya mekanisme tool-calling seperti Groq, jadi deteksinya dilakukan manual di sini)
+  const PHOTO_TRIGGER = /\b(cari(kan|in)?|kirim(kan|in)?|kasih|minta)\b.*\b(foto|gambar|photo)\b/i;
+  function extractPhotoQuery(text){
+    // Ambil kata setelah "foto/gambar ... dari/tentang" kalau ada, kalau tidak pakai teks apa adanya
+    const m = text.match(/(?:foto|gambar|photo)(?:\s+(?:dari|tentang))?\s+(.+)/i);
+    return (m && m[1] ? m[1] : text).trim();
+  }
+
+  // Susun konteks percakapan jadi satu blok teks, karena API ini stateless (cuma terima ?text=)
+  function buildPromptText(newText){
+    const recent = history.slice(-6); // batasi biar query tidak kepanjangan
+    let ctx = '';
+    if(recent.length){
+      ctx += 'Riwayat percakapan sebelumnya (untuk konteks saja):\n';
+      recent.forEach(h => { ctx += (h.role === 'user' ? 'User: ' : 'AI: ') + h.content + '\n'; });
+      ctx += '\nBalas dalam Bahasa Indonesia yang natural dan singkat untuk pesan terbaru ini:\n';
+    }
+    ctx += newText;
+    return ctx;
+  }
+
   async function sendMessage(){
     const text = userInput.value.trim();
     const image = pendingImage;
     if(!text && !image) return;
-    if(!apiKey || apiKey.includes('ISI_API_KEY')){
-      addMessage('error', 'API key belum diisi — buka file HTML, ganti nilai `apiKey` di bagian atas script.');
-      return;
-    }
 
     userInput.value = '';
     userInput.style.height = 'auto';
     addMessage('user', text, image ? image.dataUrl : null);
 
-    // Susun isi pesan user: kalau ada foto, kirim sebagai konten multi-part
-    let userContent;
     if(image){
-      userContent = [];
-      if(text) userContent.push({type:'text', text:text});
-      userContent.push({type:'image_url', image_url:{url:image.dataUrl}});
-    } else {
-      userContent = text;
+      addMessage('error', 'Catatan: API ini belum mendukung analisis foto (vision), jadi fotonya cuma ditampilkan, tidak ikut diproses AI.');
     }
-    history.push({role:'user', content:userContent});
+
+    history.push({role:'user', content:text || '(kirim foto)'});
     pendingImage = null;
     renderImgPreview();
 
     sendBtn.disabled = true;
     addTyping();
 
-    // Pakai model vision kalau ada foto di riwayat pesan yang baru dikirim, kalau tidak pakai model teks biasa
-    const usedModel = image ? visionModel : model;
-
-    const tools = [{
-      type: 'function',
-      function: {
-        name: 'search_photo',
-        description: 'Cari foto/gambar asli di internet untuk ditampilkan ke user. Panggil ini kalau user minta dicariin foto/gambar sesuatu.',
-        parameters: {
-          type: 'object',
-          properties: {
-            query: { type: 'string', description: 'Kata kunci pencarian foto, sebaiknya dalam Bahasa Inggris, singkat dan spesifik' }
-          },
-          required: ['query']
-        }
-      }
-    }];
-
     try{
       let foundPhotos = null;
-      let safety = 0;
-      let toolsEnabled = !image;
 
-      while(true){
-        safety++;
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method:'POST',
-          headers:{
-            'Content-Type':'application/json',
-            'Authorization':'Bearer ' + apiKey
-          },
-          body: JSON.stringify({
-            model: usedModel,
-            messages: [
-              {role:'system', content:'Kamu asisten AI yang ramah, jawab dalam Bahasa Indonesia yang natural dan singkat. Kalau user minta foto/gambar, panggil fungsi search_photo lewat mekanisme tool call yang tersedia — JANGAN menuliskan pemanggilan fungsi sebagai teks biasa di jawabanmu.'},
-              ...history
-            ],
-            tools: toolsEnabled ? tools : undefined,
-            tool_choice: toolsEnabled ? 'auto' : undefined
-          })
-        });
-
-        if(!res.ok){
-          const errData = await res.json().catch(() => ({}));
-          const errMsg = (errData.error && errData.error.message) || ('HTTP ' + res.status);
-          const isToolFailure = /failed to call a function|failed_generation/i.test(errMsg);
-
-          if(isToolFailure && toolsEnabled){
-            // Model gagal generate tool call yang valid — coba ulang tanpa tools
-            toolsEnabled = false;
-            continue;
-          }
-
-          removeTyping();
-          addMessage('error', 'Gagal: ' + errMsg);
-          sendBtn.disabled = false;
-          return;
-        }
-
-        const data = await res.json();
-        const choice = data.choices && data.choices[0];
-        const msgOut = choice && choice.message;
-        const toolCalls = msgOut && msgOut.tool_calls;
-
-        if(toolCalls && toolCalls.length && safety < 4){
-          history.push({role:'assistant', content: msgOut.content || null, tool_calls: toolCalls});
-
-          for(const call of toolCalls){
-            let args = {};
-            try{ args = JSON.parse(call.function.arguments || '{}'); }catch(e){}
-            const query = args.query || text || 'photo';
-
-            let toolResultText;
-            try{
-              const photos = await searchPhotos(query, 4);
-              if(photos.length){
-                foundPhotos = photos;
-                toolResultText = 'Ditemukan ' + photos.length + ' foto untuk "' + query + '". Foto sudah ditampilkan ke user, jangan tampilkan URL, cukup komentari singkat.';
-              } else {
-                toolResultText = 'Tidak ada foto ditemukan untuk "' + query + '".';
-              }
-            }catch(err){
-              toolResultText = 'Gagal cari foto: ' + err.message;
-            }
-
-            history.push({role:'tool', tool_call_id: call.id, content: toolResultText});
-          }
-          continue; // panggil lagi API buat dapetin jawaban akhir dari AI
-        }
-
-        removeTyping();
-        let reply = (msgOut && msgOut.content) ? msgOut.content : (foundPhotos ? 'Nih foto yang ketemu 👇' : '(respons kosong)');
-
-        // Fallback: sebagian model kadang nulis pemanggilan fungsi sebagai teks biasa,
-        // bukan lewat mekanisme tool_calls yang resmi. Kita tangkap pola itu di sini.
-        const fakeCallMatch = !foundPhotos && reply && reply.match(/search_photo\(\s*["']([^"']+)["']\s*\)/i);
-        if(fakeCallMatch){
-          const query = fakeCallMatch[1];
-          try{
-            const photos = await searchPhotos(query, 4);
-            if(photos.length){
-              foundPhotos = photos;
-              reply = 'Nih foto "' + query + '" yang aku temuin 👇';
-            } else {
-              reply = 'Maaf, aku gak nemu foto buat "' + query + '".';
-            }
-          }catch(err){
-            reply = 'Gagal cari foto: ' + err.message;
-          }
-        }
-
-        addMessage('ai', reply, null, foundPhotos);
-        history.push({role:'assistant', content: reply});
-        break;
+      // Kalau user kelihatan minta foto, cari duluan lewat Nexray Pinterest search
+      if(text && PHOTO_TRIGGER.test(text)){
+        try{
+          const query = extractPhotoQuery(text);
+          const photos = await searchPhotos(query, 4);
+          if(photos.length) foundPhotos = photos;
+        }catch(err){ /* biarkan, tetap lanjut minta jawaban teks dari AI */ }
       }
+
+      const promptText = buildPromptText(text || 'Aku baru kirim foto, tanggapi singkat.');
+      const res = await fetch(AI_API_URL + '?text=' + encodeURIComponent(promptText));
+
+      if(!res.ok){
+        removeTyping();
+        addMessage('error', 'Gagal: HTTP ' + res.status);
+        sendBtn.disabled = false;
+        return;
+      }
+
+      const data = await res.json();
+      if(!data.status){
+        removeTyping();
+        addMessage('error', 'Gagal: ' + (data.result || data.message || 'respons API tidak valid'));
+        sendBtn.disabled = false;
+        return;
+      }
+
+      removeTyping();
+      let reply = data.result || (foundPhotos ? 'Nih foto yang ketemu 👇' : '(respons kosong)');
+      addMessage('ai', reply, null, foundPhotos);
+      history.push({role:'assistant', content: reply});
     }catch(err){
       removeTyping();
-      addMessage('error', 'Gagal konek ke Groq API: ' + err.message);
+      addMessage('error', 'Gagal konek ke API: ' + err.message);
     }
     sendBtn.disabled = false;
     userInput.focus();
