@@ -224,7 +224,6 @@
   const apiKey = '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';
   const model = 'llama-3.3-70b-versatile';   // model buat chat teks biasa
   const visionModel = 'qwen/qwen3.6-27b';    // model buat chat yang ada fotonya
-  const pexelsApiKey = 'ISI_PEXELS_API_KEY'; // API key gratis dari https://www.pexels.com/api/ buat fitur cari foto
   // ========================
   let history = [];
   let pendingImage = null; // {dataUrl}
@@ -354,7 +353,7 @@
       bub.appendChild(grid);
       const credit = document.createElement('div');
       credit.className = 'photo-credit';
-      credit.textContent = 'via Pexels — klik foto buat lihat ukuran penuh';
+      credit.textContent = 'via Pinterest — klik foto buat lihat ukuran penuh';
       bub.appendChild(credit);
     }
     msg.appendChild(av);
@@ -364,20 +363,16 @@
     return bub;
   }
 
-  // ---- Cari foto (Pexels API) ----
+  // ---- Cari foto (Nexray Pinterest search API, gratis tanpa API key) ----
   async function searchPhotos(query, perPage){
-    if(!pexelsApiKey || pexelsApiKey.includes('ISI_PEXELS_API_KEY')){
-      throw new Error('Pexels API key belum diisi — buka file HTML, ganti nilai `pexelsApiKey` di bagian atas script. Daftar gratis di https://www.pexels.com/api/');
-    }
-    const res = await fetch('https://api.pexels.com/v1/search?query=' + encodeURIComponent(query) + '&per_page=' + (perPage || 4), {
-      headers: { Authorization: pexelsApiKey }
-    });
-    if(!res.ok) throw new Error('Pexels HTTP ' + res.status);
+    const res = await fetch('https://api.nexray.eu.cc/search/pinterest?q=' + encodeURIComponent(query));
+    if(!res.ok) throw new Error('Nexray HTTP ' + res.status);
     const data = await res.json();
-    return (data.photos || []).map(p => ({
-      thumb: p.src.medium,
-      full: p.src.large2x || p.src.original,
-      photographer: p.photographer
+    if(!data.status || !Array.isArray(data.result)) throw new Error('Respons pencarian foto tidak valid');
+    return data.result.slice(0, perPage || 4).map(p => ({
+      thumb: p.images_url,
+      full: p.images_url,
+      photographer: (p.pinner && p.pinner.full_name) || null
     }));
   }
 
@@ -466,7 +461,7 @@
           body: JSON.stringify({
             model: usedModel,
             messages: [
-              {role:'system', content:'Kamu asisten AI yang ramah, jawab dalam Bahasa Indonesia yang natural dan singkat. Kalau user minta foto/gambar, panggil fungsi search_photo dengan kata kunci yang tepat.'},
+              {role:'system', content:'Kamu asisten AI yang ramah, jawab dalam Bahasa Indonesia yang natural dan singkat. Kalau user minta foto/gambar, panggil fungsi search_photo lewat mekanisme tool call yang tersedia — JANGAN menuliskan pemanggilan fungsi sebagai teks biasa di jawabanmu.'},
               ...history
             ],
             tools: toolsEnabled ? tools : undefined,
@@ -523,7 +518,26 @@
         }
 
         removeTyping();
-        const reply = (msgOut && msgOut.content) ? msgOut.content : (foundPhotos ? 'Nih foto yang ketemu 👇' : '(respons kosong)');
+        let reply = (msgOut && msgOut.content) ? msgOut.content : (foundPhotos ? 'Nih foto yang ketemu 👇' : '(respons kosong)');
+
+        // Fallback: sebagian model kadang nulis pemanggilan fungsi sebagai teks biasa,
+        // bukan lewat mekanisme tool_calls yang resmi. Kita tangkap pola itu di sini.
+        const fakeCallMatch = !foundPhotos && reply && reply.match(/search_photo\(\s*["']([^"']+)["']\s*\)/i);
+        if(fakeCallMatch){
+          const query = fakeCallMatch[1];
+          try{
+            const photos = await searchPhotos(query, 4);
+            if(photos.length){
+              foundPhotos = photos;
+              reply = 'Nih foto "' + query + '" yang aku temuin 👇';
+            } else {
+              reply = 'Maaf, aku gak nemu foto buat "' + query + '".';
+            }
+          }catch(err){
+            reply = 'Gagal cari foto: ' + err.message;
+          }
+        }
+
         addMessage('ai', reply, null, foundPhotos);
         history.push({role:'assistant', content: reply});
         break;
