@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinz API — REST API untuk WhatsApp Bot</title>
+<meta name="description" content="Satu REST API untuk kirim pesan WA, downloader, image AI, dan AI chat. Dibangun di atas ANERA MD engine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF9;
+    --bg-alt:#F2F1EF;
+    --ink:#15161A;
+    --muted:#6B6D76;
+    --line:#E4E3E0;
+    --accent:#4F46E5;
+    --accent-soft:#EEF0FF;
+    --accent-ink:#3730A3;
+    --green:#16A34A;
+    --radius:14px;
+    --max:1160px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Sora',sans-serif; letter-spacing:-0.02em; margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 28px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px;}
+  @media(prefers-reduced-motion: reduce){*{animation:none !important; transition:none !important; scroll-behavior:auto !important;}}
+
+  header.site{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,250,249,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 0;}
+  .logo{display:flex; align-items:center; gap:9px; font-family:'Sora',sans-serif; font-weight:700; font-size:16px;}
+  .logo-dot{width:9px;height:9px;border-radius:50%; background:var(--accent); flex:none;}
+  .logo small{font-family:'JetBrains Mono',monospace; font-weight:400; color:var(--muted); font-size:12px; margin-left:4px;}
+  .nav-links{display:flex; gap:30px; font-size:14.5px; color:var(--muted);}
+  .nav-links a{text-decoration:none; transition:color .15s;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-cta{
+    font-size:13.5px; font-weight:600; background:var(--ink); color:var(--bg);
+    padding:9px 18px; border-radius:999px; text-decoration:none; white-space:nowrap;
+  }
+  @media(max-width:820px){.nav-links{display:none;}}
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--accent-ink);
+    background:var(--accent-soft); padding:6px 12px; border-radius:999px; margin-bottom:22px;
+  }
+  .eyebrow::before{content:''; width:6px;height:6px;border-radius:50%; background:var(--accent);}
+
+  /* HERO */
+  .hero{
+    padding:80px 0 90px; display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
+  }
+  @media(max-width:960px){.hero{grid-template-columns:1fr; padding:52px 0 56px;}}
+  .hero h1{font-size:clamp(32px,4.6vw,50px); font-weight:700; line-height:1.1;}
+  .hero h1 .accent{color:var(--accent);}
+  .hero p.lead{margin-top:20px; font-size:17px; color:var(--muted); max-width:48ch;}
+  .hero-actions{margin-top:30px; display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-weight:600; font-size:14.5px; padding:13px 24px; border-radius:999px;
+    text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease; border:1px solid transparent; cursor:pointer;
+  }
+  .btn-primary{background:var(--ink); color:var(--bg);}
+  .btn-primary:hover{transform:translateY(-1px);}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+
+  .hero-meta{display:flex; gap:26px; margin-top:40px; padding-top:26px; border-top:1px solid var(--line); flex-wrap:wrap;}
+  .meta-num{font-family:'Sora',sans-serif; font-size:21px; font-weight:700;}
+  .meta-label{font-size:12.5px; color:var(--muted); margin-top:2px;}
+
+  /* TERMINAL SIGNATURE */
+  .term{
+    background:#131318; border-radius:16px; overflow:hidden;
+    box-shadow:0 24px 60px -28px rgba(21,22,26,0.4);
+    border:1px solid #24242C;
+  }
+  .term-head{
+    display:flex; align-items:center; gap:8px; padding:12px 16px;
+    border-bottom:1px solid #24242C; background:#1A1A21;
+  }
+  .term-dot{width:10px;height:10px;border-radius:50%;}
+  .term-body{padding:22px 20px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#D7D7E0; min-height:280px;}
+  .term-line{margin-bottom:4px; opacity:0; animation:appear .4s ease forwards;}
+  .term-line.d1{animation-delay:.2s;}
+  .term-line.d2{animation-delay:.9s;}
+  .term-line.d3{animation-delay:1.5s;}
+  .term-line.d4{animation-delay:2.1s;}
+  .term-line.d5{animation-delay:2.5s;}
+  @keyframes appear{to{opacity:1;}}
+  .term-prompt{color:#7C7CF0;}
+  .term-str{color:#8FD19E;}
+  .term-key{color:#79B8FF;}
+  .term-comment{color:#65656F;}
+
+  /* SECTIONS */
+  section{padding:84px 0;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:42px; flex-wrap:wrap;}
+  .section-tag{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; display:block;
+  }
+  .section-head h2{font-size:clamp(25px,3.2vw,34px); font-weight:700;}
+  .section-head p{color:var(--muted); max-width:42ch; font-size:15px;}
+
+  /* ENDPOINT TABS */
+  .tabs{display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap;}
+  .tab-btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:13.5px;
+    padding:10px 18px; border-radius:999px; border:1px solid var(--line);
+    background:var(--bg); color:var(--muted); cursor:pointer; transition:all .15s;
+  }
+  .tab-btn.active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .tab-btn:hover:not(.active){border-color:var(--ink); color:var(--ink);}
+
+  .endpoint-panel{display:none; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  .endpoint-panel.active{display:grid;}
+  @media(max-width:820px){.endpoint-panel.active{grid-template-columns:1fr;}}
+  .ep-info{padding:30px 28px; border-right:1px solid var(--line);}
+  @media(max-width:820px){.ep-info{border-right:none; border-bottom:1px solid var(--line);}}
+  .ep-method{
+    display:inline-block; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600;
+    padding:4px 10px; border-radius:6px; background:var(--accent-soft); color:var(--accent-ink); margin-right:8px;
+  }
+  .ep-path{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--muted);}
+  .ep-title{font-size:19px; font-weight:600; margin-top:14px; font-family:'Sora',sans-serif;}
+  .ep-desc{color:var(--muted); font-size:14.5px; margin-top:8px;}
+  .ep-params{margin-top:20px; display:flex; flex-direction:column; gap:10px;}
+  .ep-param{display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-top:1px solid var(--line);}
+  .ep-param .name{font-family:'JetBrains Mono',monospace; color:var(--ink);}
+  .ep-param .type{color:var(--muted);}
+  .ep-code{background:#131318; padding:26px 24px; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#D7D7E0; overflow-x:auto;}
+  .ep-code .line{white-space:pre; line-height:1.7;}
+  .ep-code .c-key{color:#79B8FF;}
+  .ep-code .c-str{color:#8FD19E;}
+  .ep-code .c-com{color:#65656F;}
+  .ep-code .c-num{color:#F0A868;}
+
+  /* PROCESS */
+  .process-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  }
+  @media(max-width:760px){.process-grid{grid-template-columns:1fr;}}
+  .process-item{background:var(--bg); padding:30px 26px;}
+  .process-num{font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:13px; font-weight:500;}
+  .process-item h3{font-size:17px; margin-top:12px; font-weight:600;}
+  .process-item p{color:var(--muted); font-size:14px; margin-top:8px;}
+
+  /* PRICING */
+  .price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media(max-width:860px){.price-grid{grid-template-columns:1fr;}}
+  .price-card{
+    border:1px solid var(--line); border-radius:var(--radius); padding:30px 26px;
+    display:flex; flex-direction:column; background:var(--bg);
+  }
+  .price-card.featured{border-color:var(--ink); box-shadow:0 20px 44px -28px rgba(21,22,26,0.3); position:relative;}
+  .price-badge{
+    position:absolute; top:-12px; right:24px; background:var(--accent); color:#fff;
+    font-size:11.5px; font-weight:600; padding:5px 12px; border-radius:999px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .price-name{font-weight:600; font-size:15px; color:var(--muted);}
+  .price-amount{font-family:'Sora',sans-serif; font-size:32px; font-weight:700; margin-top:10px;}
+  .price-amount span{font-size:14px; font-weight:500; color:var(--muted);}
+  .price-desc{color:var(--muted); font-size:13.5px; margin-top:8px;}
+  .price-list{list-style:none; padding:0; margin:24px 0 0; display:flex; flex-direction:column; gap:11px; flex:1;}
+  .price-list li{font-size:13.5px; display:flex; gap:9px; align-items:flex-start;}
+  .price-list li::before{content:'✓'; color:var(--green); font-weight:700; flex:none;}
+  .price-card .btn{margin-top:24px; justify-content:center; width:100%;}
+
+  /* CONTACT */
+  .contact{background:var(--ink); color:var(--bg); border-radius:24px; padding:64px 48px; text-align:center;}
+  @media(max-width:640px){.contact{padding:48px 24px; border-radius:18px;}}
+  .contact h2{font-size:clamp(26px,4vw,38px); color:#fff;}
+  .contact p{color:#A9A9B4; margin-top:14px; font-size:15.5px;}
+  .contact .hero-actions{justify-content:center; margin-top:28px;}
+  .contact .btn-primary{background:#fff; color:var(--ink);}
+  .contact .btn-ghost{border-color:#3A3B44; color:#fff;}
+
+  footer.site{padding:36px 0 56px; color:var(--muted); font-size:13.5px;}
+  .footer-row{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    border-top:1px solid var(--line); padding-top:26px; margin-top:60px;
+  }
+  .footer-links{display:flex; gap:20px;}
+  .footer-links a{text-decoration:none; color:var(--muted);}
+  .footer-links a:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <nav>
+      <div class="logo"><span class="logo-dot"></span>Dinz<small>API</small></div>
+      <div class="nav-links">
+        <a href="#endpoints">Endpoint</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#pricing">Harga</a>
+      </div>
+      <a href="#pricing" class="nav-cta">Ambil API Key</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" style="padding-top:80px;">
+    <div>
+      <span class="eyebrow">REST API · JSON · Baileys Engine</span>
+      <h1>Satu API buat <span class="accent">semua fitur bot WA</span> kamu.</h1>
+      <p class="lead">Kirim pesan, download video, transform gambar pakai AI, sampai chat AI — semua lewat satu endpoint REST. Tinggal hit, dapet JSON.</p>
+      <div class="hero-actions">
+        <a href="#pricing" class="btn btn-primary">Ambil API Key →</a>
+        <a href="#endpoints" class="btn btn-ghost">Lihat dokumentasi</a>
+      </div>
+      <div class="hero-meta">
+        <div><div class="meta-num">4</div><div class="meta-label">Kategori endpoint</div></div>
+        <div><div class="meta-num">99.9%</div><div class="meta-label">Uptime target</div></div>
+        <div><div class="meta-num">&lt;400ms</div><div class="meta-label">Rata-rata respons</div></div>
+      </div>
+    </div>
+
+    <div class="term" aria-hidden="true">
+      <div class="term-head">
+        <span class="term-dot" style="background:#FF5F57;"></span>
+        <span class="term-dot" style="background:#FEBC2E;"></span>
+        <span class="term-dot" style="background:#28C840;"></span>
+      </div>
+      <div class="term-body">
+        <div class="term-line d1"><span class="term-prompt">$</span> curl https://api.dinzcode.dev/v1/send-message \</div>
+        <div class="term-line d1">&nbsp;&nbsp;-H <span class="term-key">"Authorization: Bearer</span> <span class="term-str">dz_live_xxx"</span> \</div>
+        <div class="term-line d1">&nbsp;&nbsp;-d <span class="term-str">'{"to":"628xxxx","text":"Halo!"}'</span></div>
+        <div class="term-line d2 term-comment">// 202ms</div>
+        <div class="term-line d3">{</div>
+        <div class="term-line d3">&nbsp;&nbsp;<span class="term-key">"status"</span>: <span class="term-str">"sent"</span>,</div>
+        <div class="term-line d4">&nbsp;&nbsp;<span class="term-key">"message_id"</span>: <span class="term-str">"3EB0C9..."</span>,</div>
+        <div class="term-line d4">&nbsp;&nbsp;<span class="term-key">"to"</span>: <span class="term-str">"628xxxx"</span></div>
+        <div class="term-line d5">}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS -->
+  <section id="endpoints">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">Dokumentasi</span>
+        <h2>4 kategori endpoint, satu format response</h2>
+      </div>
+      <p>Semua request pakai API key di header, response selalu JSON.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="msg">Kirim Pesan</button>
+      <button class="tab-btn" data-tab="dl">Downloader</button>
+      <button class="tab-btn" data-tab="img">Image AI</button>
+      <button class="tab-btn" data-tab="ai">AI Chat</button>
+    </div>
+
+    <div class="endpoint-panel active" data-panel="msg">
+      <div class="ep-info">
+        <div><span class="ep-method">POST</span><span class="ep-path">/v1/send-message</span></div>
+        <div class="ep-title">Kirim pesan WhatsApp</div>
+        <div class="ep-desc">Kirim teks, gambar, video, atau tombol interaktif ke nomor tujuan lewat sesi bot yang terhubung.</div>
+        <div class="ep-params">
+          <div class="ep-param"><span class="name">to</span><span class="type">string, wajib</span></div>
+          <div class="ep-param"><span class="name">text</span><span class="type">string</span></div>
+          <div class="ep-param"><span class="name">media_url</span><span class="type">string, opsional</span></div>
+          <div class="ep-param"><span class="name">buttons</span><span class="type">array, opsional</span></div>
+        </div>
+      </div>
+      <div class="ep-code">
+        <div class="line"><span class="c-com">// Response 200</span></div>
+        <div class="line">{</div>
+        <div class="line">  <span class="c-key">"status"</span>: <span class="c-str">"sent"</span>,</div>
+        <div class="line">  <span class="c-key">"message_id"</span>: <span class="c-str">"3EB0C9..."</span>,</div>
+        <div class="line">  <span class="c-key">"to"</span>: <span class="c-str">"628xxxxxxxxx"</span>,</div>
+        <div class="line">  <span class="c-key">"timestamp"</span>: <span class="c-num">1753600000</span></div>
+        <div class="line">}</div>
+      </div>
+    </div>
+
+    <div class="endpoint-panel" data-panel="dl">
+      <div class="ep-info">
+        <div><span class="ep-method">GET</span><span class="ep-path">/v1/download</span></div>
+        <div class="ep-title">Downloader multi-platform</div>
+        <div class="ep-desc">Ambil link media dari TikTok, YouTube, Instagram, atau Pinterest tanpa watermark.</div>
+        <div class="ep-params">
+          <div class="ep-param"><span class="name">url</span><span class="type">string, wajib</span></div>
+          <div class="ep-param"><span class="name">platform</span><span class="type">auto-detect</span></div>
+          <div class="ep-param"><span class="name">quality</span><span class="type">"360" | "720" | "1080"</span></div>
+        </div>
+      </div>
+      <div class="ep-code">
+        <div class="line"><span class="c-com">// Response 200</span></div>
+        <div class="line">{</div>
+        <div class="line">  <span class="c-key">"platform"</span>: <span class="c-str">"tiktok"</span>,</div>
+        <div class="line">  <span class="c-key">"title"</span>: <span class="c-str">"..."</span>,</div>
+        <div class="line">  <span class="c-key">"duration"</span>: <span class="c-str">"32s"</span>,</div>
+        <div class="line">  <span class="c-key">"download_url"</span>: <span class="c-str">"https://..."</span></div>
+        <div class="line">}</div>
+      </div>
+    </div>
+
+    <div class="endpoint-panel" data-panel="img">
+      <div class="ep-info">
+        <div><span class="ep-method">POST</span><span class="ep-path">/v1/image/transform</span></div>
+        <div class="ep-title">Image AI transform</div>
+        <div class="ep-desc">Ubah foto jadi berbagai gaya (cyberpunk, golden dragon, dll) atau generate mockup profil sosial media.</div>
+        <div class="ep-params">
+          <div class="ep-param"><span class="name">image_url</span><span class="type">string, wajib</span></div>
+          <div class="ep-param"><span class="name">style</span><span class="type">string, wajib</span></div>
+          <div class="ep-param"><span class="name">format</span><span class="type">"png" | "jpg"</span></div>
+        </div>
+      </div>
+      <div class="ep-code">
+        <div class="line"><span class="c-com">// Response 200</span></div>
+        <div class="line">{</div>
+        <div class="line">  <span class="c-key">"style"</span>: <span class="c-str">"cyberninja"</span>,</div>
+        <div class="line">  <span class="c-key">"result_url"</span>: <span class="c-str">"https://cdn.../out.png"</span>,</div>
+        <div class="line">  <span class="c-key">"processing_ms"</span>: <span class="c-num">1840</span></div>
+        <div class="line">}</div>
+      </div>
+    </div>
+
+    <div class="endpoint-panel" data-panel="ai">
+      <div class="ep-info">
+        <div><span class="ep-method">POST</span><span class="ep-path">/v1/ai/chat</span></div>
+        <div class="ep-title">AI Chat</div>
+        <div class="ep-desc">Balasan percakapan natural berbahasa Indonesia, dengan histori percakapan per pengguna atau grup.</div>
+        <div class="ep-params">
+          <div class="ep-param"><span class="name">session_id</span><span class="type">string, wajib</span></div>
+          <div class="ep-param"><span class="name">message</span><span class="type">string, wajib</span></div>
+          <div class="ep-param"><span class="name">persona</span><span class="type">string, opsional</span></div>
+        </div>
+      </div>
+      <div class="ep-code">
+        <div class="line"><span class="c-com">// Response 200</span></div>
+        <div class="line">{</div>
+        <div class="line">  <span class="c-key">"reply"</span>: <span class="c-str">"Siap, aku bantuin ya..."</span>,</div>
+        <div class="line">  <span class="c-key">"session_id"</span>: <span class="c-str">"u-2281"</span>,</div>
+        <div class="line">  <span class="c-key">"model"</span>: <span class="c-str">"llama-3.3-70b"</span></div>
+        <div class="line">}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICKSTART -->
+  <section id="quickstart">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">Quickstart</span>
+        <h2>Mulai dalam tiga langkah</h2>
+      </div>
+    </div>
+    <div class="process-grid">
+      <div class="process-item">
+        <div class="process-num">01</div>
+        <h3>Ambil API key</h3>
+        <p>Daftar dan generate key dari dashboard, langsung aktif dipakai.</p>
+      </div>
+      <div class="process-item">
+        <div class="process-num">02</div>
+        <h3>Pilih endpoint</h3>
+        <p>Kirim pesan, download media, transform gambar, atau AI chat — tinggal pilih.</p>
+      </div>
+      <div class="process-item">
+        <div class="process-num">03</div>
+        <h3>Hit & terima JSON</h3>
+        <p>Semua endpoint balikin format response yang konsisten, gampang diparse.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">Harga</span>
+        <h2>Pilih paket sesuai kebutuhan</h2>
+      </div>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-name">Free</div>
+        <div class="price-amount">Rp0<span>/bulan</span></div>
+        <div class="price-desc">Buat coba-coba dan proyek kecil.</div>
+        <ul class="price-list">
+          <li>100 request/hari</li>
+          <li>Semua kategori endpoint</li>
+          <li>Rate limit standar</li>
+          <li>Support komunitas</li>
+        </ul>
+        <a href="#" class="btn btn-ghost">Mulai gratis</a>
+      </div>
+      <div class="price-card featured">
+        <span class="price-badge">Populer</span>
+        <div class="price-name">Pro</div>
+        <div class="price-amount">Rp49rb<span>/bulan</span></div>
+        <div class="price-desc">Buat bot yang udah dipakai serius.</div>
+        <ul class="price-list">
+          <li>10.000 request/hari</li>
+          <li>Semua kategori endpoint</li>
+          <li>Prioritas antrian</li>
+          <li>Support respons cepat</li>
+        </ul>
+        <a href="#" class="btn btn-primary">Pilih Pro</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Business</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-desc">Volume tinggi, kebutuhan khusus.</div>
+        <ul class="price-list">
+          <li>Request unlimited</li>
+          <li>Dedicated endpoint</li>
+          <li>SLA & uptime jaminan</li>
+          <li>Support langsung ke tim</li>
+        </ul>
+        <a href="#" class="btn btn-ghost">Hubungi kami</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact">
+      <span class="eyebrow" style="background:rgba(255,255,255,0.08); color:#C9C8FF;">Siap integrasi?</span>
+      <h2>Sambungin bot kamu ke Dinz API.</h2>
+      <p>Butuh endpoint custom di luar 4 kategori ini? Ceritain kebutuhannya.</p>
+      <div class="hero-actions">
+        <a href="https://wa.me/" class="btn btn-primary">Chat via WhatsApp →</a>
+        <a href="#pricing" class="btn btn-ghost">Lihat harga</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="footer-row">
+      <div class="logo" style="font-size:15px;"><span class="logo-dot"></span>Dinz<small>API</small></div>
+      <div class="footer-links">
+        <a href="#endpoints">Endpoint</a>
+        <a href="#pricing">Harga</a>
+        <a href="#contact">Kontak</a>
+      </div>
+      <div>© 2026 Dinz Code</div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.endpoint-panel');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector('.endpoint-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
