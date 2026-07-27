@@ -453,6 +453,7 @@
     try{
       let foundPhotos = null;
       let safety = 0;
+      let toolsEnabled = !image;
 
       while(true){
         safety++;
@@ -468,15 +469,23 @@
               {role:'system', content:'Kamu asisten AI yang ramah, jawab dalam Bahasa Indonesia yang natural dan singkat. Kalau user minta foto/gambar, panggil fungsi search_photo dengan kata kunci yang tepat.'},
               ...history
             ],
-            tools: image ? undefined : tools, // tool calling belum didukung bareng gambar di sebagian model vision
-            tool_choice: image ? undefined : 'auto'
+            tools: toolsEnabled ? tools : undefined,
+            tool_choice: toolsEnabled ? 'auto' : undefined
           })
         });
 
         if(!res.ok){
-          removeTyping();
           const errData = await res.json().catch(() => ({}));
           const errMsg = (errData.error && errData.error.message) || ('HTTP ' + res.status);
+          const isToolFailure = /failed to call a function|failed_generation/i.test(errMsg);
+
+          if(isToolFailure && toolsEnabled){
+            // Model gagal generate tool call yang valid — coba ulang tanpa tools
+            toolsEnabled = false;
+            continue;
+          }
+
+          removeTyping();
           addMessage('error', 'Gagal: ' + errMsg);
           sendBtn.disabled = false;
           return;
