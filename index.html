@@ -1370,18 +1370,24 @@ async function searchSpotify(query){
     const data = await res.json();
     if(data.status === false) throw new Error(data.message || 'Lagu tidak ditemukan');
 
+    /* API balikin field pakai "-" untuk data yang kosong, bukan null/kosong string */
+    const clean = v => (!v || v === '-') ? '' : v;
+
     /* API bisa balikin objek langsung atau dibungkus di "result"/"data" */
     const r = data.result || data.data || data;
-    const title = r.title || r.name || r.judul || 'Lagu tidak diketahui';
-    const artist = r.artist || r.artists || r.singer || r.penyanyi || '';
-    const thumbnail = r.thumbnail || r.image || r.cover || r.thumb || '';
-    const album = r.album || '';
-    const duration = r.duration || r.durasi || '';
-    const releaseDate = r.release_date || r.releaseDate || '';
-    const downloadUrl = r.download || r.url_download || r.audio || r.link || r.url;
-    const spotifyUrl = r.spotify_url || r.spotifyUrl || r.source || '';
+    const title = clean(r.title || r.name || r.judul) || 'Lagu tidak diketahui';
+    const artist = clean(r.artist || r.artists || r.singer || r.penyanyi);
+    const thumbnail = clean(r.thumbnail || r.image || r.cover || r.thumb);
+    const album = clean(r.album);
+    const duration = clean(r.duration || r.durasi);
+    const releaseDate = clean(r.release_date || r.releaseDate);
+    const downloadUrl = r.play_url || r.download || r.url_download || r.audio || r.link || r.url;
+    const spotifyUrl = clean(r.spotify_url || r.spotifyUrl || r.source);
 
     if(!downloadUrl) throw new Error('Link download tidak ditemukan pada respons API');
+    if(/\/undefined\.[a-z0-9]+($|\?)/i.test(downloadUrl)){
+      throw new Error('API sumber sedang bermasalah (link audio rusak/"undefined" dari server). Coba lagi beberapa saat.');
+    }
 
     const row = document.createElement('div');
     row.className = 'track-row';
