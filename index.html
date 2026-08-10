@@ -702,6 +702,19 @@
     min-width:0;
   }
   .key-row input[type="text"]::placeholder{color:#4d4d59;}
+  .key-row select{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    padding:14px 16px;
+    min-width:0;
+    cursor:pointer;
+  }
+  .key-row select option{background:var(--panel); color:var(--ink);}
 
   .enc-result{
     display:none;
@@ -818,33 +831,42 @@
     <div class="track-list" id="trackList"></div>
   </div>
 
-  <!-- ===== PANEL: ENC/DEC FILE ===== -->
+  <!-- ===== PANEL: HTML OBFUSCATOR ===== -->
   <div class="panel" id="encfile-tool">
     <div class="tool-head">
       <div class="icon" id="encfileIconSlot"></div>
-      <div class="title">Enc/Dec File</div>
-    </div>
-
-    <div class="mode-switch" id="encModeSwitch">
-      <button type="button" class="mode-btn active" data-mode="encrypt">Encrypt</button>
-      <button type="button" class="mode-btn" data-mode="decrypt">Decrypt</button>
+      <div class="title">HTML Obfuscator</div>
     </div>
 
     <form id="encFileForm">
       <div class="file-drop" id="encFileDrop">
         <input type="file" id="encFileInput" hidden>
-        <div class="file-drop-text" id="encFileDropText">Klik atau seret file ke sini</div>
+        <div class="file-drop-text" id="encFileDropText">Klik atau seret file HTML ke sini</div>
       </div>
       <div class="key-row">
-        <input type="text" id="encKeyInput" placeholder="Key" value="saurus" required>
+        <select id="encMethodInput">
+          <option value="saurus" selected>Dinz (rekomendasi)</option>
+          <option value="aes">AES</option>
+          <option value="multi">Multi (Base64 x3 + Reverse)</option>
+          <option value="xor">XOR</option>
+          <option value="base64">Base64</option>
+          <option value="btoa">Btoa Reverse</option>
+          <option value="hex">Hex</option>
+          <option value="unicode">Unicode</option>
+          <option value="entity">HTML Entity</option>
+          <option value="charcode">Char Code</option>
+          <option value="url">URL Encode</option>
+          <option value="rot13">ROT13</option>
+          <option value="reverse">Reverse</option>
+        </select>
         <button type="submit" id="encSubmitBtn">Proses</button>
       </div>
     </form>
-    <div class="hint">Upload file yang isinya mau di-enkripsi/dekripsi, isi key, lalu klik Proses. Hasilnya bisa langsung diunduh sebagai file baru.</div>
+    <div class="hint">Upload file HTML yang mau diobfuscate, pilih metode, lalu klik Proses. Hasilnya berupa tag &lt;script&gt; siap pakai yang bisa langsung diunduh sebagai file baru.</div>
     <div class="status" id="encStatus"></div>
 
     <div class="enc-result" id="encResult">
-      <div class="other-quality" style="margin-top:0;">hasil</div>
+      <div class="other-quality" style="margin-top:0;">hasil (script obfuscated)</div>
       <textarea id="encResultText" class="enc-textarea" readonly></textarea>
       <button type="button" class="download-main" id="encDownloadBtn">Download Hasil</button>
     </div>
@@ -875,7 +897,7 @@ const ICONS = {
 ============================================================ */
 const EXTRA_TOOLS = [
   { id:'spotify', name:'Spotify', desc:'Cari & download lagu', panel:'spotify-tool' },
-  { id:'encfile', name:'Enc/Dec File', desc:'Encrypt & decrypt isi file', panel:'encfile-tool' },
+  { id:'encfile', name:'HTML Obfuscator', desc:'Obfuscate kode HTML jadi script tersamar', panel:'encfile-tool' },
 ];
 
 /* ============================================================
@@ -1550,46 +1572,38 @@ spotifyInput.addEventListener('input', ()=>{
 });
 
 /* ============================================================
-   ENC / DEC FILE
-   Alur: user upload file -> isi file dibaca sebagai teks ->
-   teks dikirim ke API rabbit-encrypt / rabbit-decrypt beserta key
-   -> hasilnya ditampilkan & bisa diunduh sebagai file baru.
+   HTML OBFUSCATOR
+   Alur: user upload file HTML -> isi file dibaca sebagai teks ->
+   teks dikirim ke API synoxcloud /encrypt/html -> API balikin
+   beberapa metode obfuscate sekaligus -> user pilih metode mana
+   yang mau dipakai -> hasil <script> ditampilkan & bisa diunduh.
 ============================================================ */
 document.getElementById('encfileIconSlot').innerHTML = ICONS.encfile;
 
-const encModeSwitch = document.getElementById('encModeSwitch');
 const encFileForm = document.getElementById('encFileForm');
 const encFileDrop = document.getElementById('encFileDrop');
 const encFileInput = document.getElementById('encFileInput');
 const encFileDropText = document.getElementById('encFileDropText');
-const encKeyInput = document.getElementById('encKeyInput');
+const encMethodInput = document.getElementById('encMethodInput');
 const encSubmitBtn = document.getElementById('encSubmitBtn');
 const encStatusEl = document.getElementById('encStatus');
 const encResultEl = document.getElementById('encResult');
 const encResultText = document.getElementById('encResultText');
 const encDownloadBtn = document.getElementById('encDownloadBtn');
 
-let encMode = 'encrypt';
 let encSelectedFile = null;
 
 /* Batas aman panjang teks untuk dikirim lewat query string GET.
-   File yang terlalu besar akan bikin URL kepanjangan dan ditolak server. */
-const ENC_MAX_CHARS = 6000;
+   Dilonggarkan karena API sumber bisa menangani teks yang jauh
+   lebih panjang dibanding endpoint lama. Tetap dibatasi supaya
+   URL request tidak ditolak browser/server kalau filenya raksasa. */
+const ENC_MAX_CHARS = 50000;
 
 function setEncStatus(msg, isError){
   encStatusEl.textContent = msg;
   encStatusEl.classList.toggle('show', !!msg);
   encStatusEl.classList.toggle('error', !!isError);
 }
-
-encModeSwitch.querySelectorAll('.mode-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    encMode = btn.dataset.mode;
-    encModeSwitch.querySelectorAll('.mode-btn').forEach(b=> b.classList.toggle('active', b === btn));
-    encResultEl.classList.remove('show');
-    setEncStatus('', false);
-  });
-});
 
 function encPickFile(file){
   if(!file) return;
@@ -1619,22 +1633,16 @@ function readFileAsText(file){
   });
 }
 
-/* Nama file hasil: tambahkan awalan enc_/dec_ di depan nama asli,
+/* Nama file hasil: tambahkan awalan obf_ di depan nama asli,
    supaya tidak menimpa file sumber kalau diunduh ulang. */
 function encResultFileName(originalName){
-  const prefix = encMode === 'encrypt' ? 'enc_' : 'dec_';
   const safe = safeFileName(originalName || 'file');
-  return prefix + safe;
+  return 'obf_' + safe;
 }
 
 async function processEncFile(){
   if(!encSelectedFile){
-    setEncStatus('Pilih file dulu sebelum diproses.', true);
-    return;
-  }
-  const key = encKeyInput.value.trim();
-  if(!key){
-    setEncStatus('Key tidak boleh kosong.', true);
+    setEncStatus('Pilih file HTML dulu sebelum diproses.', true);
     return;
   }
 
@@ -1653,21 +1661,24 @@ async function processEncFile(){
     }
 
     setEncStatus('Menghubungi server...', false);
-    const path = encMode === 'encrypt' ? 'rabbit-encrypt' : 'rabbit-decrypt';
-    const apiUrl = `https://api.synoxcloud.xyz/encrypt/${path}?text=${encodeURIComponent(text)}&key=${encodeURIComponent(key)}`;
+    const method = encMethodInput.value;
+    const apiUrl = `https://api.synoxcloud.xyz/encrypt/html?html=${encodeURIComponent(text)}&method=${encodeURIComponent(method)}`;
 
     let res;
     try{
       res = await fetch(apiUrl);
     }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, URL terlalu panjang, atau server sumber down)');
     }
     if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
     const data = await res.json();
     if(data.status === false) throw new Error(data.message || 'Gagal memproses file');
-    if(data.result === undefined || data.result === null) throw new Error('Hasil tidak ditemukan pada respons API');
 
-    encResultText.value = data.result;
+    const methodResult = data.result && data.result.methods ? data.result.methods[method] : null;
+    const script = (methodResult && methodResult.script) || (data.result && data.result.recommended && data.result.recommended.script);
+    if(!script) throw new Error('Hasil obfuscate tidak ditemukan pada respons API');
+
+    encResultText.value = script;
     encResultEl.classList.add('show');
     setEncStatus('', false);
   }catch(err){
@@ -1686,11 +1697,11 @@ encFileForm.addEventListener('submit', (e)=>{
 encDownloadBtn.addEventListener('click', ()=>{
   const content = encResultText.value;
   if(!content) return;
-  const blob = new Blob([content], {type:'text/plain'});
+  const blob = new Blob([content], {type:'text/html'});
   const blobUrl = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = blobUrl;
-  a.download = encResultFileName(encSelectedFile ? encSelectedFile.name : 'hasil.txt');
+  a.download = encResultFileName(encSelectedFile ? encSelectedFile.name : 'hasil.html');
   document.body.appendChild(a);
   a.click();
   a.remove();
