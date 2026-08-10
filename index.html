@@ -185,8 +185,56 @@
     margin-top:8px;
   }
 
+  .player{
+    padding:20px;
+    border-bottom:1px solid var(--line);
+  }
+  .player video{
+    width:100%;
+    max-height:520px;
+    border-radius:12px;
+    background:#000;
+    display:block;
+  }
+
+  .download-main{
+    width:100%;
+    margin-top:16px;
+    background:linear-gradient(90deg, var(--cyan), var(--pink));
+    color:#0b0b10;
+    border:none;
+    border-radius:10px;
+    padding:16px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    transition:filter .15s ease, transform .15s ease;
+  }
+  .download-main:hover{filter:brightness(1.08);}
+  .download-main:active{transform:scale(0.98);}
+  .download-main:disabled{opacity:0.55;cursor:wait;}
+
+  .dl-progress{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--dim);
+    text-align:center;
+    margin-top:10px;
+    min-height:14px;
+  }
+
+  .other-quality{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:#4d4d59;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    margin:22px 0 10px;
+  }
+
   .links{
-    padding:16px 20px 20px;
+    padding:0 20px 20px;
     display:flex;
     flex-direction:column;
     gap:10px;
@@ -216,6 +264,7 @@
     padding:8px 14px;
     border-radius:7px;
     transition:background .15s ease;
+    cursor:pointer;
   }
   .link-row a:hover{background:var(--pink);color:var(--ink);}
 
@@ -256,6 +305,12 @@
         <div class="duration" id="duration"></div>
       </div>
     </div>
+    <div class="player">
+      <video id="videoPlayer" controls playsinline preload="metadata"></video>
+      <button class="download-main" id="downloadBtn">Download</button>
+      <div class="dl-progress" id="dlProgress"></div>
+    </div>
+    <div class="other-quality">kualitas lain</div>
     <div class="links" id="links"></div>
   </div>
 
@@ -272,6 +327,50 @@ const authorEl = document.getElementById('author');
 const titleEl = document.getElementById('title');
 const durationEl = document.getElementById('duration');
 const linksEl = document.getElementById('links');
+const videoPlayer = document.getElementById('videoPlayer');
+const downloadBtn = document.getElementById('downloadBtn');
+const dlProgress = document.getElementById('dlProgress');
+
+let currentVideoUrl = '';
+let currentFileName = 'tiktok-video.mp4';
+
+function safeFileName(str){
+  return (str || 'tiktok-video')
+    .replace(/[^\w\-. ]+/g, '')
+    .trim()
+    .slice(0, 60) || 'tiktok-video';
+}
+
+async function forceDownload(url, filename, btnEl, progressEl){
+  const originalLabel = btnEl ? btnEl.textContent : '';
+  try{
+    if(btnEl){ btnEl.disabled = true; btnEl.textContent = 'Mengunduh...'; }
+    if(progressEl) progressEl.textContent = 'Sedang mengambil file video...';
+
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Gagal ambil file (status ' + res.status + ')');
+
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(blobUrl);
+
+    if(progressEl) progressEl.textContent = 'Selesai, cek folder unduhan.';
+  }catch(err){
+    // fallback: kalau CORS/fetch gagal, buka tab baru supaya user bisa unduh manual
+    if(progressEl) progressEl.textContent = 'Unduh otomatis gagal (' + err.message + '), membuka di tab baru...';
+    window.open(url, '_blank', 'noopener');
+  }finally{
+    if(btnEl){ btnEl.disabled = false; btnEl.textContent = originalLabel; }
+    setTimeout(() => { if(progressEl) progressEl.textContent = ''; }, 4000);
+  }
+}
 
 function setStatus(msg, isError){
   statusEl.textContent = msg;
@@ -286,9 +385,12 @@ function fmtDuration(sec){
   return `${m}:${s.toString().padStart(2,'0')} durasi`;
 }
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const url = urlInput.value.trim();
+downloadBtn.addEventListener('click', () => {
+  if(!currentVideoUrl) return;
+  forceDownload(currentVideoUrl, currentFileName, downloadBtn, dlProgress);
+});
+
+async function processUrl(url){
   if(!url) return;
 
   resultEl.classList.remove('show');
@@ -312,25 +414,34 @@ form.addEventListener('submit', async (e) => {
     titleEl.textContent = r.title || '(tanpa judul)';
     durationEl.textContent = fmtDuration(r.duration);
 
+    const mainLink = (r.links && r.links[0]) || '';
+    currentVideoUrl = mainLink;
+    currentFileName = safeFileName((r.author || 'tiktok') + '-' + (r.title || 'video')) + '.mp4';
+
+    videoPlayer.src = mainLink;
+    videoPlayer.poster = r.thumbnail || '';
+
     const labels = ['Video HD (tanpa watermark)', 'Video standar (tanpa watermark)', 'Video dengan watermark'];
     linksEl.innerHTML = '';
     (r.links || []).forEach((link, i) => {
       const row = document.createElement('div');
       row.className = 'link-row';
-      row.innerHTML = `
-        <span class="label"><b>${labels[i] || 'Link video ' + (i+1)}</b></span>
-        <a href="${link}" target="_blank" rel="noopener" download>Unduh</a>
-      `;
+      const a = document.createElement('a');
+      a.textContent = 'Unduh';
+      a.addEventListener('click', () => forceDownload(link, currentFileName.replace('.mp4', `-${i+1}.mp4`), a, dlProgress));
+      row.innerHTML = `<span class="label"><b>${labels[i] || 'Link video ' + (i+1)}</b></span>`;
+      row.appendChild(a);
       linksEl.appendChild(row);
     });
 
     if(r.music && r.music.url){
       const row = document.createElement('div');
       row.className = 'link-row';
-      row.innerHTML = `
-        <span class="label"><b>Audio asli</b></span>
-        <a href="${r.music.url}" target="_blank" rel="noopener" download>Unduh</a>
-      `;
+      const a = document.createElement('a');
+      a.textContent = 'Unduh';
+      a.addEventListener('click', () => forceDownload(r.music.url, safeFileName(r.author + '-audio') + '.mp3', a, dlProgress));
+      row.innerHTML = `<span class="label"><b>Audio asli</b></span>`;
+      row.appendChild(a);
       linksEl.appendChild(row);
     }
 
@@ -342,6 +453,30 @@ form.addEventListener('submit', async (e) => {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Proses';
   }
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  processUrl(urlInput.value.trim());
+});
+
+// auto-proses begitu link ditempel (paste) di kolom input
+urlInput.addEventListener('paste', () => {
+  setTimeout(() => {
+    const val = urlInput.value.trim();
+    if(/^https?:\/\/.+tiktok/i.test(val) || /^https?:\/\/vm\.tiktok|vt\.tiktok/i.test(val)){
+      processUrl(val);
+    }
+  }, 50);
+});
+
+// auto-proses juga kalau user ketik/tempel manual lalu berhenti sejenak
+let typingTimer;
+urlInput.addEventListener('input', () => {
+  clearTimeout(typingTimer);
+  const val = urlInput.value.trim();
+  if(!/tiktok/i.test(val)) return;
+  typingTimer = setTimeout(() => processUrl(val), 700);
 });
 </script>
 </body>
