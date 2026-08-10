@@ -174,8 +174,95 @@
     color:var(--dim);
     font-size:15px;
     max-width:520px;
-    margin:0 0 40px;
+    margin:0 0 28px;
     line-height:1.55;
+  }
+
+  .hero-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:0 0 28px;
+  }
+  .badge{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:9px 14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--dim);
+    white-space:nowrap;
+  }
+  .badge svg{width:14px;height:14px;stroke:var(--cyan);flex-shrink:0;}
+  .badge b{color:var(--ink);font-weight:700;}
+
+  .hero-cta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:52px;
+  }
+  .hero-cta{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:linear-gradient(90deg, var(--cyan), var(--pink));
+    color:#0b0b10;
+    border:none;
+    border-radius:12px;
+    padding:15px 24px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    cursor:pointer;
+    transition:filter .15s ease, transform .15s ease;
+  }
+  .hero-cta svg{width:17px;height:17px;flex-shrink:0;}
+  .hero-cta:hover{filter:brightness(1.08);}
+  .hero-cta:active{transform:scale(0.97);}
+  .hero-cta.secondary{
+    background:var(--panel);
+    color:var(--ink);
+    border:1px solid var(--line);
+  }
+  .hero-cta.secondary:hover{border-color:var(--cyan); filter:none;}
+
+  .quick-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(84px, 1fr));
+    gap:12px;
+    margin-bottom:8px;
+  }
+  .quick-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px 8px;
+    cursor:pointer;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .quick-item:hover{border-color:var(--cyan); transform:translateY(-2px);}
+  .quick-item .icon{
+    width:34px;height:34px;
+    border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    background:#1a1a22;
+  }
+  .quick-item .icon svg{width:18px;height:18px;}
+  .quick-item .qname{
+    font-size:11px;
+    font-weight:700;
+    color:var(--ink);
+    text-align:center;
+    line-height:1.3;
   }
 
   /* ---------- SERVICE GRID ---------- */
@@ -593,7 +680,28 @@
   <div id="beranda" class="welcome">
     <div class="eyebrow">multi downloader</div>
     <h1>Selamat datang di<br><span class="rip">Web Downloader Dinz</span>.</h1>
-    <p class="sub">Buka menu di kiri atas, lalu pilih "Semua Layanan" untuk mulai unduh.</p>
+    <p class="sub">Unduh video &amp; lagu dari TikTok, Instagram, YouTube, Facebook, CapCut, sampai Spotify — tinggal tempel link atau ketik judul, sisanya berjalan otomatis.</p>
+
+    <div class="hero-badges">
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg><b>7</b>&nbsp;layanan</div>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg>100% gratis</div>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>tanpa watermark</div>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>proses cepat</div>
+    </div>
+
+    <div class="hero-cta-row">
+      <button class="hero-cta" id="heroCtaBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
+        Mulai Unduh
+      </button>
+      <button class="hero-cta secondary" id="heroSupportBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Butuh bantuan?
+      </button>
+    </div>
+
+    <div class="quick-label">Akses cepat</div>
+    <div class="quick-grid" id="quickAccessGrid"></div>
   </div>
 
   <div id="layananWrap" class="panel">
@@ -615,7 +723,7 @@
       <input type="text" id="spotifyInput" placeholder="Judul lagu atau nama artis..." required>
       <button type="submit" id="spotifySendBtn">Cari</button>
     </form>
-    <div class="hint">Ketik judul lagu, hasil pencarian muncul otomatis. Klik "Download MP3" untuk mengunduh.</div>
+    <div class="hint">Ketik judul lagu, hasil pencarian muncul otomatis. Klik "Download Lagu" untuk mengunduh.</div>
     <div class="status" id="spotifyStatus"></div>
     <div class="track-list" id="trackList"></div>
   </div>
@@ -1043,6 +1151,8 @@ function buildToolBlock(svc){
   return wrap;
 }
 
+const TOOL_NAV = {};
+
 SERVICES.forEach(svc=>{
   const card = document.createElement('div');
   card.className = 'card';
@@ -1052,10 +1162,13 @@ SERVICES.forEach(svc=>{
     <div class="name">${svc.name}</div>
     <div class="desc">${svc.desc}</div>
   `;
-  card.addEventListener('click', ()=>{
+  const activate = ()=>{
+    document.getElementById('layananWrap').classList.add('show');
     document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === svc.id));
     document.getElementById('tool-' + svc.id).scrollIntoView({behavior:'smooth', block:'start'});
-  });
+  };
+  card.addEventListener('click', activate);
+  TOOL_NAV[svc.id] = activate;
   serviceGrid.appendChild(card);
 
   toolsContainer.appendChild(buildToolBlock(svc));
@@ -1070,17 +1183,39 @@ EXTRA_TOOLS.forEach(tool=>{
     <div class="name">${tool.name}</div>
     <div class="desc">${tool.desc}</div>
   `;
-  card.addEventListener('click', ()=>{
+  const activate = ()=>{
     document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === tool.id));
     showPanel(tool.panel, true);
-  });
+  };
+  card.addEventListener('click', activate);
+  TOOL_NAV[tool.id] = activate;
   serviceGrid.appendChild(card);
+});
+
+/* ============================================================
+   BERANDA — akses cepat & tombol CTA
+============================================================ */
+const quickAccessGrid = document.getElementById('quickAccessGrid');
+[...SERVICES, ...EXTRA_TOOLS].forEach(item=>{
+  const q = document.createElement('div');
+  q.className = 'quick-item';
+  q.innerHTML = `
+    <div class="icon">${ICONS[item.id]}</div>
+    <div class="qname">${item.name}</div>
+  `;
+  q.addEventListener('click', ()=>{ if(TOOL_NAV[item.id]) TOOL_NAV[item.id](); });
+  quickAccessGrid.appendChild(q);
+});
+
+document.getElementById('heroCtaBtn').addEventListener('click', openLayanan);
+document.getElementById('heroSupportBtn').addEventListener('click', ()=>{
+  window.open('https://wa.me/6287791200371?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
 });
 
 /* ============================================================
    CARI LAGU SPOTIFY
    Alur: user ketik judul lagu -> cari lewat nexray (search/spotify)
-   -> tampilkan daftar hasil -> saat tombol "Download MP3" diklik,
+   -> tampilkan daftar hasil -> saat tombol "Download Lagu" diklik,
    link Spotify lagu itu dikirim ke azbry (download/spotify) buat
    diubah jadi link file audio -> otomatis diunduh (forceDownload).
 ============================================================ */
@@ -1096,8 +1231,55 @@ function setSpotifyStatus(msg, isError){
   spotifyStatus.classList.toggle('error', !!isError);
 }
 
+/* Cari string berupa URL di mana pun posisinya di dalam objek/array,
+   berguna karena kita tidak tahu pasti nama field yang dipakai API. */
+function deepFindUrls(obj, path){
+  path = path || '';
+  let found = [];
+  if(obj === null || obj === undefined) return found;
+  if(typeof obj === 'string'){
+    if(/^https?:\/\//i.test(obj)) found.push({ path: path, value: obj });
+    return found;
+  }
+  if(Array.isArray(obj)){
+    obj.forEach((item, i)=>{ found = found.concat(deepFindUrls(item, path + '[' + i + ']')); });
+    return found;
+  }
+  if(typeof obj === 'object'){
+    Object.keys(obj).forEach(k=>{
+      found = found.concat(deepFindUrls(obj[k], path ? path + '.' + k : k));
+    });
+  }
+  return found;
+}
+
+/* Dari semua URL yang ketemu, pilih yang paling mungkin link audio:
+   bukan link Spotify, bukan gambar/thumbnail, dan diutamakan yang
+   nama field/path-nya mengandung kata seperti "download"/"audio"/"mp3". */
+function pickDownloadUrl(urls, spotifyUrl){
+  const candidates = urls.filter(u=>{
+    if(u.value === spotifyUrl) return false;
+    if(/open\.spotify\.com|spotify\.com\/track/i.test(u.value)) return false;
+    if(/\.(jpe?g|png|webp|gif)(\?|$)/i.test(u.value)) return false;
+    if(/i\.scdn\.co/i.test(u.value)) return false;
+    return true;
+  });
+  if(candidates.length === 0) return null;
+
+  const priorityRe = /download|audio|mp3|dl_url|stream|preview|play|source|media/i;
+  const prioritized = candidates.find(c=> priorityRe.test(c.path));
+  if(prioritized) return prioritized.value;
+
+  const audioExt = candidates.find(c=> /\.(mp3|m4a|ogg|wav|opus|aac)(\?|$)/i.test(c.value));
+  if(audioExt) return audioExt.value;
+
+  return candidates[0].value;
+}
+
 /* Ambil link file audio dari azbry berdasarkan link track Spotify.
-   Field nama hasil API pihak ketiga suka beda-beda, jadi dicoba beberapa kemungkinan. */
+   Nama field hasil API pihak ketiga suka beda-beda/tidak terdokumentasi,
+   jadi dicoba beberapa nama field umum dulu, lalu fallback ke pencarian
+   URL otomatis di seluruh isi respons kalau nama field itu tidak cocok. */
 async function resolveSpotifyDownload(spotifyUrl){
   const apiUrl = `https://api.azbry.com/api/download/spotify?url=${encodeURIComponent(spotifyUrl)}`;
   let res;
@@ -1111,11 +1293,18 @@ async function resolveSpotifyDownload(spotifyUrl){
   if(data.status === false) throw new Error(data.message || 'Gagal menyiapkan link download');
 
   const r = data.result || data.data || data;
-  const downloadUrl = r.download || r.download_url || r.downloadUrl ||
-                       r.url_download || r.audio || r.dl || r.mp3 ||
-                       r.play_url || r.link || r.url;
+  let downloadUrl = r.download || r.download_url || r.downloadUrl ||
+                     r.url_download || r.audio || r.dl || r.mp3 ||
+                     r.play_url || r.link || r.url;
 
-  if(!downloadUrl) throw new Error('Link download tidak ditemukan pada respons API');
+  if(!downloadUrl){
+    downloadUrl = pickDownloadUrl(deepFindUrls(data), spotifyUrl);
+  }
+
+  if(!downloadUrl){
+    console.warn('Respons API download Spotify tidak dikenali:', data);
+    throw new Error('Link download tidak ditemukan pada respons API');
+  }
   if(/\/undefined\.[a-z0-9]+($|\?)/i.test(downloadUrl)){
     throw new Error('API sumber sedang bermasalah (link audio rusak). Coba lagi beberapa saat.');
   }
@@ -1152,7 +1341,7 @@ function buildTrackRow(track){
   const dlBtn = document.createElement('a');
   dlBtn.href = '#';
   dlBtn.className = 'track-dl';
-  dlBtn.textContent = 'Download MP3';
+  dlBtn.textContent = 'Download Lagu';
   dlBtn.addEventListener('click', async (e)=>{
     e.preventDefault();
     if(!spotifyUrl){
