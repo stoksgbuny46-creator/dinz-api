@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rip / All-in-One Downloader</title>
+<title>Dinz Code / All-in-One Downloader</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -223,6 +223,8 @@
     border:1px solid var(--line);
     border-radius:18px;
     padding:24px;
+    margin-bottom:20px;
+    scroll-margin-top:80px;
   }
   .tool-head{
     display:flex;
@@ -451,6 +453,14 @@
   }
   .panel.show{display:block;}
 
+  .welcome-cta{
+    display:inline-block;
+    margin-top:6px;
+    background:linear-gradient(90deg, var(--cyan), var(--pink));
+    color:#0b0b10;
+  }
+  .welcome-cta:hover{opacity:0.9;background:linear-gradient(90deg, var(--cyan), var(--pink));}
+
   /* ---------- AI CHAT ---------- */
   .chat-log{
     display:flex;
@@ -657,7 +667,7 @@
   <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
-  <div class="brand">rip<span class="dot">.</span></div>
+  <div class="brand">Dinz Code<span class="dot">.</span></div>
   <div style="width:42px;"></div>
 </div>
 
@@ -688,44 +698,19 @@
 <!-- ================= MAIN CONTENT ================= -->
 <div class="wrap">
 
-  <div id="beranda">
+  <div id="beranda" class="welcome">
     <div class="eyebrow">multi downloader</div>
-    <h1>Satu link, <span class="rip">segala platform</span>.</h1>
-    <p class="sub">Tempel link TikTok, Instagram, YouTube, atau Facebook — proses otomatis, tonton dulu, lalu unduh langsung ke perangkat kamu.</p>
+    <h1>Selamat datang di<br><span class="rip">Web Downloader Dinz</span>.</h1>
+    <p class="sub">Buka menu di kiri atas, lalu pilih "Semua Layanan" untuk mulai unduh.</p>
   </div>
 
-  <div id="layanan">
-    <div class="section-label">Semua Layanan</div>
-    <div class="grid" id="serviceGrid"></div>
-  </div>
-
-  <div class="tool" id="tool">
-    <div class="tool-head">
-      <div class="icon" id="toolIcon"></div>
-      <div class="title" id="toolTitle">Pilih layanan di atas</div>
+  <div id="layananWrap" class="panel">
+    <div id="layanan">
+      <div class="section-label">Semua Layanan</div>
+      <div class="grid" id="serviceGrid"></div>
     </div>
 
-    <form id="form">
-      <input type="url" id="urlInput" placeholder="Tempel link di sini..." required>
-      <button type="submit" id="submitBtn">Proses</button>
-    </form>
-    <div class="hint" id="toolHint">Pilih salah satu layanan di atas terlebih dahulu.</div>
-
-    <div class="status" id="status"></div>
-
-    <div class="result" id="result">
-      <div class="result-top">
-        <img class="thumb" id="thumb" alt="thumbnail">
-        <div class="meta">
-          <div class="author" id="author"></div>
-          <div class="title" id="title"></div>
-          <div class="duration" id="duration"></div>
-        </div>
-      </div>
-      <div class="player" id="playerWrap"></div>
-      <div class="other-quality" id="otherLabel">kualitas / opsi lain</div>
-      <div class="links" id="links"></div>
-    </div>
+    <div id="toolsContainer"></div>
   </div>
 
   <!-- ===== PANEL: CARI LAGU SPOTIFY ===== -->
@@ -890,6 +875,11 @@ function closeMenu(){ menuOverlay.classList.remove('open'); }
 hamburgerBtn.addEventListener('click', openMenu);
 menuCloseBtn.addEventListener('click', closeMenu);
 
+function openLayanan(){
+  document.getElementById('layananWrap').classList.add('show');
+  document.getElementById('layanan').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
 document.querySelectorAll('.menu-item').forEach(item=>{
   item.addEventListener('click', ()=>{
     const target = item.dataset.target;
@@ -897,7 +887,11 @@ document.querySelectorAll('.menu-item').forEach(item=>{
     closeMenu();
     closeAiView();
     if(action === 'support'){
-      window.open('https://wa.me/6280000000000?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
+      window.open('https://wa.me/6287791200371?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
+      return;
+    }
+    if(target === 'layanan'){
+      openLayanan();
       return;
     }
     if(target){
@@ -910,107 +904,19 @@ document.querySelectorAll('.menu-item').forEach(item=>{
    SERVICE GRID
 ============================================================ */
 const serviceGrid = document.getElementById('serviceGrid');
-const toolIcon = document.getElementById('toolIcon');
-const toolTitle = document.getElementById('toolTitle');
-const toolHint = document.getElementById('toolHint');
-const urlInput = document.getElementById('urlInput');
-
-let activeService = null;
-
-const downloadToolEl = document.getElementById('tool');
-const allPanels = ['tool', 'spotify-tool'];
+const toolsContainer = document.getElementById('toolsContainer');
+const allPanels = ['spotify-tool'];
 
 function showPanel(panelId, scroll){
   allPanels.forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
-    if(id === 'tool'){
-      el.style.display = (id === panelId) ? '' : 'none';
-    }else{
-      el.classList.toggle('show', id === panelId);
-    }
+    el.classList.toggle('show', id === panelId);
   });
   if(scroll){
-    document.getElementById(panelId).scrollIntoView({behavior:'smooth', block:'start'});
+    const target = document.getElementById(panelId);
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
   }
-}
-
-SERVICES.forEach(svc=>{
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.id = svc.id;
-  card.innerHTML = `
-    <div class="icon">${ICONS[svc.id]}</div>
-    <div class="name">${svc.name}</div>
-    <div class="desc">${svc.desc}</div>
-  `;
-  card.addEventListener('click', ()=> selectService(svc.id, true));
-  serviceGrid.appendChild(card);
-});
-
-EXTRA_TOOLS.forEach(tool=>{
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.id = tool.id;
-  card.innerHTML = `
-    <div class="icon">${ICONS[tool.id]}</div>
-    <div class="name">${tool.name}</div>
-    <div class="desc">${tool.desc}</div>
-  `;
-  card.addEventListener('click', ()=>{
-    if(tool.mode === 'fullscreen'){
-      openAiView();
-      return;
-    }
-    document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === tool.id));
-    showPanel(tool.panel, true);
-  });
-  serviceGrid.appendChild(card);
-});
-
-function selectService(id, scrollToTool){
-  const svc = SERVICES.find(s=>s.id===id);
-  if(!svc) return;
-  activeService = svc;
-
-  document.querySelectorAll('.card').forEach(c=>{
-    c.classList.toggle('active', c.dataset.id === id);
-  });
-
-  toolIcon.innerHTML = ICONS[id];
-  toolTitle.textContent = svc.name + ' — ' + svc.desc;
-  urlInput.placeholder = svc.placeholder;
-  toolHint.textContent = 'Tempel link ' + svc.name + ', proses akan berjalan otomatis.';
-
-  resultEl.classList.remove('show');
-  setStatus('', false);
-  urlInput.value = '';
-
-  showPanel('tool', scrollToTool);
-}
-
-/* default: pilih tiktok */
-selectService('tiktok', false);
-
-/* ============================================================
-   DOWNLOAD / PROCESS LOGIC
-============================================================ */
-const form = document.getElementById('form');
-const submitBtn = document.getElementById('submitBtn');
-const statusEl = document.getElementById('status');
-const resultEl = document.getElementById('result');
-const thumbEl = document.getElementById('thumb');
-const authorEl = document.getElementById('author');
-const titleEl = document.getElementById('title');
-const durationEl = document.getElementById('duration');
-const playerWrap = document.getElementById('playerWrap');
-const otherLabel = document.getElementById('otherLabel');
-const linksEl = document.getElementById('links');
-
-function setStatus(msg, isError){
-  statusEl.textContent = msg;
-  statusEl.classList.toggle('show', !!msg);
-  statusEl.classList.toggle('error', !!isError);
 }
 
 function fmtDuration(sec){
@@ -1025,6 +931,10 @@ function safeFileName(str){
     .replace(/[^\w\-. ]+/g, '')
     .trim()
     .slice(0, 60) || 'download';
+}
+
+function mediaExt(type){
+  return type === 'audio' ? '.mp3' : (type === 'image' ? '.jpg' : '.mp4');
 }
 
 async function forceDownload(url, filename, btnEl, progressEl){
@@ -1049,7 +959,7 @@ async function forceDownload(url, filename, btnEl, progressEl){
 
     if(progressEl) progressEl.textContent = 'Selesai, cek folder unduhan.';
   }catch(err){
-    if(progressEl) progressEl.textContent = 'Unduh otomatis gagal (' + err.message + '), membuka di tab baru...';
+    if(progressEl) progressEl.textContent = 'Unduh otomatis diblokir server sumber, membuka di tab baru...';
     window.open(url, '_blank', 'noopener');
   }finally{
     if(btnEl){ btnEl.disabled = false; btnEl.textContent = originalLabel; }
@@ -1057,114 +967,231 @@ async function forceDownload(url, filename, btnEl, progressEl){
   }
 }
 
-function renderResult(info){
-  thumbEl.src = info.thumbnail || '';
-  authorEl.textContent = info.subtitle || '';
-  authorEl.style.display = info.subtitle ? 'block' : 'none';
-  titleEl.textContent = info.title || '';
-  durationEl.textContent = fmtDuration(info.duration);
-  durationEl.style.display = info.duration ? 'block' : 'none';
+/* Kalau video/audio/gambar gagal dimuat (biasanya CDN sumber blokir hotlink),
+   jangan biarkan kotak kosong — ganti jadi link yang bisa diklik manual. */
+function attachMediaErrorFallback(el, mediaUrl){
+  el.addEventListener('error', ()=>{
+    const warn = document.createElement('div');
+    warn.className = 'hint';
+    warn.style.color = 'var(--warn)';
+    warn.innerHTML = 'Preview gagal dimuat (biasanya diblokir server sumber). Tombol Download di bawah tetap bisa dicoba, atau buka manual:<br>';
+    const openLink = document.createElement('a');
+    openLink.href = mediaUrl;
+    openLink.target = '_blank';
+    openLink.rel = 'noopener';
+    openLink.textContent = mediaUrl;
+    openLink.style.wordBreak = 'break-all';
+    openLink.style.color = 'var(--cyan)';
+    warn.appendChild(openLink);
+    el.replaceWith(warn);
+  });
+}
 
-  const baseName = safeFileName((info.subtitle || activeService.name) + '-' + (info.title || 'file'));
+/* Setiap layanan (TikTok, Instagram, YouTube, Facebook) dapat tool-nya
+   sendiri: form, status, dan hasil masing-masing, tidak nyampur satu sama lain. */
+function buildToolBlock(svc){
+  const wrap = document.createElement('div');
+  wrap.className = 'tool';
+  wrap.id = 'tool-' + svc.id;
+  wrap.innerHTML = `
+    <div class="tool-head">
+      <div class="icon">${ICONS[svc.id]}</div>
+      <div class="title">${svc.name} — ${svc.desc}</div>
+    </div>
+    <form>
+      <input type="url" placeholder="${svc.placeholder}" required>
+      <button type="submit">Proses</button>
+    </form>
+    <div class="hint">Tempel link ${svc.name}, proses akan berjalan otomatis.</div>
+    <div class="status"></div>
+    <div class="result">
+      <div class="result-top">
+        <img class="thumb" alt="thumbnail">
+        <div class="meta">
+          <div class="author"></div>
+          <div class="title"></div>
+          <div class="duration"></div>
+        </div>
+      </div>
+      <div class="player"></div>
+      <div class="other-quality">kualitas / opsi lain</div>
+      <div class="links"></div>
+    </div>
+  `;
 
-  playerWrap.innerHTML = '';
-  linksEl.innerHTML = '';
+  const form = wrap.querySelector('form');
+  const urlInput = wrap.querySelector('input[type="url"]');
+  const submitBtn = wrap.querySelector('button[type="submit"]');
+  const statusEl = wrap.querySelector('.status');
+  const resultEl = wrap.querySelector('.result');
+  const thumbEl = wrap.querySelector('.thumb');
+  const authorEl = wrap.querySelector('.author');
+  const titleEl = wrap.querySelector('.title');
+  const durationEl = wrap.querySelector('.duration');
+  const playerWrap = wrap.querySelector('.player');
+  const otherLabel = wrap.querySelector('.other-quality');
+  const linksEl = wrap.querySelector('.links');
 
-  const primary = info.media[0];
-  const dlProgress = document.createElement('div');
-  dlProgress.className = 'dl-progress';
-
-  if(primary){
-    let el;
-    if(primary.type === 'video'){
-      el = document.createElement('video');
-      el.controls = true; el.playsInline = true; el.preload = 'metadata';
-      el.src = primary.url;
-      el.poster = info.thumbnail || '';
-    }else if(primary.type === 'audio'){
-      el = document.createElement('audio');
-      el.controls = true;
-      el.src = primary.url;
-    }else{
-      el = document.createElement('img');
-      el.className = 'preview';
-      el.src = primary.url;
-    }
-    playerWrap.appendChild(el);
-
-    const dlBtn = document.createElement('button');
-    dlBtn.className = 'download-main';
-    dlBtn.textContent = 'Download';
-    const ext = primary.type === 'audio' ? '.mp3' : (primary.type === 'image' ? '.jpg' : '.mp4');
-    dlBtn.addEventListener('click', ()=> forceDownload(primary.url, baseName + ext, dlBtn, dlProgress));
-    playerWrap.appendChild(dlBtn);
-    playerWrap.appendChild(dlProgress);
+  function setStatus(msg, isError){
+    statusEl.textContent = msg;
+    statusEl.classList.toggle('show', !!msg);
+    statusEl.classList.toggle('error', !!isError);
   }
 
-  const rest = info.media.slice(1);
-  otherLabel.style.display = rest.length ? 'block' : 'none';
-  rest.forEach((m, i)=>{
-    const row = document.createElement('div');
-    row.className = 'link-row';
-    const label = document.createElement('span');
-    label.className = 'label';
-    label.innerHTML = `<b>${m.label}</b>`;
-    const a = document.createElement('a');
-    a.textContent = 'Unduh';
-    const ext = m.type === 'audio' ? '.mp3' : (m.type === 'image' ? '.jpg' : '.mp4');
-    a.addEventListener('click', ()=> forceDownload(m.url, baseName + '-' + (i+2) + ext, a, dlProgress));
-    row.appendChild(label);
-    row.appendChild(a);
-    linksEl.appendChild(row);
+  function renderResult(info){
+    thumbEl.src = info.thumbnail || '';
+    authorEl.textContent = info.subtitle || '';
+    authorEl.style.display = info.subtitle ? 'block' : 'none';
+    titleEl.textContent = info.title || '';
+    durationEl.textContent = fmtDuration(info.duration);
+    durationEl.style.display = info.duration ? 'block' : 'none';
+
+    const baseName = safeFileName((info.subtitle || svc.name) + '-' + (info.title || 'file'));
+
+    playerWrap.innerHTML = '';
+    linksEl.innerHTML = '';
+
+    const primary = info.media[0];
+    const dlProgress = document.createElement('div');
+    dlProgress.className = 'dl-progress';
+
+    if(primary){
+      let el;
+      if(primary.type === 'video'){
+        el = document.createElement('video');
+        el.controls = true; el.playsInline = true; el.preload = 'metadata';
+        el.src = primary.url;
+        el.poster = info.thumbnail || '';
+      }else if(primary.type === 'audio'){
+        el = document.createElement('audio');
+        el.controls = true;
+        el.src = primary.url;
+      }else{
+        el = document.createElement('img');
+        el.className = 'preview';
+        el.src = primary.url;
+      }
+      attachMediaErrorFallback(el, primary.url);
+      playerWrap.appendChild(el);
+
+      const dlBtn = document.createElement('button');
+      dlBtn.className = 'download-main';
+      dlBtn.textContent = 'Download';
+      dlBtn.addEventListener('click', ()=> forceDownload(primary.url, baseName + mediaExt(primary.type), dlBtn, dlProgress));
+      playerWrap.appendChild(dlBtn);
+      playerWrap.appendChild(dlProgress);
+    }
+
+    const rest = info.media.slice(1);
+    otherLabel.style.display = rest.length ? 'block' : 'none';
+    rest.forEach((m, i)=>{
+      const row = document.createElement('div');
+      row.className = 'link-row';
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.innerHTML = `<b>${m.label}</b>`;
+      const a = document.createElement('a');
+      a.textContent = 'Unduh';
+      a.href = '#';
+      a.addEventListener('click', (e)=>{ e.preventDefault(); forceDownload(m.url, baseName + '-' + (i+2) + mediaExt(m.type), a, dlProgress); });
+      row.appendChild(label);
+      row.appendChild(a);
+      linksEl.appendChild(row);
+    });
+
+    resultEl.classList.add('show');
+  }
+
+  async function processUrl(url){
+    if(!url) return;
+
+    resultEl.classList.remove('show');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Memproses...';
+    setStatus('Mengambil data dari server...', false);
+
+    try{
+      const apiUrl = svc.endpoint(url);
+      let res;
+      try{
+        res = await fetch(apiUrl);
+      }catch(networkErr){
+        throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+      }
+      if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+      const data = await res.json();
+      const info = svc.parse(data);
+      renderResult(info);
+      setStatus('', false);
+    }catch(err){
+      setStatus('Gagal: ' + err.message, true);
+    }finally{
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Proses';
+    }
+  }
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    processUrl(urlInput.value.trim());
   });
 
-  resultEl.classList.add('show');
-}
+  /* auto-proses saat link ditempel */
+  urlInput.addEventListener('paste', ()=>{
+    setTimeout(()=>{
+      const val = urlInput.value.trim();
+      if(/^https?:\/\//i.test(val)) processUrl(val);
+    }, 50);
+  });
 
-async function processUrl(url){
-  if(!url || !activeService) return;
-
-  resultEl.classList.remove('show');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Memproses...';
-  setStatus('Mengambil data dari server...', false);
-
-  try{
-    const apiUrl = activeService.endpoint(url);
-    const res = await fetch(apiUrl);
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-    const data = await res.json();
-    const info = activeService.parse(data);
-    renderResult(info);
-    setStatus('', false);
-  }catch(err){
-    setStatus('Gagal: ' + err.message, true);
-  }finally{
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Proses';
-  }
-}
-
-form.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  processUrl(urlInput.value.trim());
-});
-
-/* auto-proses saat link ditempel */
-urlInput.addEventListener('paste', ()=>{
-  setTimeout(()=>{
+  /* auto-proses juga saat user berhenti mengetik sejenak */
+  let typingTimer;
+  urlInput.addEventListener('input', ()=>{
+    clearTimeout(typingTimer);
     const val = urlInput.value.trim();
-    if(/^https?:\/\//i.test(val)) processUrl(val);
-  }, 50);
+    if(!/^https?:\/\//i.test(val)) return;
+    typingTimer = setTimeout(()=> processUrl(val), 700);
+  });
+
+  return wrap;
+}
+
+SERVICES.forEach(svc=>{
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = svc.id;
+  card.innerHTML = `
+    <div class="icon">${ICONS[svc.id]}</div>
+    <div class="name">${svc.name}</div>
+    <div class="desc">${svc.desc}</div>
+  `;
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === svc.id));
+    document.getElementById('tool-' + svc.id).scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  serviceGrid.appendChild(card);
+
+  toolsContainer.appendChild(buildToolBlock(svc));
 });
 
-/* auto-proses juga saat user berhenti mengetik sejenak */
-let typingTimer;
-urlInput.addEventListener('input', ()=>{
-  clearTimeout(typingTimer);
-  const val = urlInput.value.trim();
-  if(!/^https?:\/\//i.test(val)) return;
-  typingTimer = setTimeout(()=> processUrl(val), 700);
+EXTRA_TOOLS.forEach(tool=>{
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = tool.id;
+  card.innerHTML = `
+    <div class="icon">${ICONS[tool.id]}</div>
+    <div class="name">${tool.name}</div>
+    <div class="desc">${tool.desc}</div>
+  `;
+  card.addEventListener('click', ()=>{
+    if(tool.mode === 'fullscreen'){
+      openAiView();
+      return;
+    }
+    document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === tool.id));
+    showPanel(tool.panel, true);
+  });
+  serviceGrid.appendChild(card);
 });
 
 /* ============================================================
