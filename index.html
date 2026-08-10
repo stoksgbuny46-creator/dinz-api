@@ -509,23 +509,24 @@
   }
   .track-row{
     display:flex;
+    flex-wrap:wrap;
     align-items:center;
     gap:14px;
     background:#0e0e14;
     border:1px solid var(--line);
     border-radius:12px;
-    padding:12px 14px;
+    padding:14px 16px;
   }
   .track-row img{
-    width:52px;height:52px;
-    border-radius:8px;
+    width:56px;height:56px;
+    border-radius:10px;
     object-fit:cover;
     flex-shrink:0;
     background:#1a1a22;
   }
   .track-info{min-width:0;flex:1;}
   .track-info .t-title{
-    font-size:14px;
+    font-size:15px;
     font-weight:700;
     white-space:nowrap;
     overflow:hidden;
@@ -546,20 +547,43 @@
     color:#54545f;
     margin-top:4px;
   }
-  .track-row a{
+  .track-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    padding-top:10px;
+    margin-top:2px;
+    border-top:1px solid var(--line);
+  }
+  .track-row a.track-dl{
     font-family:'JetBrains Mono', monospace;
     font-size:11px;
     font-weight:700;
     color:#0b0b10;
     background:var(--cyan);
     text-decoration:none;
-    padding:9px 13px;
+    padding:9px 16px;
     border-radius:7px;
     flex-shrink:0;
     white-space:nowrap;
     transition:background .15s ease;
   }
-  .track-row a:hover{background:var(--pink);}
+  .track-row a.track-dl:hover{background:var(--pink);}
+  .track-row a.track-open{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--dim);
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .track-row a.track-open:hover{color:var(--cyan);}
+  .track-progress{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    color:var(--dim);
+    width:100%;
+  }
 
   /* ---------- AI FULLSCREEN VIEW ---------- */
   .ai-view{
@@ -770,6 +794,7 @@ const ICONS = {
   facebook: `<svg viewBox="0 0 24 24" fill="none" stroke="#4b9bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
   ai: `<svg viewBox="0 0 24 24" fill="none" stroke="#4bf5c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1 0 8v1a4 4 0 0 1-8 0v-1a4 4 0 0 1 0-8V6a4 4 0 0 1 4-4z"/><path d="M9 10h.01M15 10h.01"/></svg>`,
   spotify: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg>`,
+  capcut: `<svg viewBox="0 0 24 24" fill="none" stroke="#00f6ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z" fill="#00f6ef" stroke="none"/></svg>`,
 };
 
 /* ============================================================
@@ -858,6 +883,28 @@ const SERVICES = [
       if(candidates.length===0) throw new Error('Format respons Facebook tidak dikenali');
       const media = candidates.filter(c=>c.url).map(c=>({type:'video', label:c.label, url:c.url}));
       return {title:r.title||'Video Facebook', subtitle:r.author||'', thumbnail:r.thumbnail||'', duration:r.duration, media};
+    }
+  },
+  {
+    id:'capcut', name:'CapCut', desc:'Unduh template/video CapCut',
+    placeholder:'https://www.capcut.com/tv2/...',
+    endpoint:url=>`https://api.nexray.eu.cc/downloader/capcut?url=${encodeURIComponent(url)}`,
+    parse:data=>{
+      if(data.status === false) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result || data.data || data;
+      const candidates = [];
+      if(r.hd) candidates.push({label:'HD', url:r.hd});
+      if(r.sd) candidates.push({label:'SD', url:r.sd});
+      if(r.video) candidates.push({label:'Video', url:r.video});
+      if(r.url) candidates.push({label:'Video', url:r.url});
+      if(r.download) candidates.push({label:'Video', url:r.download});
+      if(r.download_url) candidates.push({label:'Video', url:r.download_url});
+      if(r.play) candidates.push({label:'Video', url:r.play});
+      if(Array.isArray(r.links)) r.links.forEach((l,i)=>candidates.push({label:`Video ${i+1}`, url: typeof l==='string'?l:l.url}));
+      if(Array.isArray(r.videos)) r.videos.forEach((l,i)=>candidates.push({label:`Video ${i+1}`, url: typeof l==='string'?l:l.url}));
+      if(candidates.length===0) throw new Error('Format respons CapCut tidak dikenali');
+      const media = candidates.filter(c=>c.url).map(c=>({type:'video', label:c.label, url:c.url}));
+      return {title:r.title||r.desc||'Video CapCut', subtitle:r.author||r.username||'', thumbnail:r.thumbnail||r.cover||'', duration:r.duration, media};
     }
   },
 ];
@@ -1221,6 +1268,11 @@ const chatInput = document.getElementById('chatInput');
 const chatSendBtn = document.getElementById('chatSendBtn');
 const chatLog = document.getElementById('chatLog');
 
+/* nyimpen histori percakapan di memori (bukan localStorage) biar
+   pertanyaan lanjutan tetap nyambung — API-nya sendiri stateless,
+   jadi konteks kita yang jaga di sisi client */
+let chatHistory = [];
+
 function addBubble(text, who){
   if(chatEmpty) chatEmpty.style.display = 'none';
   const b = document.createElement('div');
@@ -1229,6 +1281,24 @@ function addBubble(text, who){
   chatLog.appendChild(b);
   chatLog.scrollTop = chatLog.scrollHeight;
   return b;
+}
+
+function extractAiText(data){
+  if(!data) return null;
+  if(typeof data === 'string') return data;
+  return data.result || data.message || data.answer || data.response ||
+         data.text || data.reply || data.data ||
+         (data.result && data.result.text) || null;
+}
+
+async function askAi(promptWithContext){
+  const res = await fetch(`https://api.nexray.eu.cc/ai/chatgpt?text=${encodeURIComponent(promptWithContext)}`);
+  if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+  const data = await res.json();
+  if(data.status === false) throw new Error(data.message || 'AI tidak memberikan jawaban');
+  const answer = extractAiText(data);
+  if(!answer) throw new Error('Format jawaban dari API tidak dikenali');
+  return answer;
 }
 
 chatForm.addEventListener('submit', async (e)=>{
@@ -1243,12 +1313,20 @@ chatForm.addEventListener('submit', async (e)=>{
   const loadingBubble = addBubble('mengetik...', 'ai loading');
 
   try{
-    const res = await fetch(`https://api.nexray.eu.cc/ai/chatgpt?text=${encodeURIComponent(text)}`);
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-    const data = await res.json();
-    if(!data.status || !data.result) throw new Error(data.message || 'AI tidak memberikan jawaban');
-    loadingBubble.textContent = data.result;
+    /* sisipkan histori 3 giliran terakhir supaya AI paham konteks obrolan,
+       bukan cuma jawab 1 kalimat lepas tanpa nyambung ke chat sebelumnya */
+    const recentHistory = chatHistory.slice(-6)
+      .map(h => (h.who === 'user' ? 'User' : 'AI') + ': ' + h.text)
+      .join('\n');
+    const promptWithContext = recentHistory
+      ? `Riwayat percakapan sebelumnya:\n${recentHistory}\n\nLanjutkan percakapan, jawab pertanyaan terbaru user berikut dengan singkat dan jelas:\nUser: ${text}`
+      : text;
+
+    const answer = await askAi(promptWithContext);
+    loadingBubble.textContent = answer;
     loadingBubble.classList.remove('loading');
+    chatHistory.push({who:'user', text});
+    chatHistory.push({who:'ai', text: answer});
   }catch(err){
     loadingBubble.textContent = 'Gagal mendapat jawaban: ' + err.message;
     loadingBubble.classList.remove('loading');
@@ -1278,30 +1356,69 @@ async function searchSpotify(query){
   trackList.innerHTML = '';
   spotifySendBtn.disabled = true;
   spotifySendBtn.textContent = 'Mencari...';
-  setSpotifyStatus('Mencari lagu...', false);
+  setSpotifyStatus('Mencari & menyiapkan lagu...', false);
 
   try{
-    const res = await fetch(`https://api.nexray.eu.cc/search/spotify?q=${encodeURIComponent(query)}`);
+    const apiUrl = `https://api.theresav.biz.id/download/spotify-play?q=${encodeURIComponent(query)}&bitrate=128k&apikey=mLjGc`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (CORS/offline/server down)');
+    }
     if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
     const data = await res.json();
-    if(!data.status || !Array.isArray(data.result) || data.result.length === 0){
-      throw new Error(data.message || 'Lagu tidak ditemukan');
-    }
+    if(data.status === false) throw new Error(data.message || 'Lagu tidak ditemukan');
 
-    data.result.forEach(track=>{
-      const row = document.createElement('div');
-      row.className = 'track-row';
-      row.innerHTML = `
-        <img src="${track.thumbnail || ''}" alt="${track.title}">
-        <div class="track-info">
-          <div class="t-title">${track.title}</div>
-          <div class="t-artist">${track.artist || ''}</div>
-          <div class="t-meta">${track.album || ''} &middot; ${track.duration || ''} &middot; ${track.release_date || ''}</div>
-        </div>
-        <a href="${track.url}" target="_blank" rel="noopener">Buka</a>
-      `;
-      trackList.appendChild(row);
+    /* API bisa balikin objek langsung atau dibungkus di "result"/"data" */
+    const r = data.result || data.data || data;
+    const title = r.title || r.name || r.judul || 'Lagu tidak diketahui';
+    const artist = r.artist || r.artists || r.singer || r.penyanyi || '';
+    const thumbnail = r.thumbnail || r.image || r.cover || r.thumb || '';
+    const album = r.album || '';
+    const duration = r.duration || r.durasi || '';
+    const releaseDate = r.release_date || r.releaseDate || '';
+    const downloadUrl = r.download || r.url_download || r.audio || r.link || r.url;
+    const spotifyUrl = r.spotify_url || r.spotifyUrl || r.source || '';
+
+    if(!downloadUrl) throw new Error('Link download tidak ditemukan pada respons API');
+
+    const row = document.createElement('div');
+    row.className = 'track-row';
+    const dlProgress = document.createElement('div');
+    dlProgress.className = 'track-progress';
+    row.innerHTML = `
+      <img src="${thumbnail}" alt="${title}">
+      <div class="track-info">
+        <div class="t-title">${title}</div>
+        <div class="t-artist">${Array.isArray(artist) ? artist.join(', ') : artist}</div>
+        <div class="t-meta">${album}${album ? ' &middot; ' : ''}${duration}${releaseDate ? ' &middot; ' + releaseDate : ''}</div>
+      </div>
+    `;
+    const actions = document.createElement('div');
+    actions.className = 'track-actions';
+    const dlBtn = document.createElement('a');
+    dlBtn.href = '#';
+    dlBtn.className = 'track-dl';
+    dlBtn.textContent = 'Download MP3';
+    dlBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const filename = safeFileName(title + (artist ? ('-' + artist) : '')) + '.mp3';
+      forceDownload(downloadUrl, filename, dlBtn, dlProgress);
     });
+    actions.appendChild(dlBtn);
+    if(spotifyUrl){
+      const openLink = document.createElement('a');
+      openLink.href = spotifyUrl;
+      openLink.target = '_blank';
+      openLink.rel = 'noopener';
+      openLink.className = 'track-open';
+      openLink.textContent = 'Buka di Spotify ↗';
+      actions.appendChild(openLink);
+    }
+    row.appendChild(actions);
+    row.appendChild(dlProgress);
+    trackList.appendChild(row);
 
     setSpotifyStatus('', false);
   }catch(err){
