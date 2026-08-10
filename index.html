@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TikTok Downloader</title>
+<title>Rip / All-in-One Downloader</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
@@ -15,6 +15,7 @@
     --dim: #8b8b98;
     --cyan: #4bf5c9;
     --pink: #ff4d8d;
+    --indigo: #8f96ff;
     --warn: #ffb84b;
   }
 
@@ -28,9 +29,112 @@
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
     min-height:100vh;
+  }
+
+  /* ---------- TOP BAR ---------- */
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:40;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 20px;
+    background:rgba(11,11,16,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    font-weight:700;
+    font-size:16px;
+    letter-spacing:-0.01em;
+  }
+  .brand .dot{color:var(--cyan);}
+
+  .hamburger{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .hamburger svg{width:20px;height:20px;stroke:var(--ink);}
+  .hamburger:hover{border-color:var(--cyan);}
+
+  /* ---------- MENU OVERLAY ---------- */
+  .menu-overlay{
+    position:fixed;
+    inset:0;
+    background:var(--bg);
+    z-index:100;
     display:flex;
     flex-direction:column;
+    padding:22px 24px;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+  }
+  .menu-overlay.open{transform:translateX(0);}
+
+  .menu-head{
+    display:flex;
     align-items:center;
+    justify-content:space-between;
+    margin-bottom:40px;
+  }
+  .menu-head h2{
+    font-size:28px;
+    font-weight:700;
+    margin:0;
+  }
+  .menu-close{
+    width:38px;height:38px;
+    border:none;
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .menu-close svg{width:24px;height:24px;stroke:var(--ink);}
+
+  .menu-list{
+    display:flex;
+    flex-direction:column;
+    gap:34px;
+  }
+  .menu-item{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    background:none;
+    border:none;
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:21px;
+    font-weight:500;
+    cursor:pointer;
+    padding:0;
+    text-align:left;
+  }
+  .menu-item svg{
+    width:26px;height:26px;
+    stroke:var(--indigo);
+    flex-shrink:0;
+  }
+  .menu-item.support svg{stroke:var(--indigo);}
+  .menu-item:hover{color:var(--cyan);}
+  .menu-item:hover svg{stroke:var(--cyan);}
+
+  /* ---------- HERO ---------- */
+  .wrap{
+    max-width:880px;
+    margin:0 auto;
     padding:48px 20px 80px;
   }
 
@@ -53,12 +157,11 @@
   }
 
   h1{
-    font-size:clamp(38px, 7vw, 68px);
-    line-height:0.95;
+    font-size:clamp(34px, 6vw, 56px);
+    line-height:1.02;
     margin:0 0 10px;
     font-weight:700;
     letter-spacing:-0.02em;
-    text-align:center;
   }
   h1 .rip{
     background:linear-gradient(90deg, var(--cyan), var(--pink));
@@ -70,18 +173,77 @@
   .sub{
     color:var(--dim);
     font-size:15px;
-    text-align:center;
-    max-width:480px;
-    margin:0 0 44px;
+    max-width:520px;
+    margin:0 0 40px;
     line-height:1.55;
   }
 
+  /* ---------- SERVICE GRID ---------- */
+  .section-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#54545f;
+    margin:0 0 16px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+    gap:14px;
+    margin-bottom:56px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:20px;
+    cursor:pointer;
+    transition:border-color .15s ease, transform .15s ease;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .card:hover{border-color:var(--cyan); transform:translateY(-2px);}
+  .card.active{border-color:var(--pink); box-shadow:0 0 0 1px var(--pink);}
+  .card .icon{
+    width:40px;height:40px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    background:#1a1a22;
+  }
+  .card .icon svg{width:20px;height:20px;}
+  .card .name{font-weight:700;font-size:15px;}
+  .card .desc{font-family:'JetBrains Mono', monospace;font-size:11px;color:var(--dim);}
+
+  /* ---------- TOOL ---------- */
+  .tool{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:24px;
+  }
+  .tool-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .tool-head .icon{
+    width:36px;height:36px;
+    border-radius:9px;
+    background:#1a1a22;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .tool-head .icon svg{width:18px;height:18px;}
+  .tool-head .title{font-weight:700;font-size:17px;}
+
   form{
     width:100%;
-    max-width:640px;
     display:flex;
     gap:10px;
-    background:var(--panel);
+    background:#0e0e14;
     border:1px solid var(--line);
     border-radius:14px;
     padding:8px;
@@ -95,6 +257,7 @@
     font-family:'JetBrains Mono', monospace;
     font-size:14px;
     padding:14px 16px;
+    min-width:0;
   }
   input[type="url"]::placeholder{color:#4d4d59;}
 
@@ -124,9 +287,7 @@
   }
 
   .status{
-    max-width:640px;
-    width:100%;
-    margin-top:24px;
+    margin-top:20px;
     font-family:'JetBrains Mono', monospace;
     font-size:13px;
     color:var(--warn);
@@ -139,11 +300,10 @@
   .result{
     display:none;
     width:100%;
-    max-width:640px;
-    margin-top:32px;
-    background:var(--panel);
+    margin-top:24px;
+    background:#0e0e14;
     border:1px solid var(--line);
-    border-radius:18px;
+    border-radius:16px;
     overflow:hidden;
   }
   .result.show{display:block;}
@@ -156,7 +316,7 @@
   }
   .thumb{
     width:96px;
-    height:128px;
+    height:96px;
     border-radius:10px;
     object-fit:cover;
     background:#1a1a22;
@@ -189,13 +349,15 @@
     padding:20px;
     border-bottom:1px solid var(--line);
   }
-  .player video{
+  .player video, .player img.preview{
     width:100%;
-    max-height:520px;
+    max-height:480px;
     border-radius:12px;
     background:#000;
     display:block;
+    object-fit:contain;
   }
+  .player audio{width:100%;}
 
   .download-main{
     width:100%;
@@ -243,10 +405,11 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    background:#0e0e14;
+    background:var(--panel);
     border:1px solid var(--line);
     border-radius:10px;
     padding:12px 16px;
+    gap:12px;
   }
   .link-row .label{
     font-family:'JetBrains Mono', monospace;
@@ -265,6 +428,7 @@
     border-radius:7px;
     transition:background .15s ease;
     cursor:pointer;
+    flex-shrink:0;
   }
   .link-row a:hover{background:var(--pink);color:var(--ink);}
 
@@ -276,6 +440,210 @@
     text-align:center;
   }
 
+  /* ---------- SHARED TOOL PANEL (dipakai untuk AI & Spotify juga) ---------- */
+  .panel{
+    display:none;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:24px;
+    margin-top:24px;
+  }
+  .panel.show{display:block;}
+
+  /* ---------- AI CHAT ---------- */
+  .chat-log{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    max-height:420px;
+    overflow-y:auto;
+    padding:4px 4px 16px;
+    margin-bottom:14px;
+  }
+  .chat-log:empty{display:none;}
+  .bubble{
+    max-width:82%;
+    padding:12px 15px;
+    border-radius:14px;
+    font-size:14px;
+    line-height:1.5;
+    white-space:pre-wrap;
+  }
+  .bubble.user{
+    align-self:flex-end;
+    background:linear-gradient(90deg, var(--cyan), var(--pink));
+    color:#0b0b10;
+    font-weight:500;
+    border-bottom-right-radius:4px;
+  }
+  .bubble.ai{
+    align-self:flex-start;
+    background:#0e0e14;
+    border:1px solid var(--line);
+    color:var(--ink);
+    border-bottom-left-radius:4px;
+  }
+  .bubble.ai.loading{
+    color:var(--dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+  }
+
+  /* ---------- SPOTIFY RESULTS ---------- */
+  .track-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:20px;
+  }
+  .track-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:#0e0e14;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .track-row img{
+    width:52px;height:52px;
+    border-radius:8px;
+    object-fit:cover;
+    flex-shrink:0;
+    background:#1a1a22;
+  }
+  .track-info{min-width:0;flex:1;}
+  .track-info .t-title{
+    font-size:14px;
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .track-info .t-artist{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--dim);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-top:3px;
+  }
+  .track-info .t-meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    color:#54545f;
+    margin-top:4px;
+  }
+  .track-row a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    color:#0b0b10;
+    background:var(--cyan);
+    text-decoration:none;
+    padding:9px 13px;
+    border-radius:7px;
+    flex-shrink:0;
+    white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .track-row a:hover{background:var(--pink);}
+
+  /* ---------- AI FULLSCREEN VIEW ---------- */
+  .ai-view{
+    position:fixed;
+    inset:0;
+    z-index:60;
+    background:var(--bg);
+    display:none;
+    flex-direction:column;
+    transform:translateY(12px);
+    opacity:0;
+    transition:transform .22s ease, opacity .22s ease;
+  }
+  .ai-view.show{
+    display:flex;
+    transform:translateY(0);
+    opacity:1;
+  }
+
+  .ai-header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px 20px;
+    border-bottom:1px solid var(--line);
+    background:rgba(11,11,16,0.9);
+    backdrop-filter:blur(10px);
+    flex-shrink:0;
+  }
+  .ai-back{
+    width:38px;height:38px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .ai-back svg{width:18px;height:18px;stroke:var(--ink);}
+  .ai-back:hover{border-color:var(--cyan);}
+  .ai-header .icon{
+    width:34px;height:34px;
+    border-radius:9px;
+    background:#1a1a22;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .ai-header .icon svg{width:17px;height:17px;}
+  .ai-header-text .t{font-weight:700;font-size:15px;}
+  .ai-header-text .s{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    color:var(--cyan);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:2px;
+  }
+  .ai-header-text .s::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 8px var(--cyan);
+  }
+
+  .ai-body{
+    flex:1;
+    overflow-y:auto;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .ai-empty{
+    margin:auto;
+    text-align:center;
+    color:#54545f;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    max-width:280px;
+    line-height:1.6;
+  }
+
+  .ai-footer{
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);
+    background:rgba(11,11,16,0.9);
+    backdrop-filter:blur(10px);
+    flex-shrink:0;
+  }
+  .ai-footer form{
+    background:#0e0e14;
+  }
+
   @media (max-width:480px){
     form{flex-direction:column;}
     button{padding:14px;}
@@ -284,41 +652,350 @@
 </head>
 <body>
 
-  <div class="eyebrow">Download Video Tiktok By Dinz Code</div>
-  <h1>Tarik videonya,<br class="br-desktop"> bukan <span class="rip">watermark</span>-nya.</h1>
-  <p class="sub">Tempel link TikTok — dapat versi HD tanpa watermark dalam hitungan detik.</p>
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="brand">rip<span class="dot">.</span></div>
+  <div style="width:42px;"></div>
+</div>
 
-  <form id="form">
-    <input type="url" id="urlInput" placeholder="https://vm.tiktok.com/..." required>
-    <button type="submit" id="submitBtn">Proses</button>
-  </form>
-  <div class="hint">tempel link video tiktok nya</div>
+<!-- ================= MENU OVERLAY ================= -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-head">
+    <h2>Menu</h2>
+    <button class="menu-close" id="menuCloseBtn" aria-label="Tutup menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="menu-list">
+    <button class="menu-item" data-target="beranda">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+      Beranda
+    </button>
+    <button class="menu-item" data-target="layanan">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      Semua Layanan
+    </button>
+    <button class="menu-item support" data-action="support">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      Support
+    </button>
+  </div>
+</div>
 
-  <div class="status" id="status"></div>
+<!-- ================= MAIN CONTENT ================= -->
+<div class="wrap">
 
-  <div class="result" id="result">
-    <div class="result-top">
-      <img class="thumb" id="thumb" alt="thumbnail">
-      <div class="meta">
-        <div class="author" id="author"></div>
-        <div class="title" id="title"></div>
-        <div class="duration" id="duration"></div>
-      </div>
-    </div>
-    <div class="player">
-      <video id="videoPlayer" controls playsinline preload="metadata"></video>
-      <button class="download-main" id="downloadBtn">Download</button>
-      <div class="dl-progress" id="dlProgress"></div>
-    </div>
-    <div class="other-quality">kualitas lain</div>
-    <div class="links" id="links"></div>
+  <div id="beranda">
+    <div class="eyebrow">multi downloader</div>
+    <h1>Satu link, <span class="rip">segala platform</span>.</h1>
+    <p class="sub">Tempel link TikTok, Instagram, YouTube, atau Facebook — proses otomatis, tonton dulu, lalu unduh langsung ke perangkat kamu.</p>
   </div>
 
-  <footer>by : dinz code &middot; cepat dan aman</footer>
+  <div id="layanan">
+    <div class="section-label">Semua Layanan</div>
+    <div class="grid" id="serviceGrid"></div>
+  </div>
+
+  <div class="tool" id="tool">
+    <div class="tool-head">
+      <div class="icon" id="toolIcon"></div>
+      <div class="title" id="toolTitle">Pilih layanan di atas</div>
+    </div>
+
+    <form id="form">
+      <input type="url" id="urlInput" placeholder="Tempel link di sini..." required>
+      <button type="submit" id="submitBtn">Proses</button>
+    </form>
+    <div class="hint" id="toolHint">Pilih salah satu layanan di atas terlebih dahulu.</div>
+
+    <div class="status" id="status"></div>
+
+    <div class="result" id="result">
+      <div class="result-top">
+        <img class="thumb" id="thumb" alt="thumbnail">
+        <div class="meta">
+          <div class="author" id="author"></div>
+          <div class="title" id="title"></div>
+          <div class="duration" id="duration"></div>
+        </div>
+      </div>
+      <div class="player" id="playerWrap"></div>
+      <div class="other-quality" id="otherLabel">kualitas / opsi lain</div>
+      <div class="links" id="links"></div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL: CARI LAGU SPOTIFY ===== -->
+  <div class="panel" id="spotify-tool">
+    <div class="tool-head">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg></div>
+      <div class="title">Cari Lagu Spotify</div>
+    </div>
+    <form id="spotifyForm">
+      <input type="text" id="spotifyInput" placeholder="Judul lagu atau nama artis..." required>
+      <button type="submit" id="spotifySendBtn">Cari</button>
+    </form>
+    <div class="hint">Hasil menampilkan info lagu &amp; tautan langsung ke Spotify.</div>
+    <div class="status" id="spotifyStatus"></div>
+    <div class="track-list" id="trackList"></div>
+  </div>
+
+  <footer>dibuat dengan API azbry.com &amp; nexray.eu.cc &middot; hanya untuk konten yang kamu punya hak untuk unduh</footer>
+</div>
+
+<!-- ================= AI VIEW (halaman terpisah, full screen) ================= -->
+<div class="ai-view" id="aiView">
+  <div class="ai-header">
+    <button class="ai-back" id="aiBackBtn" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#4bf5c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1 0 8v1a4 4 0 0 1-8 0v-1a4 4 0 0 1 0-8V6a4 4 0 0 1 4-4z"/><path d="M9 10h.01M15 10h.01"/></svg></div>
+    <div class="ai-header-text">
+      <div class="t">Tanya Jawab AI</div>
+      <div class="s">online</div>
+    </div>
+  </div>
+
+  <div class="ai-body" id="chatLog">
+    <div class="ai-empty" id="chatEmpty">Mulai percakapan — tanya apa saja di kolom bawah.</div>
+  </div>
+
+  <div class="ai-footer">
+    <form id="chatForm">
+      <input type="text" id="chatInput" placeholder="Tanya apa saja..." required>
+      <button type="submit" id="chatSendBtn">Kirim</button>
+    </form>
+  </div>
+</div>
+
+</div>
 
 <script>
-const form = document.getElementById('form');
+/* ============================================================
+   ICONS
+============================================================ */
+const ICONS = {
+  tiktok: `<svg viewBox="0 0 24 24" fill="none" stroke="#4bf5c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>`,
+  instagram: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d8d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>`,
+  ytmp4: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><polygon points="10 9 15 12 10 15 10 9" fill="#ff4d4d" stroke="none"/></svg>`,
+  ytmp3: `<svg viewBox="0 0 24 24" fill="none" stroke="#ffb84b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  facebook: `<svg viewBox="0 0 24 24" fill="none" stroke="#4b9bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
+  ai: `<svg viewBox="0 0 24 24" fill="none" stroke="#4bf5c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1 0 8v1a4 4 0 0 1-8 0v-1a4 4 0 0 1 0-8V6a4 4 0 0 1 4-4z"/><path d="M9 10h.01M15 10h.01"/></svg>`,
+  spotify: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg>`,
+};
+
+/* ============================================================
+   EXTRA TOOLS (bukan downloader, punya panel sendiri)
+============================================================ */
+const EXTRA_TOOLS = [
+  { id:'ai', name:'Tanya Jawab AI', desc:'Chat dengan AI', mode:'fullscreen' },
+  { id:'spotify', name:'Spotify', desc:'Cari lagu & info', panel:'spotify-tool' },
+];
+
+/* ============================================================
+   SERVICE CONFIG
+============================================================ */
+const SERVICES = [
+  {
+    id:'tiktok', name:'TikTok', desc:'Video tanpa watermark',
+    placeholder:'https://vm.tiktok.com/...',
+    endpoint:url=>`https://api.azbry.com/api/download/tiktok?url=${encodeURIComponent(url)}`,
+    parse:data=>{
+      if(!data.status || !data.result) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result;
+      const media = [];
+      const labels = ['Video HD (tanpa watermark)','Video standar (tanpa watermark)','Video dengan watermark'];
+      (r.links||[]).forEach((link,i)=>media.push({type:'video', label:labels[i]||`Video ${i+1}`, url:link}));
+      if(r.music && r.music.url) media.push({type:'audio', label:'Audio asli', url:r.music.url});
+      if(media.length===0) throw new Error('Tidak ada media ditemukan pada respons');
+      return {title:r.title||'(tanpa judul)', subtitle:'@'+(r.author||'unknown'), thumbnail:r.thumbnail||'', duration:r.duration, media};
+    }
+  },
+  {
+    id:'instagram', name:'Instagram', desc:'Reels, video & foto',
+    placeholder:'https://www.instagram.com/reel/...',
+    endpoint:url=>`https://api.azbry.com/api/download/instagram?url=${encodeURIComponent(url)}`,
+    parse:data=>{
+      if(!data.status) throw new Error(data.message || 'Gagal mengambil data Instagram');
+      const media = [];
+      (data.videos||[]).forEach((v,i)=>media.push({type:'video', label:`Video ${i+1}`, url:v}));
+      (data.images||[]).forEach((im,i)=>media.push({type:'image', label:`Foto ${i+1}`, url:im}));
+      if(media.length===0) throw new Error('Tidak ada media ditemukan pada respons');
+      const firstImage = media.find(m=>m.type==='image');
+      return {
+        title: data.type==='video' ? 'Video Instagram' : 'Postingan Instagram',
+        subtitle: data.creator ? ('via ' + data.creator) : '',
+        thumbnail: data.thumb || (firstImage ? firstImage.url : ''),
+        duration:null,
+        media
+      };
+    }
+  },
+  {
+    id:'ytmp4', name:'YouTube', desc:'Unduh video (MP4)',
+    placeholder:'https://youtube.com/shorts/... atau link video',
+    endpoint:url=>`https://api.azbry.com/api/download/ytmp4?url=${encodeURIComponent(url)}`,
+    parse:data=>{
+      if(!data.status || !data.result || !data.result.download) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result;
+      return {title:r.title||'(tanpa judul)', subtitle:r.author||'', thumbnail:r.thumbnail||'', duration:r.duration,
+        media:[{type:'video', label:`Video ${r.quality||''}`.trim(), url:r.download}]};
+    }
+  },
+  {
+    id:'ytmp3', name:'YouTube', desc:'Unduh audio (MP3)',
+    placeholder:'https://youtube.com/shorts/... atau link video',
+    endpoint:url=>`https://api.azbry.com/api/download/ytmp3?url=${encodeURIComponent(url)}`,
+    parse:data=>{
+      if(!data.status || !data.result || !data.result.download) throw new Error(data.message || 'Audio tidak ditemukan / link tidak valid');
+      const r = data.result;
+      return {title:r.title||'(tanpa judul)', subtitle:r.channel||'', thumbnail:r.thumbnail||'', duration:r.duration,
+        media:[{type:'audio', label:'Audio MP3', url:r.download}]};
+    }
+  },
+  {
+    id:'facebook', name:'Facebook', desc:'Unduh video FB',
+    placeholder:'https://www.facebook.com/share/r/...',
+    endpoint:url=>`https://api.azbry.com/api/download/facebook?url=${encodeURIComponent(url)}`,
+    parse:data=>{
+      if(data.status === false) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result || data;
+      const candidates = [];
+      if(r.hd) candidates.push({label:'HD', url:r.hd});
+      if(r.sd) candidates.push({label:'SD', url:r.sd});
+      if(r.url) candidates.push({label:'Video', url:r.url});
+      if(r.download) candidates.push({label:'Video', url:r.download});
+      if(Array.isArray(r.links)) r.links.forEach((l,i)=>candidates.push({label:`Video ${i+1}`, url: typeof l==='string'?l:l.url}));
+      if(Array.isArray(data.videos)) data.videos.forEach((l,i)=>candidates.push({label:`Video ${i+1}`, url:l}));
+      if(candidates.length===0) throw new Error('Format respons Facebook tidak dikenali');
+      const media = candidates.filter(c=>c.url).map(c=>({type:'video', label:c.label, url:c.url}));
+      return {title:r.title||'Video Facebook', subtitle:r.author||'', thumbnail:r.thumbnail||'', duration:r.duration, media};
+    }
+  },
+];
+
+/* ============================================================
+   MENU
+============================================================ */
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const menuOverlay = document.getElementById('menuOverlay');
+const menuCloseBtn = document.getElementById('menuCloseBtn');
+
+function openMenu(){ menuOverlay.classList.add('open'); }
+function closeMenu(){ menuOverlay.classList.remove('open'); }
+
+hamburgerBtn.addEventListener('click', openMenu);
+menuCloseBtn.addEventListener('click', closeMenu);
+
+document.querySelectorAll('.menu-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const target = item.dataset.target;
+    const action = item.dataset.action;
+    closeMenu();
+    closeAiView();
+    if(action === 'support'){
+      window.open('https://wa.me/6280000000000?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
+      return;
+    }
+    if(target){
+      document.getElementById(target).scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+/* ============================================================
+   SERVICE GRID
+============================================================ */
+const serviceGrid = document.getElementById('serviceGrid');
+const toolIcon = document.getElementById('toolIcon');
+const toolTitle = document.getElementById('toolTitle');
+const toolHint = document.getElementById('toolHint');
 const urlInput = document.getElementById('urlInput');
+
+let activeService = null;
+
+const downloadToolEl = document.getElementById('tool');
+const allPanels = ['tool', 'spotify-tool'];
+
+function showPanel(panelId, scroll){
+  allPanels.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(id === 'tool'){
+      el.style.display = (id === panelId) ? '' : 'none';
+    }else{
+      el.classList.toggle('show', id === panelId);
+    }
+  });
+  if(scroll){
+    document.getElementById(panelId).scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+SERVICES.forEach(svc=>{
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = svc.id;
+  card.innerHTML = `
+    <div class="icon">${ICONS[svc.id]}</div>
+    <div class="name">${svc.name}</div>
+    <div class="desc">${svc.desc}</div>
+  `;
+  card.addEventListener('click', ()=> selectService(svc.id, true));
+  serviceGrid.appendChild(card);
+});
+
+EXTRA_TOOLS.forEach(tool=>{
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = tool.id;
+  card.innerHTML = `
+    <div class="icon">${ICONS[tool.id]}</div>
+    <div class="name">${tool.name}</div>
+    <div class="desc">${tool.desc}</div>
+  `;
+  card.addEventListener('click', ()=>{
+    if(tool.mode === 'fullscreen'){
+      openAiView();
+      return;
+    }
+    document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === tool.id));
+    showPanel(tool.panel, true);
+  });
+  serviceGrid.appendChild(card);
+});
+
+function selectService(id, scrollToTool){
+  const svc = SERVICES.find(s=>s.id===id);
+  if(!svc) return;
+  activeService = svc;
+
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.toggle('active', c.dataset.id === id);
+  });
+
+  toolIcon.innerHTML = ICONS[id];
+  toolTitle.textContent = svc.name + ' — ' + svc.desc;
+  urlInput.placeholder = svc.placeholder;
+  toolHint.textContent = 'Tempel link ' + svc.name + ', proses akan berjalan otomatis.';
+
+  resultEl.classList.remove('show');
+  setStatus('', false);
+  urlInput.value = '';
+
+  showPanel('tool', scrollToTool);
+}
+
+/* default: pilih tiktok */
+selectService('tiktok', false);
+
+/* ============================================================
+   DOWNLOAD / PROCESS LOGIC
+============================================================ */
+const form = document.getElementById('form');
 const submitBtn = document.getElementById('submitBtn');
 const statusEl = document.getElementById('status');
 const resultEl = document.getElementById('result');
@@ -326,26 +1003,35 @@ const thumbEl = document.getElementById('thumb');
 const authorEl = document.getElementById('author');
 const titleEl = document.getElementById('title');
 const durationEl = document.getElementById('duration');
+const playerWrap = document.getElementById('playerWrap');
+const otherLabel = document.getElementById('otherLabel');
 const linksEl = document.getElementById('links');
-const videoPlayer = document.getElementById('videoPlayer');
-const downloadBtn = document.getElementById('downloadBtn');
-const dlProgress = document.getElementById('dlProgress');
 
-let currentVideoUrl = '';
-let currentFileName = 'tiktok-video.mp4';
+function setStatus(msg, isError){
+  statusEl.textContent = msg;
+  statusEl.classList.toggle('show', !!msg);
+  statusEl.classList.toggle('error', !!isError);
+}
+
+function fmtDuration(sec){
+  if(sec === null || sec === undefined) return '';
+  const m = Math.floor(sec/60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2,'0')} durasi`;
+}
 
 function safeFileName(str){
-  return (str || 'tiktok-video')
+  return (str || 'download')
     .replace(/[^\w\-. ]+/g, '')
     .trim()
-    .slice(0, 60) || 'tiktok-video';
+    .slice(0, 60) || 'download';
 }
 
 async function forceDownload(url, filename, btnEl, progressEl){
   const originalLabel = btnEl ? btnEl.textContent : '';
   try{
     if(btnEl){ btnEl.disabled = true; btnEl.textContent = 'Mengunduh...'; }
-    if(progressEl) progressEl.textContent = 'Sedang mengambil file video...';
+    if(progressEl) progressEl.textContent = 'Sedang mengambil file...';
 
     const res = await fetch(url);
     if(!res.ok) throw new Error('Gagal ambil file (status ' + res.status + ')');
@@ -363,7 +1049,6 @@ async function forceDownload(url, filename, btnEl, progressEl){
 
     if(progressEl) progressEl.textContent = 'Selesai, cek folder unduhan.';
   }catch(err){
-    // fallback: kalau CORS/fetch gagal, buka tab baru supaya user bisa unduh manual
     if(progressEl) progressEl.textContent = 'Unduh otomatis gagal (' + err.message + '), membuka di tab baru...';
     window.open(url, '_blank', 'noopener');
   }finally{
@@ -372,26 +1057,72 @@ async function forceDownload(url, filename, btnEl, progressEl){
   }
 }
 
-function setStatus(msg, isError){
-  statusEl.textContent = msg;
-  statusEl.classList.toggle('show', !!msg);
-  statusEl.classList.toggle('error', !!isError);
-}
+function renderResult(info){
+  thumbEl.src = info.thumbnail || '';
+  authorEl.textContent = info.subtitle || '';
+  authorEl.style.display = info.subtitle ? 'block' : 'none';
+  titleEl.textContent = info.title || '';
+  durationEl.textContent = fmtDuration(info.duration);
+  durationEl.style.display = info.duration ? 'block' : 'none';
 
-function fmtDuration(sec){
-  if(!sec && sec !== 0) return '';
-  const m = Math.floor(sec/60);
-  const s = sec % 60;
-  return `${m}:${s.toString().padStart(2,'0')} durasi`;
-}
+  const baseName = safeFileName((info.subtitle || activeService.name) + '-' + (info.title || 'file'));
 
-downloadBtn.addEventListener('click', () => {
-  if(!currentVideoUrl) return;
-  forceDownload(currentVideoUrl, currentFileName, downloadBtn, dlProgress);
-});
+  playerWrap.innerHTML = '';
+  linksEl.innerHTML = '';
+
+  const primary = info.media[0];
+  const dlProgress = document.createElement('div');
+  dlProgress.className = 'dl-progress';
+
+  if(primary){
+    let el;
+    if(primary.type === 'video'){
+      el = document.createElement('video');
+      el.controls = true; el.playsInline = true; el.preload = 'metadata';
+      el.src = primary.url;
+      el.poster = info.thumbnail || '';
+    }else if(primary.type === 'audio'){
+      el = document.createElement('audio');
+      el.controls = true;
+      el.src = primary.url;
+    }else{
+      el = document.createElement('img');
+      el.className = 'preview';
+      el.src = primary.url;
+    }
+    playerWrap.appendChild(el);
+
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'download-main';
+    dlBtn.textContent = 'Download';
+    const ext = primary.type === 'audio' ? '.mp3' : (primary.type === 'image' ? '.jpg' : '.mp4');
+    dlBtn.addEventListener('click', ()=> forceDownload(primary.url, baseName + ext, dlBtn, dlProgress));
+    playerWrap.appendChild(dlBtn);
+    playerWrap.appendChild(dlProgress);
+  }
+
+  const rest = info.media.slice(1);
+  otherLabel.style.display = rest.length ? 'block' : 'none';
+  rest.forEach((m, i)=>{
+    const row = document.createElement('div');
+    row.className = 'link-row';
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.innerHTML = `<b>${m.label}</b>`;
+    const a = document.createElement('a');
+    a.textContent = 'Unduh';
+    const ext = m.type === 'audio' ? '.mp3' : (m.type === 'image' ? '.jpg' : '.mp4');
+    a.addEventListener('click', ()=> forceDownload(m.url, baseName + '-' + (i+2) + ext, a, dlProgress));
+    row.appendChild(label);
+    row.appendChild(a);
+    linksEl.appendChild(row);
+  });
+
+  resultEl.classList.add('show');
+}
 
 async function processUrl(url){
-  if(!url) return;
+  if(!url || !activeService) return;
 
   resultEl.classList.remove('show');
   submitBtn.disabled = true;
@@ -399,53 +1130,12 @@ async function processUrl(url){
   setStatus('Mengambil data dari server...', false);
 
   try{
-    const apiUrl = 'https://api.azbry.com/api/download/tiktok?url=' + encodeURIComponent(url);
+    const apiUrl = activeService.endpoint(url);
     const res = await fetch(apiUrl);
     if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
     const data = await res.json();
-
-    if(!data.status || !data.result){
-      throw new Error(data.message || 'Video tidak ditemukan atau link tidak valid');
-    }
-
-    const r = data.result;
-    thumbEl.src = r.thumbnail || '';
-    authorEl.textContent = '@' + (r.author || 'unknown');
-    titleEl.textContent = r.title || '(tanpa judul)';
-    durationEl.textContent = fmtDuration(r.duration);
-
-    const mainLink = (r.links && r.links[0]) || '';
-    currentVideoUrl = mainLink;
-    currentFileName = safeFileName((r.author || 'tiktok') + '-' + (r.title || 'video')) + '.mp4';
-
-    videoPlayer.src = mainLink;
-    videoPlayer.poster = r.thumbnail || '';
-
-    const labels = ['Video HD (tanpa watermark)', 'Video standar (tanpa watermark)', 'Video dengan watermark'];
-    linksEl.innerHTML = '';
-    (r.links || []).forEach((link, i) => {
-      const row = document.createElement('div');
-      row.className = 'link-row';
-      const a = document.createElement('a');
-      a.textContent = 'Unduh';
-      a.addEventListener('click', () => forceDownload(link, currentFileName.replace('.mp4', `-${i+1}.mp4`), a, dlProgress));
-      row.innerHTML = `<span class="label"><b>${labels[i] || 'Link video ' + (i+1)}</b></span>`;
-      row.appendChild(a);
-      linksEl.appendChild(row);
-    });
-
-    if(r.music && r.music.url){
-      const row = document.createElement('div');
-      row.className = 'link-row';
-      const a = document.createElement('a');
-      a.textContent = 'Unduh';
-      a.addEventListener('click', () => forceDownload(r.music.url, safeFileName(r.author + '-audio') + '.mp3', a, dlProgress));
-      row.innerHTML = `<span class="label"><b>Audio asli</b></span>`;
-      row.appendChild(a);
-      linksEl.appendChild(row);
-    }
-
-    resultEl.classList.add('show');
+    const info = activeService.parse(data);
+    renderResult(info);
     setStatus('', false);
   }catch(err){
     setStatus('Gagal: ' + err.message, true);
@@ -455,28 +1145,158 @@ async function processUrl(url){
   }
 }
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', (e)=>{
   e.preventDefault();
   processUrl(urlInput.value.trim());
 });
 
-// auto-proses begitu link ditempel (paste) di kolom input
-urlInput.addEventListener('paste', () => {
-  setTimeout(() => {
+/* auto-proses saat link ditempel */
+urlInput.addEventListener('paste', ()=>{
+  setTimeout(()=>{
     const val = urlInput.value.trim();
-    if(/^https?:\/\/.+tiktok/i.test(val) || /^https?:\/\/vm\.tiktok|vt\.tiktok/i.test(val)){
-      processUrl(val);
-    }
+    if(/^https?:\/\//i.test(val)) processUrl(val);
   }, 50);
 });
 
-// auto-proses juga kalau user ketik/tempel manual lalu berhenti sejenak
+/* auto-proses juga saat user berhenti mengetik sejenak */
 let typingTimer;
-urlInput.addEventListener('input', () => {
+urlInput.addEventListener('input', ()=>{
   clearTimeout(typingTimer);
   const val = urlInput.value.trim();
-  if(!/tiktok/i.test(val)) return;
-  typingTimer = setTimeout(() => processUrl(val), 700);
+  if(!/^https?:\/\//i.test(val)) return;
+  typingTimer = setTimeout(()=> processUrl(val), 700);
+});
+
+/* ============================================================
+   AI VIEW (fullscreen)
+============================================================ */
+const aiView = document.getElementById('aiView');
+const aiBackBtn = document.getElementById('aiBackBtn');
+const chatEmpty = document.getElementById('chatEmpty');
+
+function openAiView(){
+  closeMenu();
+  aiView.classList.add('show');
+  document.body.style.overflow = 'hidden';
+  setTimeout(()=> chatInput.focus(), 250);
+}
+function closeAiView(){
+  aiView.classList.remove('show');
+  document.body.style.overflow = '';
+}
+aiBackBtn.addEventListener('click', closeAiView);
+
+/* ============================================================
+   TANYA JAWAB AI
+============================================================ */
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const chatSendBtn = document.getElementById('chatSendBtn');
+const chatLog = document.getElementById('chatLog');
+
+function addBubble(text, who){
+  if(chatEmpty) chatEmpty.style.display = 'none';
+  const b = document.createElement('div');
+  b.className = 'bubble ' + who;
+  b.textContent = text;
+  chatLog.appendChild(b);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  return b;
+}
+
+chatForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const text = chatInput.value.trim();
+  if(!text) return;
+
+  addBubble(text, 'user');
+  chatInput.value = '';
+  chatSendBtn.disabled = true;
+
+  const loadingBubble = addBubble('mengetik...', 'ai loading');
+
+  try{
+    const res = await fetch(`https://api.nexray.eu.cc/ai/chatgpt?text=${encodeURIComponent(text)}`);
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+    const data = await res.json();
+    if(!data.status || !data.result) throw new Error(data.message || 'AI tidak memberikan jawaban');
+    loadingBubble.textContent = data.result;
+    loadingBubble.classList.remove('loading');
+  }catch(err){
+    loadingBubble.textContent = 'Gagal mendapat jawaban: ' + err.message;
+    loadingBubble.classList.remove('loading');
+  }finally{
+    chatSendBtn.disabled = false;
+    chatInput.focus();
+  }
+});
+
+/* ============================================================
+   CARI LAGU SPOTIFY
+============================================================ */
+const spotifyForm = document.getElementById('spotifyForm');
+const spotifyInput = document.getElementById('spotifyInput');
+const spotifySendBtn = document.getElementById('spotifySendBtn');
+const spotifyStatus = document.getElementById('spotifyStatus');
+const trackList = document.getElementById('trackList');
+
+function setSpotifyStatus(msg, isError){
+  spotifyStatus.textContent = msg;
+  spotifyStatus.classList.toggle('show', !!msg);
+  spotifyStatus.classList.toggle('error', !!isError);
+}
+
+async function searchSpotify(query){
+  if(!query) return;
+  trackList.innerHTML = '';
+  spotifySendBtn.disabled = true;
+  spotifySendBtn.textContent = 'Mencari...';
+  setSpotifyStatus('Mencari lagu...', false);
+
+  try{
+    const res = await fetch(`https://api.nexray.eu.cc/search/spotify?q=${encodeURIComponent(query)}`);
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+    const data = await res.json();
+    if(!data.status || !Array.isArray(data.result) || data.result.length === 0){
+      throw new Error(data.message || 'Lagu tidak ditemukan');
+    }
+
+    data.result.forEach(track=>{
+      const row = document.createElement('div');
+      row.className = 'track-row';
+      row.innerHTML = `
+        <img src="${track.thumbnail || ''}" alt="${track.title}">
+        <div class="track-info">
+          <div class="t-title">${track.title}</div>
+          <div class="t-artist">${track.artist || ''}</div>
+          <div class="t-meta">${track.album || ''} &middot; ${track.duration || ''} &middot; ${track.release_date || ''}</div>
+        </div>
+        <a href="${track.url}" target="_blank" rel="noopener">Buka</a>
+      `;
+      trackList.appendChild(row);
+    });
+
+    setSpotifyStatus('', false);
+  }catch(err){
+    setSpotifyStatus('Gagal: ' + err.message, true);
+  }finally{
+    spotifySendBtn.disabled = false;
+    spotifySendBtn.textContent = 'Cari';
+  }
+}
+
+spotifyForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  searchSpotify(spotifyInput.value.trim());
+});
+
+/* auto-cari saat berhenti mengetik */
+let spotifyTypingTimer;
+spotifyInput.addEventListener('input', ()=>{
+  clearTimeout(spotifyTypingTimer);
+  const val = spotifyInput.value.trim();
+  if(val.length < 2) return;
+  spotifyTypingTimer = setTimeout(()=> searchSpotify(val), 700);
 });
 </script>
 </body>
