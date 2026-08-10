@@ -461,45 +461,6 @@
   }
   .welcome-cta:hover{opacity:0.9;background:linear-gradient(90deg, var(--cyan), var(--pink));}
 
-  /* ---------- AI CHAT ---------- */
-  .chat-log{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    max-height:420px;
-    overflow-y:auto;
-    padding:4px 4px 16px;
-    margin-bottom:14px;
-  }
-  .chat-log:empty{display:none;}
-  .bubble{
-    max-width:82%;
-    padding:12px 15px;
-    border-radius:14px;
-    font-size:14px;
-    line-height:1.5;
-    white-space:pre-wrap;
-  }
-  .bubble.user{
-    align-self:flex-end;
-    background:linear-gradient(90deg, var(--cyan), var(--pink));
-    color:#0b0b10;
-    font-weight:500;
-    border-bottom-right-radius:4px;
-  }
-  .bubble.ai{
-    align-self:flex-start;
-    background:#0e0e14;
-    border:1px solid var(--line);
-    color:var(--ink);
-    border-bottom-left-radius:4px;
-  }
-  .bubble.ai.loading{
-    color:var(--dim);
-    font-family:'JetBrains Mono', monospace;
-    font-size:12px;
-  }
-
   /* ---------- SPOTIFY RESULTS ---------- */
   .track-list{
     display:flex;
@@ -585,99 +546,6 @@
     width:100%;
   }
 
-  /* ---------- AI FULLSCREEN VIEW ---------- */
-  .ai-view{
-    position:fixed;
-    inset:0;
-    z-index:60;
-    background:var(--bg);
-    display:none;
-    flex-direction:column;
-    transform:translateY(12px);
-    opacity:0;
-    transition:transform .22s ease, opacity .22s ease;
-  }
-  .ai-view.show{
-    display:flex;
-    transform:translateY(0);
-    opacity:1;
-  }
-
-  .ai-header{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:16px 20px;
-    border-bottom:1px solid var(--line);
-    background:rgba(11,11,16,0.9);
-    backdrop-filter:blur(10px);
-    flex-shrink:0;
-  }
-  .ai-back{
-    width:38px;height:38px;
-    border-radius:10px;
-    border:1px solid var(--line);
-    background:var(--panel);
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;
-    flex-shrink:0;
-  }
-  .ai-back svg{width:18px;height:18px;stroke:var(--ink);}
-  .ai-back:hover{border-color:var(--cyan);}
-  .ai-header .icon{
-    width:34px;height:34px;
-    border-radius:9px;
-    background:#1a1a22;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-  }
-  .ai-header .icon svg{width:17px;height:17px;}
-  .ai-header-text .t{font-weight:700;font-size:15px;}
-  .ai-header-text .s{
-    font-family:'JetBrains Mono', monospace;
-    font-size:10px;
-    color:var(--cyan);
-    display:flex;
-    align-items:center;
-    gap:6px;
-    margin-top:2px;
-  }
-  .ai-header-text .s::before{
-    content:"";
-    width:6px;height:6px;border-radius:50%;
-    background:var(--cyan);
-    box-shadow:0 0 8px var(--cyan);
-  }
-
-  .ai-body{
-    flex:1;
-    overflow-y:auto;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
-  .ai-empty{
-    margin:auto;
-    text-align:center;
-    color:#54545f;
-    font-family:'JetBrains Mono', monospace;
-    font-size:12px;
-    max-width:280px;
-    line-height:1.6;
-  }
-
-  .ai-footer{
-    padding:14px 16px calc(14px + env(safe-area-inset-bottom));
-    border-top:1px solid var(--line);
-    background:rgba(11,11,16,0.9);
-    backdrop-filter:blur(10px);
-    flex-shrink:0;
-  }
-  .ai-footer form{
-    background:#0e0e14;
-  }
-
   @media (max-width:480px){
     form{flex-direction:column;}
     button{padding:14px;}
@@ -747,37 +615,12 @@
       <input type="text" id="spotifyInput" placeholder="Judul lagu atau nama artis..." required>
       <button type="submit" id="spotifySendBtn">Cari</button>
     </form>
-    <div class="hint">Hasil menampilkan info lagu &amp; tautan langsung ke Spotify.</div>
+    <div class="hint">Ketik judul lagu, hasil pencarian muncul otomatis. Klik "Download MP3" untuk mengunduh.</div>
     <div class="status" id="spotifyStatus"></div>
     <div class="track-list" id="trackList"></div>
   </div>
 
   <footer>dibuat dengan API azbry.com &amp; nexray.eu.cc &middot; hanya untuk konten yang kamu punya hak untuk unduh</footer>
-</div>
-
-<!-- ================= AI VIEW (halaman terpisah, full screen) ================= -->
-<div class="ai-view" id="aiView">
-  <div class="ai-header">
-    <button class="ai-back" id="aiBackBtn" aria-label="Kembali">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#4bf5c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1 0 8v1a4 4 0 0 1-8 0v-1a4 4 0 0 1 0-8V6a4 4 0 0 1 4-4z"/><path d="M9 10h.01M15 10h.01"/></svg></div>
-    <div class="ai-header-text">
-      <div class="t">Tanya Jawab AI</div>
-      <div class="s">online</div>
-    </div>
-  </div>
-
-  <div class="ai-body" id="chatLog">
-    <div class="ai-empty" id="chatEmpty">Mulai percakapan — tanya apa saja di kolom bawah.</div>
-  </div>
-
-  <div class="ai-footer">
-    <form id="chatForm">
-      <input type="text" id="chatInput" placeholder="Tanya apa saja..." required>
-      <button type="submit" id="chatSendBtn">Kirim</button>
-    </form>
-  </div>
 </div>
 
 </div>
@@ -792,7 +635,6 @@ const ICONS = {
   ytmp4: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><polygon points="10 9 15 12 10 15 10 9" fill="#ff4d4d" stroke="none"/></svg>`,
   ytmp3: `<svg viewBox="0 0 24 24" fill="none" stroke="#ffb84b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
   facebook: `<svg viewBox="0 0 24 24" fill="none" stroke="#4b9bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
-  ai: `<svg viewBox="0 0 24 24" fill="none" stroke="#4bf5c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1 0 8v1a4 4 0 0 1-8 0v-1a4 4 0 0 1 0-8V6a4 4 0 0 1 4-4z"/><path d="M9 10h.01M15 10h.01"/></svg>`,
   spotify: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg>`,
   capcut: `<svg viewBox="0 0 24 24" fill="none" stroke="#00f6ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z" fill="#00f6ef" stroke="none"/></svg>`,
 };
@@ -801,8 +643,7 @@ const ICONS = {
    EXTRA TOOLS (bukan downloader, punya panel sendiri)
 ============================================================ */
 const EXTRA_TOOLS = [
-  { id:'ai', name:'Tanya Jawab AI', desc:'Chat dengan AI', mode:'fullscreen' },
-  { id:'spotify', name:'Spotify', desc:'Cari lagu & info', panel:'spotify-tool' },
+  { id:'spotify', name:'Spotify', desc:'Cari & download lagu', panel:'spotify-tool' },
 ];
 
 /* ============================================================
@@ -932,7 +773,6 @@ document.querySelectorAll('.menu-item').forEach(item=>{
     const target = item.dataset.target;
     const action = item.dataset.action;
     closeMenu();
-    closeAiView();
     if(action === 'support'){
       window.open('https://wa.me/6287791200371?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
       return;
@@ -1231,10 +1071,6 @@ EXTRA_TOOLS.forEach(tool=>{
     <div class="desc">${tool.desc}</div>
   `;
   card.addEventListener('click', ()=>{
-    if(tool.mode === 'fullscreen'){
-      openAiView();
-      return;
-    }
     document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === tool.id));
     showPanel(tool.panel, true);
   });
@@ -1242,102 +1078,11 @@ EXTRA_TOOLS.forEach(tool=>{
 });
 
 /* ============================================================
-   AI VIEW (fullscreen)
-============================================================ */
-const aiView = document.getElementById('aiView');
-const aiBackBtn = document.getElementById('aiBackBtn');
-const chatEmpty = document.getElementById('chatEmpty');
-
-function openAiView(){
-  closeMenu();
-  aiView.classList.add('show');
-  document.body.style.overflow = 'hidden';
-  setTimeout(()=> chatInput.focus(), 250);
-}
-function closeAiView(){
-  aiView.classList.remove('show');
-  document.body.style.overflow = '';
-}
-aiBackBtn.addEventListener('click', closeAiView);
-
-/* ============================================================
-   TANYA JAWAB AI
-============================================================ */
-const chatForm = document.getElementById('chatForm');
-const chatInput = document.getElementById('chatInput');
-const chatSendBtn = document.getElementById('chatSendBtn');
-const chatLog = document.getElementById('chatLog');
-
-/* nyimpen histori percakapan di memori (bukan localStorage) biar
-   pertanyaan lanjutan tetap nyambung — API-nya sendiri stateless,
-   jadi konteks kita yang jaga di sisi client */
-let chatHistory = [];
-
-function addBubble(text, who){
-  if(chatEmpty) chatEmpty.style.display = 'none';
-  const b = document.createElement('div');
-  b.className = 'bubble ' + who;
-  b.textContent = text;
-  chatLog.appendChild(b);
-  chatLog.scrollTop = chatLog.scrollHeight;
-  return b;
-}
-
-function extractAiText(data){
-  if(!data) return null;
-  if(typeof data === 'string') return data;
-  return data.result || data.message || data.answer || data.response ||
-         data.text || data.reply || data.data ||
-         (data.result && data.result.text) || null;
-}
-
-async function askAi(promptWithContext){
-  const res = await fetch(`https://api.nexray.eu.cc/ai/chatgpt?text=${encodeURIComponent(promptWithContext)}`);
-  if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-  const data = await res.json();
-  if(data.status === false) throw new Error(data.message || 'AI tidak memberikan jawaban');
-  const answer = extractAiText(data);
-  if(!answer) throw new Error('Format jawaban dari API tidak dikenali');
-  return answer;
-}
-
-chatForm.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const text = chatInput.value.trim();
-  if(!text) return;
-
-  addBubble(text, 'user');
-  chatInput.value = '';
-  chatSendBtn.disabled = true;
-
-  const loadingBubble = addBubble('mengetik...', 'ai loading');
-
-  try{
-    /* sisipkan histori 3 giliran terakhir supaya AI paham konteks obrolan,
-       bukan cuma jawab 1 kalimat lepas tanpa nyambung ke chat sebelumnya */
-    const recentHistory = chatHistory.slice(-6)
-      .map(h => (h.who === 'user' ? 'User' : 'AI') + ': ' + h.text)
-      .join('\n');
-    const promptWithContext = recentHistory
-      ? `Riwayat percakapan sebelumnya:\n${recentHistory}\n\nLanjutkan percakapan, jawab pertanyaan terbaru user berikut dengan singkat dan jelas:\nUser: ${text}`
-      : text;
-
-    const answer = await askAi(promptWithContext);
-    loadingBubble.textContent = answer;
-    loadingBubble.classList.remove('loading');
-    chatHistory.push({who:'user', text});
-    chatHistory.push({who:'ai', text: answer});
-  }catch(err){
-    loadingBubble.textContent = 'Gagal mendapat jawaban: ' + err.message;
-    loadingBubble.classList.remove('loading');
-  }finally{
-    chatSendBtn.disabled = false;
-    chatInput.focus();
-  }
-});
-
-/* ============================================================
    CARI LAGU SPOTIFY
+   Alur: user ketik judul lagu -> cari lewat nexray (search/spotify)
+   -> tampilkan daftar hasil -> saat tombol "Download MP3" diklik,
+   link Spotify lagu itu dikirim ke azbry (download/spotify) buat
+   diubah jadi link file audio -> otomatis diunduh (forceDownload).
 ============================================================ */
 const spotifyForm = document.getElementById('spotifyForm');
 const spotifyInput = document.getElementById('spotifyInput');
@@ -1351,15 +1096,107 @@ function setSpotifyStatus(msg, isError){
   spotifyStatus.classList.toggle('error', !!isError);
 }
 
+/* Ambil link file audio dari azbry berdasarkan link track Spotify.
+   Field nama hasil API pihak ketiga suka beda-beda, jadi dicoba beberapa kemungkinan. */
+async function resolveSpotifyDownload(spotifyUrl){
+  const apiUrl = `https://api.azbry.com/api/download/spotify?url=${encodeURIComponent(spotifyUrl)}`;
+  let res;
+  try{
+    res = await fetch(apiUrl);
+  }catch(networkErr){
+    throw new Error('Tidak bisa menghubungi server download (CORS/offline/server down)');
+  }
+  if(!res.ok) throw new Error('Server download mengembalikan status ' + res.status);
+  const data = await res.json();
+  if(data.status === false) throw new Error(data.message || 'Gagal menyiapkan link download');
+
+  const r = data.result || data.data || data;
+  const downloadUrl = r.download || r.download_url || r.downloadUrl ||
+                       r.url_download || r.audio || r.dl || r.mp3 ||
+                       r.play_url || r.link || r.url;
+
+  if(!downloadUrl) throw new Error('Link download tidak ditemukan pada respons API');
+  if(/\/undefined\.[a-z0-9]+($|\?)/i.test(downloadUrl)){
+    throw new Error('API sumber sedang bermasalah (link audio rusak). Coba lagi beberapa saat.');
+  }
+  return downloadUrl;
+}
+
+function buildTrackRow(track){
+  const clean = v => (!v || v === '-') ? '' : v;
+
+  const title = clean(track.title || track.name) || 'Lagu tidak diketahui';
+  const artist = clean(track.artist || track.artists);
+  const thumbnail = clean(track.thumbnail || track.image || track.cover);
+  const album = clean(track.album);
+  const duration = clean(track.duration);
+  const releaseDate = clean(track.release_date || track.releaseDate);
+  const spotifyUrl = clean(track.url || track.spotify_url || track.link);
+
+  const row = document.createElement('div');
+  row.className = 'track-row';
+  const dlProgress = document.createElement('div');
+  dlProgress.className = 'track-progress';
+  row.innerHTML = `
+    <img src="${thumbnail}" alt="${title}">
+    <div class="track-info">
+      <div class="t-title">${title}</div>
+      <div class="t-artist">${Array.isArray(artist) ? artist.join(', ') : artist}</div>
+      <div class="t-meta">${album}${album ? ' &middot; ' : ''}${duration}${releaseDate ? ' &middot; ' + releaseDate : ''}</div>
+    </div>
+  `;
+
+  const actions = document.createElement('div');
+  actions.className = 'track-actions';
+
+  const dlBtn = document.createElement('a');
+  dlBtn.href = '#';
+  dlBtn.className = 'track-dl';
+  dlBtn.textContent = 'Download MP3';
+  dlBtn.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    if(!spotifyUrl){
+      dlProgress.textContent = 'Link Spotify untuk lagu ini tidak tersedia.';
+      return;
+    }
+    const originalLabel = dlBtn.textContent;
+    dlBtn.textContent = 'Menyiapkan...';
+    dlProgress.textContent = 'Menyiapkan link download...';
+    try{
+      const downloadUrl = await resolveSpotifyDownload(spotifyUrl);
+      const filename = safeFileName(title + (artist ? ('-' + artist) : '')) + '.mp3';
+      await forceDownload(downloadUrl, filename, dlBtn, dlProgress);
+    }catch(err){
+      dlProgress.textContent = 'Gagal: ' + err.message;
+      dlBtn.textContent = originalLabel;
+    }
+  });
+  actions.appendChild(dlBtn);
+
+  if(spotifyUrl){
+    const openLink = document.createElement('a');
+    openLink.href = spotifyUrl;
+    openLink.target = '_blank';
+    openLink.rel = 'noopener';
+    openLink.className = 'track-open';
+    openLink.textContent = 'Buka di Spotify ↗';
+    actions.appendChild(openLink);
+  }
+
+  row.appendChild(actions);
+  row.appendChild(dlProgress);
+  return row;
+}
+
 async function searchSpotify(query){
   if(!query) return;
   trackList.innerHTML = '';
   spotifySendBtn.disabled = true;
   spotifySendBtn.textContent = 'Mencari...';
-  setSpotifyStatus('Mencari & menyiapkan lagu...', false);
+  setSpotifyStatus('Mencari lagu...', false);
 
   try{
-    const apiUrl = `https://api.theresav.biz.id/download/spotify-play?q=${encodeURIComponent(query)}&bitrate=128k&apikey=mLjGc`;
+    const apiUrl = `https://api.nexray.eu.cc/search/spotify?q=${encodeURIComponent(query)}`;
     let res;
     try{
       res = await fetch(apiUrl);
@@ -1370,62 +1207,12 @@ async function searchSpotify(query){
     const data = await res.json();
     if(data.status === false) throw new Error(data.message || 'Lagu tidak ditemukan');
 
-    /* API balikin field pakai "-" untuk data yang kosong, bukan null/kosong string */
-    const clean = v => (!v || v === '-') ? '' : v;
-
-    /* API bisa balikin objek langsung atau dibungkus di "result"/"data" */
-    const r = data.result || data.data || data;
-    const title = clean(r.title || r.name || r.judul) || 'Lagu tidak diketahui';
-    const artist = clean(r.artist || r.artists || r.singer || r.penyanyi);
-    const thumbnail = clean(r.thumbnail || r.image || r.cover || r.thumb);
-    const album = clean(r.album);
-    const duration = clean(r.duration || r.durasi);
-    const releaseDate = clean(r.release_date || r.releaseDate);
-    const downloadUrl = r.play_url || r.download || r.url_download || r.audio || r.link || r.url;
-    const spotifyUrl = clean(r.spotify_url || r.spotifyUrl || r.source);
-
-    if(!downloadUrl) throw new Error('Link download tidak ditemukan pada respons API');
-    if(/\/undefined\.[a-z0-9]+($|\?)/i.test(downloadUrl)){
-      throw new Error('API sumber sedang bermasalah (link audio rusak/"undefined" dari server). Coba lagi beberapa saat.');
+    const results = data.result || data.data || [];
+    if(!Array.isArray(results) || results.length === 0){
+      throw new Error('Lagu tidak ditemukan');
     }
 
-    const row = document.createElement('div');
-    row.className = 'track-row';
-    const dlProgress = document.createElement('div');
-    dlProgress.className = 'track-progress';
-    row.innerHTML = `
-      <img src="${thumbnail}" alt="${title}">
-      <div class="track-info">
-        <div class="t-title">${title}</div>
-        <div class="t-artist">${Array.isArray(artist) ? artist.join(', ') : artist}</div>
-        <div class="t-meta">${album}${album ? ' &middot; ' : ''}${duration}${releaseDate ? ' &middot; ' + releaseDate : ''}</div>
-      </div>
-    `;
-    const actions = document.createElement('div');
-    actions.className = 'track-actions';
-    const dlBtn = document.createElement('a');
-    dlBtn.href = '#';
-    dlBtn.className = 'track-dl';
-    dlBtn.textContent = 'Download MP3';
-    dlBtn.addEventListener('click', (e)=>{
-      e.preventDefault();
-      const filename = safeFileName(title + (artist ? ('-' + artist) : '')) + '.mp3';
-      forceDownload(downloadUrl, filename, dlBtn, dlProgress);
-    });
-    actions.appendChild(dlBtn);
-    if(spotifyUrl){
-      const openLink = document.createElement('a');
-      openLink.href = spotifyUrl;
-      openLink.target = '_blank';
-      openLink.rel = 'noopener';
-      openLink.className = 'track-open';
-      openLink.textContent = 'Buka di Spotify ↗';
-      actions.appendChild(openLink);
-    }
-    row.appendChild(actions);
-    row.appendChild(dlProgress);
-    trackList.appendChild(row);
-
+    results.forEach(track => trackList.appendChild(buildTrackRow(track)));
     setSpotifyStatus('', false);
   }catch(err){
     setSpotifyStatus('Gagal: ' + err.message, true);
