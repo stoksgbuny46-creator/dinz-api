@@ -3,885 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Untuk Kamu ❤️</title>
+<title>Rip / TikTok Downloader</title>
 <style>
-/* ============================================================
-   BAGIAN CSS — TEMA PINK, UNGU, PUTIH
-   ============================================================ */
-:root{
-  --pink:#ff6fa5;
-  --pink-dark:#ff3d81;
-  --purple:#a855f7;
-  --purple-dark:#7c3aed;
-  --white:#ffffff;
-  --glass-bg:rgba(255,255,255,0.18);
-  --glass-border:rgba(255,255,255,0.35);
-}
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-*{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg: #0b0b10;
+    --panel: #131319;
+    --line: #24242e;
+    --ink: #f2f1ee;
+    --dim: #8b8b98;
+    --cyan: #4bf5c9;
+    --pink: #ff4d8d;
+    --warn: #ffb84b;
+  }
 
-html,body{
-  height:100%;
-  font-family:'Segoe UI', 'Poppins', sans-serif;
-  overflow-x:hidden;
-  background:linear-gradient(135deg,#ffdde1,#ffe8f0 25%,#e9d5ff 60%,#f3e8ff);
-  background-size:400% 400%;
-  animation:bgShift 18s ease infinite;
-  color:#4a154b;
-}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(75,245,201,0.08), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(255,77,141,0.08), transparent 45%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:48px 20px 80px;
+  }
 
-@keyframes bgShift{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 12px var(--cyan);
+  }
 
-/* Canvas latar belakang untuk bintang & hati yang bergerak */
-#bg-canvas{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  z-index:0;
-  pointer-events:none;
-}
+  h1{
+    font-size:clamp(38px, 7vw, 68px);
+    line-height:0.95;
+    margin:0 0 10px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    text-align:center;
+  }
+  h1 .rip{
+    background:linear-gradient(90deg, var(--cyan), var(--pink));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
 
-/* Kontainer utama halaman */
-.page{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:40px 16px;
-}
+  .sub{
+    color:var(--dim);
+    font-size:15px;
+    text-align:center;
+    max-width:480px;
+    margin:0 0 44px;
+    line-height:1.55;
+  }
 
-/* ============================================================
-   KARTU UTAMA — EFEK GLASSMORPHISM
-   ============================================================ */
-.main-card{
-  width:100%;
-  max-width:520px;
-  background:var(--glass-bg);
-  border:1px solid var(--glass-border);
-  border-radius:28px;
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  box-shadow:0 8px 32px rgba(168,85,247,0.25), 0 0 0 1px rgba(255,255,255,0.1) inset;
-  padding:36px 28px;
-  text-align:center;
-  animation:cardIn 1s ease;
-}
+  form{
+    width:100%;
+    max-width:640px;
+    display:flex;
+    gap:10px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:8px;
+  }
+  input[type="url"]{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    padding:14px 16px;
+  }
+  input[type="url"]::placeholder{color:#4d4d59;}
 
-@keyframes cardIn{
-  from{opacity:0; transform:translateY(40px) scale(.95);}
-  to{opacity:1; transform:translateY(0) scale(1);}
-}
+  button{
+    background:var(--ink);
+    color:#0b0b10;
+    border:none;
+    border-radius:9px;
+    padding:0 26px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition:transform .15s ease, background .15s ease;
+    white-space:nowrap;
+  }
+  button:hover{background:var(--cyan);}
+  button:active{transform:scale(0.97);}
+  button:disabled{opacity:0.5;cursor:wait;}
 
-/* Judul besar */
-.title{
-  font-size:2.4rem;
-  font-weight:800;
-  background:linear-gradient(90deg,var(--pink-dark),var(--purple-dark));
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-  margin-bottom:6px;
-  letter-spacing:1px;
-  text-shadow:0 2px 18px rgba(255,111,165,.25);
-}
+  .hint{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:#54545f;
+    margin-top:12px;
+    letter-spacing:0.02em;
+  }
 
-.subtitle{
-  font-size:0.95rem;
-  color:#7a3ea1;
-  margin-bottom:18px;
-  opacity:.85;
-}
+  .status{
+    max-width:640px;
+    width:100%;
+    margin-top:24px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--warn);
+    display:none;
+    text-align:center;
+  }
+  .status.show{display:block;}
+  .status.error{color:var(--pink);}
 
-/* Efek mengetik */
-.typing-wrap{
-  min-height:32px;
-  margin-bottom:20px;
-  font-size:1.05rem;
-  font-style:italic;
-  color:#8b2f6b;
-}
-.typing-cursor{
-  display:inline-block;
-  width:2px;
-  background:var(--pink-dark);
-  margin-left:2px;
-  animation:blink 0.8s steps(1) infinite;
-}
-@keyframes blink{50%{opacity:0;}}
+  .result{
+    display:none;
+    width:100%;
+    max-width:640px;
+    margin-top:32px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .result.show{display:block;}
 
-/* Foto placeholder — GANTI src pada tag <img id="photo"> untuk memakai foto sendiri */
-.photo-frame{
-  width:180px;
-  height:180px;
-  margin:0 auto 20px auto;
-  border-radius:50%;
-  padding:6px;
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  box-shadow:0 0 25px rgba(255,111,165,.55);
-  animation:floatPhoto 4s ease-in-out infinite;
-}
-@keyframes floatPhoto{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-10px);}
-}
-.photo-frame img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:50%;
-  border:3px solid white;
-  display:block;
-}
+  .result-top{
+    display:flex;
+    gap:16px;
+    padding:20px;
+    border-bottom:1px solid var(--line);
+  }
+  .thumb{
+    width:96px;
+    height:128px;
+    border-radius:10px;
+    object-fit:cover;
+    background:#1a1a22;
+    flex-shrink:0;
+  }
+  .meta{min-width:0;}
+  .meta .author{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--cyan);
+    margin-bottom:6px;
+  }
+  .meta .title{
+    font-size:14px;
+    line-height:1.45;
+    color:var(--ink);
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .meta .duration{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--dim);
+    margin-top:8px;
+  }
 
-/* Countdown */
-.countdown-box{
-  margin:14px 0 24px 0;
-  padding:14px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.35);
-  border:1px solid rgba(255,255,255,0.5);
-}
-.countdown-label{
-  font-size:.85rem;
-  color:#7c3aed;
-  margin-bottom:8px;
-  font-weight:600;
-}
-.countdown-grid{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.countdown-item{
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  color:white;
-  min-width:64px;
-  padding:10px 6px;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(168,85,247,.35);
-}
-.countdown-item span{display:block;}
-.countdown-num{font-size:1.3rem;font-weight:800;}
-.countdown-text{font-size:.65rem;text-transform:uppercase;opacity:.9;}
+  .links{
+    padding:16px 20px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .link-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#0e0e14;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 16px;
+  }
+  .link-row .label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--dim);
+  }
+  .link-row .label b{color:var(--ink);font-weight:700;}
+  .link-row a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:700;
+    color:var(--bg);
+    background:var(--ink);
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:7px;
+    transition:background .15s ease;
+  }
+  .link-row a:hover{background:var(--pink);color:var(--ink);}
 
-/* ============================================================
-   TOMBOL — HOVER, RIPPLE, GLOW
-   ============================================================ */
-.buttons{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  margin-top:10px;
-}
+  footer{
+    margin-top:60px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:#3f3f49;
+    text-align:center;
+  }
 
-.btn{
-  position:relative;
-  overflow:hidden;
-  border:none;
-  outline:none;
-  cursor:pointer;
-  padding:14px 20px;
-  font-size:1rem;
-  font-weight:700;
-  border-radius:16px;
-  color:white;
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  box-shadow:0 4px 15px rgba(168,85,247,.35);
-  transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;
-}
-.btn:hover{
-  transform:translateY(-3px) scale(1.02);
-  box-shadow:0 8px 25px rgba(255,111,165,.55), 0 0 25px rgba(168,85,247,.45);
-  filter:brightness(1.08);
-}
-.btn:active{
-  transform:translateY(0) scale(.98);
-}
-
-/* Ripple effect */
-.ripple{
-  position:absolute;
-  border-radius:50%;
-  background:rgba(255,255,255,0.6);
-  transform:scale(0);
-  animation:rippleAnim .6s linear;
-  pointer-events:none;
-}
-@keyframes rippleAnim{
-  to{transform:scale(3.5); opacity:0;}
-}
-
-/* Tombol musik berdampingan */
-.music-row{
-  display:flex;
-  gap:10px;
-}
-.music-row .btn{flex:1;}
-.btn.secondary{
-  background:linear-gradient(135deg,#f9a8d4,#c4b5fd);
-}
-.btn.playing{
-  box-shadow:0 0 25px rgba(255,111,165,.8);
-}
-
-/* ============================================================
-   LEDAKAN HATI (saat tombol Klik Aku ditekan)
-   ============================================================ */
-#heart-burst{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:50;
-  overflow:hidden;
-}
-.burst-heart{
-  position:absolute;
-  font-size:24px;
-  animation:burstFly 1.4s ease-out forwards;
-  will-change:transform, opacity;
-}
-@keyframes burstFly{
-  0%{transform:translate(0,0) scale(0.4) rotate(0deg); opacity:1;}
-  100%{transform:var(--fly) scale(1.3) rotate(360deg); opacity:0;}
-}
-
-/* ============================================================
-   MODAL / POPUP UMUM (Popup romantis, Surat, Alasan)
-   ============================================================ */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(74,21,75,0.55);
-  backdrop-filter:blur(4px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
-  padding:16px;
-}
-.overlay.show{display:flex;}
-
-.modal{
-  background:linear-gradient(160deg,#fff, #fdf2ff);
-  border-radius:22px;
-  max-width:440px;
-  width:100%;
-  padding:30px 24px;
-  text-align:center;
-  position:relative;
-  box-shadow:0 20px 60px rgba(124,58,237,.4);
-  animation:popIn .4s ease;
-}
-@keyframes popIn{
-  from{opacity:0; transform:scale(.8);}
-  to{opacity:1; transform:scale(1);}
-}
-.modal h2{
-  color:var(--pink-dark);
-  margin-bottom:14px;
-  font-size:1.4rem;
-}
-.modal p{
-  color:#5b2170;
-  line-height:1.6;
-  margin-bottom:18px;
-}
-.close-btn{
-  margin-top:6px;
-}
-
-/* Surat cinta */
-.envelope-wrap{
-  perspective:1000px;
-  margin-bottom:10px;
-}
-.letter-paper{
-  background:#fffaf5;
-  border-radius:10px;
-  padding:20px 18px;
-  text-align:left;
-  font-size:.95rem;
-  line-height:1.7;
-  color:#6b2d5b;
-  box-shadow:0 6px 20px rgba(0,0,0,.08);
-  transform-origin:top center;
-  animation:letterOpen .7s ease forwards;
-}
-@keyframes letterOpen{
-  from{transform:rotateX(-90deg); opacity:0;}
-  to{transform:rotateX(0deg); opacity:1;}
-}
-
-/* Daftar alasan */
-.reasons-list{
-  list-style:none;
-  text-align:left;
-  margin-bottom:14px;
-  max-height:260px;
-  overflow-y:auto;
-}
-.reasons-list li{
-  background:rgba(168,85,247,.08);
-  border-left:4px solid var(--pink);
-  padding:10px 12px;
-  border-radius:8px;
-  margin-bottom:8px;
-  opacity:0;
-  animation:reasonIn .5s ease forwards;
-}
-@keyframes reasonIn{
-  from{opacity:0; transform:translateX(-15px);}
-  to{opacity:1; transform:translateX(0);}
-}
-
-/* Kejutan / konfeti */
-#confetti-canvas{
-  position:fixed;
-  inset:0;
-  z-index:90;
-  pointer-events:none;
-}
-.surprise-msg{
-  position:fixed;
-  top:18%;
-  left:50%;
-  transform:translate(-50%,-20px);
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  color:white;
-  padding:16px 26px;
-  border-radius:16px;
-  font-weight:700;
-  text-align:center;
-  z-index:95;
-  box-shadow:0 10px 30px rgba(168,85,247,.5);
-  opacity:0;
-  animation:surpriseIn .6s ease forwards, surpriseOut .6s ease 2.6s forwards;
-  max-width:80%;
-}
-@keyframes surpriseIn{
-  from{opacity:0; transform:translate(-50%,-40px);}
-  to{opacity:1; transform:translate(-50%,0);}
-}
-@keyframes surpriseOut{
-  to{opacity:0; transform:translate(-50%,-30px);}
-}
-
-footer.credit{
-  margin-top:22px;
-  font-size:.75rem;
-  color:#8b5fae;
-  opacity:.7;
-  text-align:center;
-}
-
-/* ============================================================
-   RESPONSIF
-   ============================================================ */
-@media (max-width:480px){
-  .title{font-size:1.9rem;}
-  .main-card{padding:26px 18px;border-radius:22px;}
-  .photo-frame{width:150px;height:150px;}
-  .countdown-item{min-width:56px;padding:8px 4px;}
-  .countdown-num{font-size:1.1rem;}
-}
+  @media (max-width:480px){
+    form{flex-direction:column;}
+    button{padding:14px;}
+  }
 </style>
 </head>
 <body>
 
-<!-- Canvas untuk animasi latar belakang bintang & hati -->
-<canvas id="bg-canvas"></canvas>
+  <div class="eyebrow">tikwm via azbry</div>
+  <h1>Tarik videonya,<br class="br-desktop"> bukan <span class="rip">watermark</span>-nya.</h1>
+  <p class="sub">Tempel link TikTok — dapat versi HD tanpa watermark dalam hitungan detik.</p>
 
-<!-- Lapisan untuk animasi ledakan hati -->
-<div id="heart-burst"></div>
+  <form id="form">
+    <input type="url" id="urlInput" placeholder="https://vm.tiktok.com/..." required>
+    <button type="submit" id="submitBtn">Proses</button>
+  </form>
+  <div class="hint">tempel link video tiktok nya</div>
 
-<!-- Canvas untuk animasi konfeti -->
-<canvas id="confetti-canvas"></canvas>
+  <div class="status" id="status"></div>
 
-<div class="page">
-  <div class="main-card">
-
-    <!-- Judul -->
-    <h1 class="title">Untuk Kamu ❤️</h1>
-    <p class="subtitle">Sebuah halaman kecil, untuk perasaan yang besar</p>
-
-    <!-- Efek mengetik -->
-    <div class="typing-wrap">
-      <span id="typing-text"></span><span class="typing-cursor">&nbsp;</span>
-    </div>
-
-    <!-- Foto placeholder: ganti atribut src di bawah dengan foto kamu -->
-    <div class="photo-frame">
-      <img id="photo" src="https://placehold.co/300x300/ff9ecb/ffffff?text=Foto+Kita" alt="Foto Kenangan">
-    </div>
-
-    <!-- Countdown sejak tanggal jadian -->
-    <div class="countdown-box">
-      <div class="countdown-label">💞 Sudah bersama selama</div>
-      <div class="countdown-grid">
-        <div class="countdown-item"><span class="countdown-num" id="cd-days">0</span><span class="countdown-text">Hari</span></div>
-        <div class="countdown-item"><span class="countdown-num" id="cd-hours">0</span><span class="countdown-text">Jam</span></div>
-        <div class="countdown-item"><span class="countdown-num" id="cd-mins">0</span><span class="countdown-text">Menit</span></div>
-        <div class="countdown-item"><span class="countdown-num" id="cd-secs">0</span><span class="countdown-text">Detik</span></div>
+  <div class="result" id="result">
+    <div class="result-top">
+      <img class="thumb" id="thumb" alt="thumbnail">
+      <div class="meta">
+        <div class="author" id="author"></div>
+        <div class="title" id="title"></div>
+        <div class="duration" id="duration"></div>
       </div>
     </div>
-
-    <!-- Tombol-tombol interaktif -->
-    <div class="buttons">
-      <div class="music-row">
-        <button class="btn secondary" id="btn-play">▶ Putar Musik</button>
-        <button class="btn secondary" id="btn-pause">⏸ Jeda Musik</button>
-      </div>
-      <button class="btn" id="btn-click-me">💖 Klik Aku</button>
-      <button class="btn" id="btn-letter">💌 Buka Surat</button>
-      <button class="btn" id="btn-reasons">🌹 Alasan Aku Sayang Kamu</button>
-      <button class="btn" id="btn-surprise">🎁 Kejutan</button>
-    </div>
-
-    <footer class="credit">Dibuat dengan ❤️ khusus untuk kamu</footer>
+    <div class="links" id="links"></div>
   </div>
-</div>
 
-<!-- ============ MODAL: Popup Romantis (tombol Klik Aku) ============ -->
-<div class="overlay" id="overlay-popup">
-  <div class="modal">
-    <h2>Kamu Tahu? 💗</h2>
-    <p id="popup-text">Setiap detak jantungku selalu punya nama kamu di dalamnya. Terima kasih sudah menjadi alasan aku tersenyum setiap hari.</p>
-    <button class="btn close-btn" data-close="overlay-popup">Tutup</button>
-  </div>
-</div>
-
-<!-- ============ MODAL: Surat Cinta ============ -->
-<div class="overlay" id="overlay-letter">
-  <div class="modal">
-    <h2>Surat Untukmu 💌</h2>
-    <div class="envelope-wrap">
-      <div class="letter-paper" id="letter-paper">
-        Hai sayang,<br><br>
-        Jika kata-kata bisa memeluk, aku ingin tulisan ini memelukmu erat-erat.
-        Terima kasih sudah hadir, sudah bertahan, dan sudah memilih untuk tetap
-        ada di sisiku. Kamu adalah bagian favorit dari hidupku.<br><br>
-        Selalu milikmu, ❤️
-      </div>
-    </div>
-    <button class="btn close-btn" data-close="overlay-letter">Tutup</button>
-  </div>
-</div>
-
-<!-- ============ MODAL: Alasan Aku Sayang Kamu ============ -->
-<div class="overlay" id="overlay-reasons">
-  <div class="modal">
-    <h2>Alasan Aku Sayang Kamu 🌹</h2>
-    <ul class="reasons-list" id="reasons-list"></ul>
-    <button class="btn" id="btn-next-reason">Alasan Berikutnya ➜</button>
-    <button class="btn close-btn" data-close="overlay-reasons" style="margin-top:10px;">Tutup</button>
-  </div>
-</div>
+  <footer>by : dinz code &middot; cepat dan aman</footer>
 
 <script>
-/* ============================================================
-   BAGIAN JAVASCRIPT
-   Semua fitur di bawah ini murni JS, tanpa framework/library.
-   ============================================================ */
+const form = document.getElementById('form');
+const urlInput = document.getElementById('urlInput');
+const submitBtn = document.getElementById('submitBtn');
+const statusEl = document.getElementById('status');
+const resultEl = document.getElementById('result');
+const thumbEl = document.getElementById('thumb');
+const authorEl = document.getElementById('author');
+const titleEl = document.getElementById('title');
+const durationEl = document.getElementById('duration');
+const linksEl = document.getElementById('links');
 
-/* -------------------- 1. LATAR BELAKANG: BINTANG & HATI -------------------- */
-const bgCanvas = document.getElementById('bg-canvas');
-const bgCtx = bgCanvas.getContext('2d');
-let W, H;
-
-function resizeCanvas(){
-  W = bgCanvas.width = window.innerWidth;
-  H = bgCanvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// Data bintang (berkedip)
-const stars = Array.from({length: 90}, () => ({
-  x: Math.random()*W,
-  y: Math.random()*H,
-  r: Math.random()*1.6+0.4,
-  alpha: Math.random(),
-  speed: Math.random()*0.02+0.005
-}));
-
-// Data hati yang melayang ke atas
-const floatingHearts = Array.from({length: 18}, () => makeHeart());
-function makeHeart(){
-  return {
-    x: Math.random()*W,
-    y: H + Math.random()*H,
-    size: Math.random()*14+10,
-    speed: Math.random()*0.6+0.3,
-    drift: Math.random()*0.6-0.3,
-    alpha: Math.random()*0.5+0.3
-  };
+function setStatus(msg, isError){
+  statusEl.textContent = msg;
+  statusEl.classList.toggle('show', !!msg);
+  statusEl.classList.toggle('error', !!isError);
 }
 
-function drawHeartShape(ctx, x, y, size, alpha, color){
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.translate(x, y);
-  ctx.scale(size/20, size/20);
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.moveTo(0, 5);
-  ctx.bezierCurveTo(0, 0, -10, 0, -10, -6);
-  ctx.bezierCurveTo(-10, -12, -3, -12, 0, -4);
-  ctx.bezierCurveTo(3, -12, 10, -12, 10, -6);
-  ctx.bezierCurveTo(10, 0, 0, 0, 0, 5);
-  ctx.fill();
-  ctx.restore();
+function fmtDuration(sec){
+  if(!sec && sec !== 0) return '';
+  const m = Math.floor(sec/60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2,'0')} durasi`;
 }
 
-function animateBackground(){
-  bgCtx.clearRect(0,0,W,H);
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const url = urlInput.value.trim();
+  if(!url) return;
 
-  // Bintang berkedip
-  stars.forEach(s => {
-    s.alpha += s.speed;
-    if(s.alpha > 1 || s.alpha < 0) s.speed *= -1;
-    bgCtx.save();
-    bgCtx.globalAlpha = Math.abs(s.alpha);
-    bgCtx.fillStyle = '#ffffff';
-    bgCtx.beginPath();
-    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-    bgCtx.fill();
-    bgCtx.restore();
-  });
+  resultEl.classList.remove('show');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Memproses...';
+  setStatus('Mengambil data dari server...', false);
 
-  // Hati melayang
-  floatingHearts.forEach(h => {
-    h.y -= h.speed;
-    h.x += h.drift;
-    if(h.y < -20){
-      h.y = H + 20;
-      h.x = Math.random()*W;
+  try{
+    const apiUrl = 'https://api.azbry.com/api/download/tiktok?url=' + encodeURIComponent(url);
+    const res = await fetch(apiUrl);
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+    const data = await res.json();
+
+    if(!data.status || !data.result){
+      throw new Error(data.message || 'Video tidak ditemukan atau link tidak valid');
     }
-    drawHeartShape(bgCtx, h.x, h.y, h.size, h.alpha, '#ff6fa5');
-  });
 
-  requestAnimationFrame(animateBackground);
-}
-animateBackground();
+    const r = data.result;
+    thumbEl.src = r.thumbnail || '';
+    authorEl.textContent = '@' + (r.author || 'unknown');
+    titleEl.textContent = r.title || '(tanpa judul)';
+    durationEl.textContent = fmtDuration(r.duration);
 
-/* -------------------- 2. EFEK MENGETIK -------------------- */
-const typingWords = [
-  "Kamu adalah senyum favoritku 😊",
-  "Terima kasih sudah ada 💫",
-  "Kamu rumah bagi hatiku 🏡",
-  "Selalu bersyukur punya kamu 🌸"
-];
-const typingEl = document.getElementById('typing-text');
-let twIndex = 0, twChar = 0, twDeleting = false;
-
-function typeLoop(){
-  const current = typingWords[twIndex];
-  if(!twDeleting){
-    twChar++;
-    typingEl.textContent = current.slice(0, twChar);
-    if(twChar === current.length){
-      twDeleting = true;
-      setTimeout(typeLoop, 1400);
-      return;
-    }
-  } else {
-    twChar--;
-    typingEl.textContent = current.slice(0, twChar);
-    if(twChar === 0){
-      twDeleting = false;
-      twIndex = (twIndex+1) % typingWords.length;
-    }
-  }
-  setTimeout(typeLoop, twDeleting ? 40 : 70);
-}
-typeLoop();
-
-/* -------------------- 3. COUNTDOWN SEJAK TANGGAL JADIAN -------------------- */
-// GANTI tanggal di bawah ini sesuai tanggal jadian kalian (format: TAHUN, BULAN-1, TANGGAL)
-const startDate = new Date(2023, 0, 14, 0, 0, 0); // contoh: 14 Januari 2023
-
-function updateCountdown(){
-  const now = new Date();
-  let diff = now - startDate;
-  if(diff < 0) diff = 0;
-
-  const days = Math.floor(diff / (1000*60*60*24));
-  const hours = Math.floor((diff / (1000*60*60)) % 24);
-  const mins = Math.floor((diff / (1000*60)) % 60);
-  const secs = Math.floor((diff / 1000) % 60);
-
-  document.getElementById('cd-days').textContent = days;
-  document.getElementById('cd-hours').textContent = hours;
-  document.getElementById('cd-mins').textContent = mins;
-  document.getElementById('cd-secs').textContent = secs;
-}
-updateCountdown();
-setInterval(updateCountdown, 1000);
-
-/* -------------------- 4. RIPPLE EFFECT PADA SEMUA TOMBOL -------------------- */
-document.querySelectorAll('.btn').forEach(btn => {
-  btn.addEventListener('click', function(e){
-    const rect = btn.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    const size = Math.max(rect.width, rect.height);
-    ripple.className = 'ripple';
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
-    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
-    btn.appendChild(ripple);
-    setTimeout(()=> ripple.remove(), 650);
-  });
-});
-
-/* -------------------- 5. MUSIK ROMANTIS (Web Audio API) --------------------
-   Menggunakan synth ambient bawaan (tanpa file eksternal) agar tombol
-   Putar/Jeda benar-benar berfungsi di mana saja. Jika ingin memakai file
-   musik sendiri, ganti fungsi playMusic/pauseMusic dengan tag <audio>.
-------------------------------------------------------------------------- */
-let audioCtx = null;
-let musicNodes = [];
-let musicInterval = null;
-let isPlaying = false;
-
-// Progresi akor sederhana yang lembut (dalam Hz)
-const chordProgression = [
-  [261.63, 329.63, 392.00], // C major
-  [220.00, 261.63, 329.63], // A minor
-  [174.61, 220.00, 261.63], // F major
-  [196.00, 246.94, 293.66]  // G major
-];
-let chordIndex = 0;
-
-function playChord(freqs){
-  const now = audioCtx.currentTime;
-  const gainMaster = audioCtx.createGain();
-  gainMaster.gain.setValueAtTime(0, now);
-  gainMaster.gain.linearRampToValueAtTime(0.06, now + 1.2);
-  gainMaster.gain.linearRampToValueAtTime(0, now + 3.6);
-  gainMaster.connect(audioCtx.destination);
-
-  freqs.forEach(freq => {
-    const osc = audioCtx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    osc.connect(gainMaster);
-    osc.start(now);
-    osc.stop(now + 3.7);
-    musicNodes.push(osc);
-  });
-}
-
-function playMusic(){
-  if(isPlaying) return;
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if(audioCtx.state === 'suspended'){
-    audioCtx.resume();
-  }
-  isPlaying = true;
-  document.getElementById('btn-play').classList.add('playing');
-
-  playChord(chordProgression[chordIndex]);
-  musicInterval = setInterval(() => {
-    chordIndex = (chordIndex + 1) % chordProgression.length;
-    playChord(chordProgression[chordIndex]);
-  }, 3600);
-}
-
-function pauseMusic(){
-  isPlaying = false;
-  document.getElementById('btn-play').classList.remove('playing');
-  if(musicInterval){
-    clearInterval(musicInterval);
-    musicInterval = null;
-  }
-  if(audioCtx){
-    audioCtx.suspend();
-  }
-}
-
-document.getElementById('btn-play').addEventListener('click', playMusic);
-document.getElementById('btn-pause').addEventListener('click', pauseMusic);
-
-/* -------------------- 6. TOMBOL "KLIK AKU" — LEDAKAN HATI + POPUP -------------------- */
-const heartBurstContainer = document.getElementById('heart-burst');
-const popupTexts = [
-  "Setiap detak jantungku selalu punya nama kamu di dalamnya 💗",
-  "Kamu adalah alasan aku percaya pada cinta yang tenang 🌷",
-  "Bersamamu, hal sederhana terasa seperti keajaiban ✨",
-  "Aku sayang kamu, hari ini dan seterusnya 💕"
-];
-
-function burstHearts(){
-  const centerX = window.innerWidth/2;
-  const centerY = window.innerHeight/2;
-  const emojiSet = ['❤️','💖','💗','💓','💞'];
-
-  for(let i=0; i<40; i++){
-    const h = document.createElement('div');
-    h.className = 'burst-heart';
-    h.textContent = emojiSet[Math.floor(Math.random()*emojiSet.length)];
-
-    const angle = Math.random()*Math.PI*2;
-    const distance = 150 + Math.random()*300;
-    const flyX = Math.cos(angle)*distance;
-    const flyY = Math.sin(angle)*distance;
-
-    h.style.left = centerX + 'px';
-    h.style.top = centerY + 'px';
-    h.style.setProperty('--fly', `translate(${flyX}px, ${flyY}px)`);
-    h.style.animationDelay = (Math.random()*0.15) + 's';
-
-    heartBurstContainer.appendChild(h);
-    setTimeout(()=> h.remove(), 1700);
-  }
-}
-
-document.getElementById('btn-click-me').addEventListener('click', () => {
-  burstHearts();
-  document.getElementById('popup-text').textContent =
-    popupTexts[Math.floor(Math.random()*popupTexts.length)];
-  openOverlay('overlay-popup');
-});
-
-/* -------------------- 7. TOMBOL "BUKA SURAT" -------------------- */
-document.getElementById('btn-letter').addEventListener('click', () => {
-  const letter = document.getElementById('letter-paper');
-  // reset animasi setiap kali dibuka
-  letter.style.animation = 'none';
-  void letter.offsetWidth; // trigger reflow agar animasi ulang
-  letter.style.animation = 'letterOpen .7s ease forwards';
-  openOverlay('overlay-letter');
-});
-
-/* -------------------- 8. TOMBOL "ALASAN AKU SAYANG KAMU" -------------------- */
-const reasons = [
-  "Karena kamu selalu mendengarkan tanpa menghakimi 🌷",
-  "Karena tawamu adalah lagu favoritku 🎶",
-  "Karena kamu sabar menghadapi hari-hari burukku 💪",
-  "Karena kamu selalu jujur padaku 🤍",
-  "Karena kamu membuatku ingin jadi versi terbaik diriku ✨",
-  "Karena pelukmu terasa seperti rumah 🏡",
-  "Karena kamu percaya padaku saat aku ragu pada diriku sendiri 💫"
-];
-let reasonIndex = 0;
-
-function showNextReason(){
-  const list = document.getElementById('reasons-list');
-  if(reasonIndex >= reasons.length){
-    reasonIndex = 0;
-    list.innerHTML = '';
-  }
-  const li = document.createElement('li');
-  li.textContent = reasons[reasonIndex];
-  list.appendChild(li);
-  list.scrollTop = list.scrollHeight;
-  reasonIndex++;
-}
-
-document.getElementById('btn-reasons').addEventListener('click', () => {
-  document.getElementById('reasons-list').innerHTML = '';
-  reasonIndex = 0;
-  showNextReason();
-  openOverlay('overlay-reasons');
-});
-document.getElementById('btn-next-reason').addEventListener('click', showNextReason);
-
-/* -------------------- 9. TOMBOL "KEJUTAN" — KONFETI + PESAN ACAK -------------------- */
-const confettiCanvas = document.getElementById('confetti-canvas');
-const confettiCtx = confettiCanvas.getContext('2d');
-confettiCanvas.width = window.innerWidth;
-confettiCanvas.height = window.innerHeight;
-window.addEventListener('resize', () => {
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
-});
-
-const surpriseMessages = [
-  "Kamu adalah kejutan terbaik dalam hidupku 🎉",
-  "Semoga harimu semanis senyummu 🍬",
-  "Kamu layak mendapatkan semua kebahagiaan 🌈",
-  "Terima kasih sudah memilih untuk tetap tinggal 💐",
-  "Kejutan kecil untuk hati yang besar ❤️"
-];
-
-let confettiParticles = [];
-function launchConfetti(){
-  const colors = ['#ff6fa5','#a855f7','#ffffff','#ff3d81','#c4b5fd'];
-  for(let i=0;i<120;i++){
-    confettiParticles.push({
-      x: Math.random()*confettiCanvas.width,
-      y: -20 - Math.random()*200,
-      size: Math.random()*6+4,
-      color: colors[Math.floor(Math.random()*colors.length)],
-      speedY: Math.random()*3+2,
-      speedX: Math.random()*2-1,
-      rotation: Math.random()*360,
-      rotSpeed: Math.random()*8-4,
-      life: 0
+    const labels = ['Video HD (tanpa watermark)', 'Video standar (tanpa watermark)', 'Video dengan watermark'];
+    linksEl.innerHTML = '';
+    (r.links || []).forEach((link, i) => {
+      const row = document.createElement('div');
+      row.className = 'link-row';
+      row.innerHTML = `
+        <span class="label"><b>${labels[i] || 'Link video ' + (i+1)}</b></span>
+        <a href="${link}" target="_blank" rel="noopener" download>Unduh</a>
+      `;
+      linksEl.appendChild(row);
     });
-  }
-}
 
-function animateConfetti(){
-  confettiCtx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
-  confettiParticles.forEach(p => {
-    p.y += p.speedY;
-    p.x += p.speedX;
-    p.rotation += p.rotSpeed;
-    p.life++;
+    if(r.music && r.music.url){
+      const row = document.createElement('div');
+      row.className = 'link-row';
+      row.innerHTML = `
+        <span class="label"><b>Audio asli</b></span>
+        <a href="${r.music.url}" target="_blank" rel="noopener" download>Unduh</a>
+      `;
+      linksEl.appendChild(row);
+    }
 
-    confettiCtx.save();
-    confettiCtx.translate(p.x, p.y);
-    confettiCtx.rotate(p.rotation * Math.PI/180);
-    confettiCtx.fillStyle = p.color;
-    confettiCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
-    confettiCtx.restore();
-  });
-  // buang partikel yang sudah keluar layar / terlalu lama
-  confettiParticles = confettiParticles.filter(p => p.y < confettiCanvas.height + 30 && p.life < 400);
-  requestAnimationFrame(animateConfetti);
-}
-animateConfetti();
-
-document.getElementById('btn-surprise').addEventListener('click', () => {
-  launchConfetti();
-  const msg = document.createElement('div');
-  msg.className = 'surprise-msg';
-  msg.textContent = surpriseMessages[Math.floor(Math.random()*surpriseMessages.length)];
-  document.body.appendChild(msg);
-  setTimeout(()=> msg.remove(), 3300);
-});
-
-/* -------------------- 10. FUNGSI UMUM MODAL (BUKA/TUTUP) -------------------- */
-function openOverlay(id){
-  document.getElementById(id).classList.add('show');
-}
-function closeOverlay(id){
-  document.getElementById(id).classList.remove('show');
-}
-document.querySelectorAll('[data-close]').forEach(btn => {
-  btn.addEventListener('click', () => closeOverlay(btn.getAttribute('data-close')));
-});
-// Klik di luar kartu modal untuk menutup
-document.querySelectorAll('.overlay').forEach(ov => {
-  ov.addEventListener('click', (e) => {
-    if(e.target === ov) ov.classList.remove('show');
-  });
-});
-// Tutup modal dengan tombol Escape
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape'){
-    document.querySelectorAll('.overlay.show').forEach(ov => ov.classList.remove('show'));
+    resultEl.classList.add('show');
+    setStatus('', false);
+  }catch(err){
+    setStatus('Gagal: ' + err.message, true);
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Proses';
   }
 });
 </script>
