@@ -8,23 +8,27 @@
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
   :root{
-    --bg: #0b0b10;
-    --panel: #131319;
-    --line: #24242e;
-    --ink: #f2f1ee;
-    --dim: #8b8b98;
-    --cyan: #4bf5c9;
-    --pink: #ff4d8d;
-    --indigo: #8f96ff;
-    --warn: #ffb84b;
+    --bg: #FBF3E2;
+    --panel: #FFFFFF;
+    --sunken: #FBF1DC;
+    --iconbg: #F5EAD3;
+    --line: #1B1712;
+    --ink: #1B1712;
+    --dim: #756D5C;
+    --dim2: #A39980;
+    --dim3: #B0A78C;
+    --cyan: #FF6A1A;
+    --pink: #E8420A;
+    --indigo: #C2410C;
+    --warn: #B45309;
   }
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(circle at 15% 0%, rgba(75,245,201,0.08), transparent 45%),
-      radial-gradient(circle at 85% 20%, rgba(255,77,141,0.08), transparent 45%),
+      radial-gradient(circle at 15% 0%, rgba(255,106,26,0.10), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(232,66,10,0.08), transparent 45%),
       var(--bg);
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
@@ -40,9 +44,9 @@
     align-items:center;
     justify-content:space-between;
     padding:16px 20px;
-    background:rgba(11,11,16,0.85);
+    background:rgba(251,243,226,0.9);
     backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
+    border-bottom:1.5px solid var(--line);
   }
   .brand{
     font-weight:700;
@@ -211,25 +215,26 @@
     align-items:center;
     gap:8px;
     background:linear-gradient(90deg, var(--cyan), var(--pink));
-    color:#0b0b10;
-    border:none;
+    color:#fff;
+    border:1.5px solid var(--line);
     border-radius:12px;
     padding:15px 24px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
     font-size:14.5px;
     cursor:pointer;
-    transition:filter .15s ease, transform .15s ease;
+    box-shadow:4px 4px 0 var(--line);
+    transition:filter .15s ease, transform .15s ease, box-shadow .15s ease;
   }
   .hero-cta svg{width:17px;height:17px;flex-shrink:0;}
-  .hero-cta:hover{filter:brightness(1.08);}
-  .hero-cta:active{transform:scale(0.97);}
+  .hero-cta:hover{filter:brightness(1.05); transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--line);}
+  .hero-cta:active{transform:translate(0,0); box-shadow:1px 1px 0 var(--line);}
   .hero-cta.secondary{
     background:var(--panel);
     color:var(--ink);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
   }
-  .hero-cta.secondary:hover{border-color:var(--cyan); filter:none;}
+  .hero-cta.secondary:hover{border-color:var(--line); filter:none;}
 
   .quick-grid{
     display:grid;
@@ -243,18 +248,19 @@
     align-items:center;
     gap:8px;
     background:var(--panel);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:14px;
     padding:16px 8px;
     cursor:pointer;
-    transition:border-color .15s ease, transform .15s ease;
+    box-shadow:3px 3px 0 var(--line);
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
   }
-  .quick-item:hover{border-color:var(--cyan); transform:translateY(-2px);}
+  .quick-item:hover{border-color:var(--cyan); transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--cyan);}
   .quick-item .icon{
     width:34px;height:34px;
     border-radius:9px;
     display:flex;align-items:center;justify-content:center;
-    background:#1a1a22;
+    background:var(--iconbg);
   }
   .quick-item .icon svg{width:18px;height:18px;}
   .quick-item .qname{
@@ -271,7 +277,7 @@
     font-size:12px;
     letter-spacing:0.14em;
     text-transform:uppercase;
-    color:#54545f;
+    color:var(--dim2);
     margin:0 0 16px;
   }
 
@@ -283,22 +289,23 @@
   }
   .card{
     background:var(--panel);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:16px;
     padding:20px;
     cursor:pointer;
-    transition:border-color .15s ease, transform .15s ease;
+    box-shadow:3px 3px 0 var(--line);
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
     display:flex;
     flex-direction:column;
     gap:14px;
   }
-  .card:hover{border-color:var(--cyan); transform:translateY(-2px);}
-  .card.active{border-color:var(--pink); box-shadow:0 0 0 1px var(--pink);}
+  .card:hover{border-color:var(--cyan); transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--cyan);}
+  .card.active{border-color:var(--pink); box-shadow:4px 4px 0 var(--pink);}
   .card .icon{
     width:40px;height:40px;
     border-radius:10px;
     display:flex;align-items:center;justify-content:center;
-    background:#1a1a22;
+    background:var(--iconbg);
   }
   .card .icon svg{width:20px;height:20px;}
   .card .name{font-weight:700;font-size:15px;}
@@ -307,10 +314,11 @@
   /* ---------- TOOL ---------- */
   .tool{
     background:var(--panel);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:18px;
     padding:24px;
     margin-bottom:20px;
+    box-shadow:4px 4px 0 var(--line);
     scroll-margin-top:80px;
   }
   .tool-head{
@@ -322,7 +330,7 @@
   .tool-head .icon{
     width:36px;height:36px;
     border-radius:9px;
-    background:#1a1a22;
+    background:var(--iconbg);
     display:flex;align-items:center;justify-content:center;
   }
   .tool-head .icon svg{width:18px;height:18px;}
@@ -332,12 +340,12 @@
     width:100%;
     display:flex;
     gap:10px;
-    background:#0e0e14;
+    background:var(--sunken);
     border:1px solid var(--line);
     border-radius:14px;
     padding:8px;
   }
-  input[type="url"]{
+  input[type="url"], form input[type="text"]{
     flex:1;
     background:transparent;
     border:none;
@@ -348,11 +356,11 @@
     padding:14px 16px;
     min-width:0;
   }
-  input[type="url"]::placeholder{color:#4d4d59;}
+  input[type="url"]::placeholder, form input[type="text"]::placeholder{color:var(--dim3);}
 
   button{
     background:var(--ink);
-    color:#0b0b10;
+    color:var(--bg);
     border:none;
     border-radius:9px;
     padding:0 26px;
@@ -363,14 +371,14 @@
     transition:transform .15s ease, background .15s ease;
     white-space:nowrap;
   }
-  button:hover{background:var(--cyan);}
+  button:hover{background:var(--cyan); color:#fff;}
   button:active{transform:scale(0.97);}
   button:disabled{opacity:0.5;cursor:wait;}
 
   .hint{
     font-family:'JetBrains Mono', monospace;
     font-size:11px;
-    color:#54545f;
+    color:var(--dim2);
     margin-top:12px;
     letter-spacing:0.02em;
   }
@@ -390,7 +398,7 @@
     display:none;
     width:100%;
     margin-top:24px;
-    background:#0e0e14;
+    background:var(--sunken);
     border:1px solid var(--line);
     border-radius:16px;
     overflow:hidden;
@@ -408,7 +416,7 @@
     height:96px;
     border-radius:10px;
     object-fit:cover;
-    background:#1a1a22;
+    background:var(--iconbg);
     flex-shrink:0;
   }
   .meta{min-width:0;}
@@ -452,14 +460,15 @@
     width:100%;
     margin-top:16px;
     background:linear-gradient(90deg, var(--cyan), var(--pink));
-    color:#0b0b10;
-    border:none;
+    color:#fff;
+    border:1.5px solid var(--line);
     border-radius:10px;
     padding:16px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
     font-size:15px;
     cursor:pointer;
+    box-shadow:3px 3px 0 var(--line);
     transition:filter .15s ease, transform .15s ease;
   }
   .download-main:hover{filter:brightness(1.08);}
@@ -478,7 +487,7 @@
   .other-quality{
     font-family:'JetBrains Mono', monospace;
     font-size:11px;
-    color:#4d4d59;
+    color:var(--dim3);
     text-transform:uppercase;
     letter-spacing:0.1em;
     margin:22px 0 10px;
@@ -519,13 +528,13 @@
     cursor:pointer;
     flex-shrink:0;
   }
-  .link-row a:hover{background:var(--pink);color:var(--ink);}
+  .link-row a:hover{background:var(--pink);color:#fff;}
 
   footer{
     margin-top:60px;
     font-family:'JetBrains Mono', monospace;
     font-size:11px;
-    color:#3f3f49;
+    color:var(--dim3);
     text-align:center;
   }
 
@@ -533,10 +542,11 @@
   .panel{
     display:none;
     background:var(--panel);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:18px;
     padding:24px;
     margin-top:24px;
+    box-shadow:4px 4px 0 var(--line);
   }
   .panel.show{display:block;}
 
@@ -544,7 +554,7 @@
     display:inline-block;
     margin-top:6px;
     background:linear-gradient(90deg, var(--cyan), var(--pink));
-    color:#0b0b10;
+    color:#fff;
   }
   .welcome-cta:hover{opacity:0.9;background:linear-gradient(90deg, var(--cyan), var(--pink));}
 
@@ -560,7 +570,7 @@
     flex-wrap:wrap;
     align-items:center;
     gap:14px;
-    background:#0e0e14;
+    background:var(--sunken);
     border:1px solid var(--line);
     border-radius:12px;
     padding:14px 16px;
@@ -570,7 +580,7 @@
     border-radius:10px;
     object-fit:cover;
     flex-shrink:0;
-    background:#1a1a22;
+    background:var(--iconbg);
   }
   .track-info{min-width:0;flex:1;}
   .track-info .t-title{
@@ -592,7 +602,7 @@
   .track-info .t-meta{
     font-family:'JetBrains Mono', monospace;
     font-size:10px;
-    color:#54545f;
+    color:var(--dim2);
     margin-top:4px;
   }
   .track-actions{
@@ -608,7 +618,7 @@
     font-family:'JetBrains Mono', monospace;
     font-size:11px;
     font-weight:700;
-    color:#0b0b10;
+    color:#fff;
     background:var(--cyan);
     text-decoration:none;
     padding:9px 16px;
@@ -637,7 +647,7 @@
   .mode-switch{
     display:flex;
     gap:8px;
-    background:#0e0e14;
+    background:var(--sunken);
     border:1px solid var(--line);
     border-radius:12px;
     padding:6px;
@@ -658,7 +668,7 @@
   .mode-btn:hover{background:transparent; color:var(--ink);}
   .mode-btn.active{background:var(--panel); color:var(--ink);}
 
-  #encFileForm{
+  #encFileForm, #web2apkForm{
     display:flex;
     flex-direction:column;
     background:transparent;
@@ -667,7 +677,7 @@
     gap:12px;
   }
   .file-drop{
-    background:#0e0e14;
+    background:var(--sunken);
     border:1px dashed var(--line);
     border-radius:14px;
     padding:22px 16px;
@@ -685,7 +695,7 @@
   .key-row{
     display:flex;
     gap:10px;
-    background:#0e0e14;
+    background:var(--sunken);
     border:1px solid var(--line);
     border-radius:14px;
     padding:8px;
@@ -701,7 +711,7 @@
     padding:14px 16px;
     min-width:0;
   }
-  .key-row input[type="text"]::placeholder{color:#4d4d59;}
+  .key-row input[type="text"]::placeholder{color:var(--dim3);}
 
   .enc-result{
     display:none;
@@ -712,7 +722,7 @@
     width:100%;
     min-height:140px;
     resize:vertical;
-    background:#0e0e14;
+    background:var(--sunken);
     border:1px solid var(--line);
     border-radius:12px;
     color:var(--ink);
@@ -850,6 +860,39 @@
     </div>
   </div>
 
+  <!-- ===== PANEL: WEB TO ZIP ===== -->
+  <div class="panel" id="web2zip-tool">
+    <div class="tool-head">
+      <div class="icon" id="web2zipIconSlot"></div>
+      <div class="title">Web to ZIP</div>
+    </div>
+    <form id="web2zipForm">
+      <input type="url" id="web2zipInput" placeholder="https://situs-tujuan.com" required>
+      <button type="submit" id="web2zipSendBtn">Proses</button>
+    </form>
+    <div class="hint">Tempel URL website, hasilnya file .zip yang otomatis terunduh.</div>
+    <div class="status" id="web2zipStatus"></div>
+  </div>
+
+  <!-- ===== PANEL: WEB TO APK ===== -->
+  <div class="panel" id="web2apk-tool">
+    <div class="tool-head">
+      <div class="icon" id="web2apkIconSlot"></div>
+      <div class="title">Web to APK</div>
+    </div>
+    <form id="web2apkForm">
+      <div class="key-row">
+        <input type="text" id="web2apkNameInput" placeholder="Nama aplikasi (mis. Dinz Downloader)" required>
+      </div>
+      <div class="key-row">
+        <input type="url" id="web2apkUrlInput" placeholder="https://situs-tujuan.com" required>
+        <button type="submit" id="web2apkSendBtn">Buat APK</button>
+      </div>
+    </form>
+    <div class="hint">Isi nama aplikasi &amp; URL website. APK otomatis terunduh lalu langsung dibuka untuk dipasang — Android tetap akan minta izin "pasang aplikasi tak dikenal" sekali, itu proteksi bawaan HP dan bukan sesuatu yang bisa dilewati dari web.</div>
+    <div class="status" id="web2apkStatus"></div>
+  </div>
+
   <footer>dibuat oleh dinz code &amp; di kembangkan oleh dinz code &middot; cepat - aman</footer>
 </div>
 
@@ -868,6 +911,8 @@ const ICONS = {
   spotify: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg>`,
   capcut: `<svg viewBox="0 0 24 24" fill="none" stroke="#00f6ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z" fill="#00f6ef" stroke="none"/></svg>`,
   encfile: `<svg viewBox="0 0 24 24" fill="none" stroke="#8f96ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+  web2zip: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>`,
+  web2apk: `<svg viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="19" x2="14" y2="19"/></svg>`,
 };
 
 /* ============================================================
@@ -876,6 +921,8 @@ const ICONS = {
 const EXTRA_TOOLS = [
   { id:'spotify', name:'Spotify', desc:'Cari & download lagu', panel:'spotify-tool' },
   { id:'encfile', name:'Enc/Dec File', desc:'Encrypt & decrypt isi file', panel:'encfile-tool' },
+  { id:'web2zip', name:'Web to ZIP', desc:'Unduh website jadi file ZIP', panel:'web2zip-tool' },
+  { id:'web2apk', name:'Web to APK', desc:'Ubah website jadi APK Android', panel:'web2apk-tool' },
 ];
 
 /* ============================================================
@@ -1024,7 +1071,7 @@ document.querySelectorAll('.menu-item').forEach(item=>{
 ============================================================ */
 const serviceGrid = document.getElementById('serviceGrid');
 const toolsContainer = document.getElementById('toolsContainer');
-const allPanels = ['spotify-tool', 'encfile-tool'];
+const allPanels = ['spotify-tool', 'encfile-tool', 'web2zip-tool', 'web2apk-tool'];
 
 function showPanel(panelId, scroll){
   allPanels.forEach(id=>{
@@ -1054,6 +1101,17 @@ function safeFileName(str){
 
 function mediaExt(type){
   return type === 'audio' ? '.mp3' : (type === 'image' ? '.jpg' : '.mp4');
+}
+
+/* Dipakai oleh Web to ZIP / Web to APK: cari field link hasil dari
+   respons JSON API, karena tiap API suka beda-beda nama field-nya. */
+function extractResultUrl(data){
+  if(!data) return null;
+  if(typeof data === 'string') return /^https?:\/\//i.test(data) ? data : null;
+  const r = data.result || data.data || data;
+  if(typeof r === 'string') return /^https?:\/\//i.test(r) ? r : null;
+  const candidates = [r.url, r.download, r.download_url, r.file, r.zip, r.apk, r.link, r.output];
+  return candidates.find(u => typeof u === 'string' && /^https?:\/\//i.test(u)) || null;
 }
 
 async function forceDownload(url, filename, btnEl, progressEl){
@@ -1695,6 +1753,188 @@ encDownloadBtn.addEventListener('click', ()=>{
   a.click();
   a.remove();
   URL.revokeObjectURL(blobUrl);
+});
+
+/* ============================================================
+   WEB TO ZIP
+   Alur: user tempel URL website -> dikirim ke synoxcloud web2zip ->
+   kalau respons JSON, ambil link hasilnya lalu diunduh (forceDownload);
+   kalau respons langsung berupa file, unduh langsung dari blob-nya.
+============================================================ */
+document.getElementById('web2zipIconSlot').innerHTML = ICONS.web2zip;
+
+const web2zipForm = document.getElementById('web2zipForm');
+const web2zipInput = document.getElementById('web2zipInput');
+const web2zipSendBtn = document.getElementById('web2zipSendBtn');
+const web2zipStatus = document.getElementById('web2zipStatus');
+
+function setWeb2zipStatus(msg, isError){
+  web2zipStatus.textContent = msg;
+  web2zipStatus.classList.toggle('show', !!msg);
+  web2zipStatus.classList.toggle('error', !!isError);
+}
+
+/* Beberapa API balikin JSON berisi link file, sebagian lagi langsung
+   nge-stream file-nya. Fungsi ini nangani dua-duanya. */
+async function downloadFromApiResponse(res, apiUrl, filename){
+  const ctype = (res.headers.get('content-type') || '').toLowerCase();
+  if(ctype.includes('json')){
+    const data = await res.json();
+    if(data && data.status === false) throw new Error(data.message || 'Gagal memproses permintaan');
+    const link = extractResultUrl(data);
+    if(!link) throw new Error('Link hasil tidak ditemukan pada respons API');
+    await forceDownload(link, filename);
+    return;
+  }
+  try{
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=> URL.revokeObjectURL(blobUrl), 4000);
+  }catch(err){
+    window.open(apiUrl, '_blank', 'noopener');
+  }
+}
+
+async function processWeb2zip(url){
+  if(!url) return;
+  web2zipSendBtn.disabled = true;
+  web2zipSendBtn.textContent = 'Memproses...';
+  setWeb2zipStatus('Membuat file ZIP dari website...', false);
+
+  try{
+    const apiUrl = `https://api.synoxcloud.xyz/tools/web2zip?url=${encodeURIComponent(url)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+
+    const filename = safeFileName(url.replace(/^https?:\/\//i,'').replace(/\/+$/,'')) + '.zip';
+    await downloadFromApiResponse(res, apiUrl, filename);
+    setWeb2zipStatus('Selesai, cek folder unduhan.', false);
+  }catch(err){
+    setWeb2zipStatus('Gagal: ' + err.message, true);
+  }finally{
+    web2zipSendBtn.disabled = false;
+    web2zipSendBtn.textContent = 'Proses';
+    setTimeout(()=>{ if(!web2zipStatus.classList.contains('error')) setWeb2zipStatus('', false); }, 5000);
+  }
+}
+
+web2zipForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  processWeb2zip(web2zipInput.value.trim());
+});
+
+/* ============================================================
+   WEB TO APK
+   Alur: user isi nama app + URL website -> synoxcloud web2apk ->
+   APK-nya diunduh otomatis, lalu langsung dibuka (window.location)
+   supaya installer Android muncul sendiri. Catatan: Android tetap
+   mewajibkan konfirmasi izin "pasang aplikasi tak dikenal" untuk
+   browser yang dipakai — ini proteksi sistem, bukan sesuatu yang
+   bisa dilewati dari halaman web manapun.
+============================================================ */
+document.getElementById('web2apkIconSlot').innerHTML = ICONS.web2apk;
+
+const web2apkForm = document.getElementById('web2apkForm');
+const web2apkNameInput = document.getElementById('web2apkNameInput');
+const web2apkUrlInput = document.getElementById('web2apkUrlInput');
+const web2apkSendBtn = document.getElementById('web2apkSendBtn');
+const web2apkStatus = document.getElementById('web2apkStatus');
+
+function setWeb2apkStatus(msg, isError){
+  web2apkStatus.textContent = msg;
+  web2apkStatus.classList.toggle('show', !!msg);
+  web2apkStatus.classList.toggle('error', !!isError);
+}
+
+/* Unduh APK sebagai blob lalu langsung navigasi ke blob URL itu.
+   Di Chrome Android ini biasanya memicu prompt installer begitu
+   file selesai diunduh, tanpa user harus buka folder Download manual. */
+async function downloadAndOpenApk(fileUrl, filename){
+  let blob;
+  try{
+    const res = await fetch(fileUrl);
+    if(!res.ok) throw new Error('status ' + res.status);
+    const raw = await res.blob();
+    blob = raw.type === 'application/vnd.android.package-archive'
+      ? raw
+      : new Blob([raw], {type:'application/vnd.android.package-archive'});
+  }catch(err){
+    window.open(fileUrl, '_blank', 'noopener');
+    return;
+  }
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>{ window.location.href = blobUrl; }, 400);
+}
+
+async function processWeb2apk(appName, websiteUrl){
+  if(!appName || !websiteUrl) return;
+  web2apkSendBtn.disabled = true;
+  web2apkSendBtn.textContent = 'Membuat APK...';
+  setWeb2apkStatus('Membuat APK dari website, proses ini bisa makan waktu lebih lama...', false);
+
+  try{
+    const apiUrl = `https://api.synoxcloud.xyz/tools/web2apk?appName=${encodeURIComponent(appName)}&websiteUrl=${encodeURIComponent(websiteUrl)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+
+    const filename = safeFileName(appName) + '.apk';
+    const ctype = (res.headers.get('content-type') || '').toLowerCase();
+
+    if(ctype.includes('json')){
+      const data = await res.json();
+      if(data && data.status === false) throw new Error(data.message || 'Gagal membuat APK');
+      const link = extractResultUrl(data);
+      if(!link) throw new Error('Link APK tidak ditemukan pada respons API');
+      await downloadAndOpenApk(link, filename);
+    }else{
+      const raw = await res.blob();
+      const blob = raw.type === 'application/vnd.android.package-archive'
+        ? raw
+        : new Blob([raw], {type:'application/vnd.android.package-archive'});
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>{ window.location.href = blobUrl; }, 400);
+    }
+
+    setWeb2apkStatus('APK terunduh & sedang dibuka. Kalau installer tidak langsung muncul, buka lewat notifikasi unduhan lalu izinkan "Pasang aplikasi tak dikenal" untuk browser ini.', false);
+  }catch(err){
+    setWeb2apkStatus('Gagal: ' + err.message, true);
+  }finally{
+    web2apkSendBtn.disabled = false;
+    web2apkSendBtn.textContent = 'Buat APK';
+  }
+}
+
+web2apkForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  processWeb2apk(web2apkNameInput.value.trim(), web2apkUrlInput.value.trim());
 });
 </script>
 </body>
