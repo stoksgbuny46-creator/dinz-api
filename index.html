@@ -893,6 +893,25 @@
     <div class="status" id="web2apkStatus"></div>
   </div>
 
+  <!-- ===== PANEL: BYPASS LINK ===== -->
+  <div class="panel" id="bypass-tool">
+    <div class="tool-head">
+      <div class="icon" id="bypassIconSlot"></div>
+      <div class="title">Bypass Link</div>
+    </div>
+    <form id="bypassForm">
+      <input type="url" id="bypassInput" placeholder="https://sfl.gl/xxxxx" required>
+      <button type="submit" id="bypassSendBtn">Bypass</button>
+    </form>
+    <div class="hint">Tempel link shortlink (mis. sfile), hasilnya link unduhan langsung (mis. Mediafire).</div>
+    <div class="status" id="bypassStatus"></div>
+    <div class="enc-result" id="bypassResult">
+      <textarea id="bypassResultText" class="enc-textarea" readonly></textarea>
+      <button type="button" class="download-main" id="bypassCopyBtn">Salin Link</button>
+      <button type="button" class="download-main" id="bypassOpenBtn">Buka Link</button>
+    </div>
+  </div>
+
   <footer>dibuat oleh dinz code &amp; di kembangkan oleh dinz code &middot; cepat - aman</footer>
 </div>
 
@@ -913,6 +932,7 @@ const ICONS = {
   encfile: `<svg viewBox="0 0 24 24" fill="none" stroke="#8f96ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
   web2zip: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>`,
   web2apk: `<svg viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="19" x2="14" y2="19"/></svg>`,
+  bypass: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 0 0 4 4l3-3a4 4 0 0 0-5.6-5.6l-1 1"/><path d="M15 12a4 4 0 0 0-4-4l-3 3a4 4 0 0 0 5.6 5.6l1-1"/></svg>`,
 };
 
 /* ============================================================
@@ -923,6 +943,7 @@ const EXTRA_TOOLS = [
   { id:'encfile', name:'Enc/Dec File', desc:'Encrypt & decrypt isi file', panel:'encfile-tool' },
   { id:'web2zip', name:'Web to ZIP', desc:'Unduh website jadi file ZIP', panel:'web2zip-tool' },
   { id:'web2apk', name:'Web to APK', desc:'Ubah website jadi APK Android', panel:'web2apk-tool' },
+  { id:'bypass', name:'Bypass Link', desc:'Ubah link sfile jadi link langsung', panel:'bypass-tool' },
 ];
 
 /* ============================================================
@@ -1071,7 +1092,7 @@ document.querySelectorAll('.menu-item').forEach(item=>{
 ============================================================ */
 const serviceGrid = document.getElementById('serviceGrid');
 const toolsContainer = document.getElementById('toolsContainer');
-const allPanels = ['spotify-tool', 'encfile-tool', 'web2zip-tool', 'web2apk-tool'];
+const allPanels = ['spotify-tool', 'encfile-tool', 'web2zip-tool', 'web2apk-tool', 'bypass-tool'];
 
 function showPanel(panelId, scroll){
   allPanels.forEach(id=>{
@@ -1935,6 +1956,84 @@ async function processWeb2apk(appName, websiteUrl){
 web2apkForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   processWeb2apk(web2apkNameInput.value.trim(), web2apkUrlInput.value.trim());
+});
+
+/* ============================================================
+   BYPASS LINK
+   Alur: user tempel shortlink (mis. sfile/sfl.gl) -> dikirim ke
+   API bypass izenlol -> ambil result.destination_url -> tampilkan
+   sebagai link yang bisa disalin / dibuka (mis. Mediafire).
+============================================================ */
+document.getElementById('bypassIconSlot').innerHTML = ICONS.bypass;
+
+const bypassForm = document.getElementById('bypassForm');
+const bypassInput = document.getElementById('bypassInput');
+const bypassSendBtn = document.getElementById('bypassSendBtn');
+const bypassStatus = document.getElementById('bypassStatus');
+const bypassResult = document.getElementById('bypassResult');
+const bypassResultText = document.getElementById('bypassResultText');
+const bypassCopyBtn = document.getElementById('bypassCopyBtn');
+const bypassOpenBtn = document.getElementById('bypassOpenBtn');
+
+function setBypassStatus(msg, isError){
+  bypassStatus.textContent = msg;
+  bypassStatus.classList.toggle('show', !!msg);
+  bypassStatus.classList.toggle('error', !!isError);
+}
+
+async function processBypass(url){
+  if(!url) return;
+  bypassResult.classList.remove('show');
+  bypassSendBtn.disabled = true;
+  bypassSendBtn.textContent = 'Memproses...';
+  setBypassStatus('Mem-bypass link...', false);
+
+  try{
+    const apiUrl = `https://api-xemoz-official.my.id/api/tools/bypasslink_izenlol.php?url=${encodeURIComponent(url)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+
+    const data = await res.json();
+    if(!data || data.status === false) throw new Error((data && data.message) || 'Gagal mem-bypass link');
+
+    const dest = data.result && data.result.destination_url;
+    if(!dest || !/^https?:\/\//i.test(dest)){
+      throw new Error(dest || 'Link tidak berhasil di-bypass, coba lagi atau cek link sumbernya');
+    }
+
+    bypassResultText.value = dest;
+    bypassOpenBtn.onclick = ()=> window.open(dest, '_blank', 'noopener');
+    bypassResult.classList.add('show');
+    setBypassStatus('Berhasil, link hasil siap dipakai.', false);
+  }catch(err){
+    setBypassStatus('Gagal: ' + err.message, true);
+  }finally{
+    bypassSendBtn.disabled = false;
+    bypassSendBtn.textContent = 'Bypass';
+  }
+}
+
+bypassCopyBtn.addEventListener('click', async ()=>{
+  if(!bypassResultText.value) return;
+  try{
+    await navigator.clipboard.writeText(bypassResultText.value);
+    bypassCopyBtn.textContent = 'Tersalin!';
+  }catch(e){
+    bypassResultText.select();
+    document.execCommand('copy');
+    bypassCopyBtn.textContent = 'Tersalin!';
+  }
+  setTimeout(()=>{ bypassCopyBtn.textContent = 'Salin Link'; }, 1500);
+});
+
+bypassForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  processBypass(bypassInput.value.trim());
 });
 </script>
 </body>
