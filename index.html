@@ -5,30 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dinz Code / All-in-One Downloader</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
   :root{
-    --bg: #FBF3E2;
+    --bg: #EEF1FA;
     --panel: #FFFFFF;
-    --sunken: #FBF1DC;
-    --iconbg: #F5EAD3;
-    --line: #1B1712;
-    --ink: #1B1712;
-    --dim: #756D5C;
-    --dim2: #A39980;
-    --dim3: #B0A78C;
-    --cyan: #FF6A1A;
-    --pink: #E8420A;
-    --indigo: #C2410C;
+    --sunken: #F4F6FC;
+    --iconbg: #E9EEFC;
+    --line: #14151A;
+    --ink: #14151A;
+    --dim: #5B6472;
+    --dim2: #8890A0;
+    --dim3: #AFB6C4;
+    --cyan: #2F6FED;
+    --cyan-bg: #DCE8FE;
+    --pink: #FF4D6D;
+    --indigo: #2F6FED;
     --warn: #B45309;
+    --yellow: #FFD639;
+    --green: #22C55E;
+    --grid-line: rgba(20,21,26,0.055);
   }
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(circle at 15% 0%, rgba(255,106,26,0.10), transparent 45%),
-      radial-gradient(circle at 85% 20%, rgba(232,66,10,0.08), transparent 45%),
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/26px 26px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/26px 26px,
       var(--bg);
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
@@ -43,15 +47,17 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:16px 20px;
-    background:rgba(251,243,226,0.9);
+    padding:14px 20px;
+    background:rgba(255,255,255,0.92);
     backdrop-filter:blur(10px);
-    border-bottom:1.5px solid var(--line);
+    border-bottom:2px solid var(--line);
   }
   .brand{
     font-weight:700;
     font-size:16px;
-    letter-spacing:-0.01em;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+    font-family:'JetBrains Mono', monospace;
   }
   .brand .dot{color:var(--cyan);}
 
@@ -59,16 +65,18 @@
     width:42px;
     height:42px;
     border-radius:10px;
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     background:var(--panel);
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
     flex-shrink:0;
+    box-shadow:2px 2px 0 var(--line);
   }
   .hamburger svg{width:20px;height:20px;stroke:var(--ink);}
   .hamburger:hover{border-color:var(--cyan);}
+  .hamburger:active{transform:translate(1px,1px); box-shadow:1px 1px 0 var(--line);}
 
   /* ---------- MENU OVERLAY ---------- */
   .menu-overlay{
@@ -78,7 +86,9 @@
     z-index:100;
     display:flex;
     flex-direction:column;
-    padding:22px 24px;
+    padding:22px 24px 40px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
     transform:translateX(-100%);
     transition:transform .28s cubic-bezier(.4,0,.2,1);
   }
@@ -91,155 +101,275 @@
     margin-bottom:40px;
   }
   .menu-head h2{
-    font-size:28px;
+    font-size:26px;
     font-weight:700;
     margin:0;
+    text-transform:uppercase;
+    font-family:'JetBrains Mono', monospace;
   }
   .menu-close{
     width:38px;height:38px;
-    border:none;
-    background:transparent;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    background:var(--panel);
     color:var(--ink);
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
+    box-shadow:2px 2px 0 var(--line);
   }
-  .menu-close svg{width:24px;height:24px;stroke:var(--ink);}
+  .menu-close svg{width:22px;height:22px;stroke:var(--ink);}
 
   .menu-list{
     display:flex;
     flex-direction:column;
-    gap:34px;
+    gap:14px;
   }
   .menu-item{
     display:flex;
     align-items:center;
-    gap:20px;
-    background:none;
-    border:none;
+    gap:16px;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:14px;
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
-    font-size:21px;
-    font-weight:500;
+    font-size:18px;
+    font-weight:700;
+    text-transform:uppercase;
     cursor:pointer;
-    padding:0;
+    padding:16px 18px;
     text-align:left;
+    box-shadow:3px 3px 0 var(--line);
+    transition:transform .12s ease, box-shadow .12s ease;
   }
   .menu-item svg{
-    width:26px;height:26px;
-    stroke:var(--indigo);
+    width:22px;height:22px;
+    stroke:var(--cyan);
     flex-shrink:0;
   }
-  .menu-item.support svg{stroke:var(--indigo);}
-  .menu-item:hover{color:var(--cyan);}
-  .menu-item:hover svg{stroke:var(--cyan);}
+  .menu-item:hover{transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--cyan); border-color:var(--cyan);}
 
-  /* ---------- HERO ---------- */
+  /* item halaman aktif (Beranda) — sengaja dibuat tidak bisa dipencet */
+  .menu-item.menu-item-current{
+    cursor:default;
+    pointer-events:none;
+    opacity:0.55;
+    box-shadow:3px 3px 0 var(--line);
+  }
+  .menu-item.menu-item-current svg{stroke:var(--dim2);}
+  .menu-item-current .tag{
+    margin-left:auto;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--dim2);
+    border:1.5px solid var(--dim3);
+    border-radius:999px;
+    padding:4px 9px;
+  }
+
+  /* ---------- WRAP ---------- */
   .wrap{
     max-width:880px;
     margin:0 auto;
-    padding:48px 20px 80px;
+    padding:20px 18px 80px;
   }
 
-  .eyebrow{
-    font-family:'JetBrains Mono', monospace;
-    font-size:12px;
-    letter-spacing:0.18em;
-    text-transform:uppercase;
-    color:var(--cyan);
+  /* ---------- PILL ROW ---------- */
+  .pill-row{
     display:flex;
-    align-items:center;
+    flex-wrap:wrap;
     gap:10px;
+    background:var(--panel);
+    border:2px solid var(--line);
+    border-radius:22px;
+    padding:10px;
+    box-shadow:4px 4px 0 var(--line);
     margin-bottom:18px;
   }
-  .eyebrow::before{
-    content:"";
-    width:7px;height:7px;border-radius:50%;
-    background:var(--cyan);
-    box-shadow:0 0 12px var(--cyan);
-  }
-
-  h1{
-    font-size:clamp(34px, 6vw, 56px);
-    line-height:1.02;
-    margin:0 0 10px;
-    font-weight:700;
-    letter-spacing:-0.02em;
-  }
-  h1 .rip{
-    background:linear-gradient(90deg, var(--cyan), var(--pink));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-  }
-
-  .sub{
-    color:var(--dim);
-    font-size:15px;
-    max-width:520px;
-    margin:0 0 28px;
-    line-height:1.55;
-  }
-
-  .hero-badges{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin:0 0 28px;
-  }
-  .badge{
-    display:flex;
-    align-items:center;
-    gap:7px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:9px 14px;
-    font-family:'JetBrains Mono', monospace;
-    font-size:11.5px;
-    color:var(--dim);
-    white-space:nowrap;
-  }
-  .badge svg{width:14px;height:14px;stroke:var(--cyan);flex-shrink:0;}
-  .badge b{color:var(--ink);font-weight:700;}
-
-  .hero-cta-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    margin-bottom:52px;
-  }
-  .hero-cta{
+  .pill{
     display:inline-flex;
     align-items:center;
     gap:8px;
-    background:linear-gradient(90deg, var(--cyan), var(--pink));
-    color:#fff;
     border:1.5px solid var(--line);
-    border-radius:12px;
-    padding:15px 24px;
+    border-radius:999px;
+    padding:11px 16px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
-    font-size:14.5px;
+    font-size:12px;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
     cursor:pointer;
-    box-shadow:4px 4px 0 var(--line);
-    transition:filter .15s ease, transform .15s ease, box-shadow .15s ease;
+    color:var(--ink);
+    transition:transform .12s ease, box-shadow .12s ease;
+    white-space:nowrap;
   }
-  .hero-cta svg{width:17px;height:17px;flex-shrink:0;}
-  .hero-cta:hover{filter:brightness(1.05); transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--line);}
-  .hero-cta:active{transform:translate(0,0); box-shadow:1px 1px 0 var(--line);}
-  .hero-cta.secondary{
+  .pill svg{width:15px;height:15px;flex-shrink:0;}
+  .pill:hover{transform:translate(-1px,-1px);}
+  .pill:active{transform:translate(0,0);}
+  .pill-red{background:var(--pink); color:#fff;}
+  .pill-blue{background:var(--cyan); color:#fff;}
+  .pill-yellow{background:var(--yellow); color:var(--ink);}
+
+  /* ---------- STATUS CARD ---------- */
+  .status-card{
+    background:var(--panel);
+    border:2px solid var(--line);
+    border-radius:20px;
+    padding:22px;
+    box-shadow:5px 5px 0 var(--line);
+    margin-bottom:26px;
+  }
+  .status-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .status-line{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--cyan);
+  }
+  .status-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 10px var(--green);
+    flex-shrink:0;
+  }
+  .status-mini-btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.04em;
     background:var(--panel);
     color:var(--ink);
     border:1.5px solid var(--line);
+    border-radius:9px;
+    padding:8px 12px;
+    cursor:pointer;
+    white-space:nowrap;
   }
-  .hero-cta.secondary:hover{border-color:var(--line); filter:none;}
+  .status-mini-btn:hover{border-color:var(--cyan); color:var(--cyan);}
 
+  .api-title{
+    font-size:clamp(26px, 6vw, 34px);
+    line-height:1.05;
+    margin:0 0 18px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    text-transform:uppercase;
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  .stat-row{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .stat-cell{
+    padding:14px 8px;
+    text-align:center;
+    border-right:1.5px solid var(--line);
+    background:var(--panel);
+  }
+  .stat-cell:last-child{border-right:none;}
+  .stat-cell.online{background:var(--cyan-bg);}
+  .stat-num{
+    font-size:22px;
+    font-weight:700;
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--ink);
+  }
+  .stat-cell.online .stat-num{color:var(--cyan);}
+  .stat-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--dim2);
+    margin-top:3px;
+  }
+  .stat-cell.online .stat-label{color:var(--cyan);}
+
+  .search-row{
+    display:flex;
+    gap:10px;
+  }
+  .search-box{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--sunken);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:0 14px;
+    min-width:0;
+  }
+  .search-box svg{width:16px;height:16px;stroke:var(--dim2); flex-shrink:0;}
+  .search-box input{
+    flex:1;
+    min-width:0;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    text-transform:uppercase;
+    padding:13px 0;
+  }
+  .search-box input::placeholder{color:var(--dim3);}
+  .sync-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:0 14px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    color:var(--ink);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .sync-btn svg{width:14px;height:14px;stroke:var(--cyan);}
+  .sync-btn.spin svg{animation:spin .6s linear;}
+  @keyframes spin{from{transform:rotate(0);}to{transform:rotate(360deg);}}
+
+  .quick-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--dim2);
+    margin:0 0 12px;
+  }
+
+  /* ---------- QUICK GRID ---------- */
   .quick-grid{
     display:grid;
     grid-template-columns:repeat(auto-fill, minmax(84px, 1fr));
-    gap:12px;
+    gap:10px;
     margin-bottom:8px;
   }
   .quick-item{
@@ -250,74 +380,105 @@
     background:var(--panel);
     border:1.5px solid var(--line);
     border-radius:14px;
-    padding:16px 8px;
+    padding:14px 6px;
     cursor:pointer;
     box-shadow:3px 3px 0 var(--line);
     transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
   }
   .quick-item:hover{border-color:var(--cyan); transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--cyan);}
   .quick-item .icon{
-    width:34px;height:34px;
+    width:32px;height:32px;
     border-radius:9px;
     display:flex;align-items:center;justify-content:center;
     background:var(--iconbg);
   }
-  .quick-item .icon svg{width:18px;height:18px;}
+  .quick-item .icon svg{width:17px;height:17px;}
   .quick-item .qname{
-    font-size:11px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
     font-weight:700;
+    text-transform:uppercase;
     color:var(--ink);
     text-align:center;
     line-height:1.3;
   }
 
-  /* ---------- SERVICE GRID ---------- */
+  /* ---------- SERVICE LIST (folder-style rows) ---------- */
   .section-label{
     font-family:'JetBrains Mono', monospace;
     font-size:12px;
     letter-spacing:0.14em;
     text-transform:uppercase;
     color:var(--dim2);
-    margin:0 0 16px;
+    margin:32px 0 14px;
   }
 
   .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
-    gap:14px;
-    margin-bottom:56px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:44px;
   }
   .card{
     background:var(--panel);
     border:1.5px solid var(--line);
-    border-radius:16px;
-    padding:20px;
+    border-radius:14px;
+    padding:14px 16px;
     cursor:pointer;
     box-shadow:3px 3px 0 var(--line);
     transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
     display:flex;
-    flex-direction:column;
-    gap:14px;
+    align-items:center;
+    gap:12px;
   }
   .card:hover{border-color:var(--cyan); transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--cyan);}
   .card.active{border-color:var(--pink); box-shadow:4px 4px 0 var(--pink);}
   .card .icon{
-    width:40px;height:40px;
-    border-radius:10px;
+    width:36px;height:36px;
+    border-radius:9px;
     display:flex;align-items:center;justify-content:center;
     background:var(--iconbg);
+    flex-shrink:0;
   }
-  .card .icon svg{width:20px;height:20px;}
-  .card .name{font-weight:700;font-size:15px;}
-  .card .desc{font-family:'JetBrains Mono', monospace;font-size:11px;color:var(--dim);}
+  .card .icon svg{width:18px;height:18px;}
+  .card .name{
+    font-weight:700;
+    font-size:14px;
+    text-transform:uppercase;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .card .desc{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:12.5px;
+    color:var(--dim);
+    margin-top:2px;
+  }
+  .card > div:nth-child(2){flex:1; min-width:0;}
+  .card::after{
+    content:"+";
+    flex-shrink:0;
+    width:30px;height:30px;
+    border-radius:8px;
+    background:var(--cyan-bg);
+    border:1.5px solid var(--line);
+    color:var(--cyan);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:16px;
+    font-family:'Space Grotesk', sans-serif;
+  }
+  .card.active::after{background:var(--pink); color:#fff; content:"\2713";}
+  .card.filtered-out{display:none;}
 
   /* ---------- TOOL ---------- */
   .tool{
     background:var(--panel);
-    border:1.5px solid var(--line);
+    border:2px solid var(--line);
     border-radius:18px;
-    padding:24px;
-    margin-bottom:20px;
+    padding:22px;
+    margin-bottom:18px;
     box-shadow:4px 4px 0 var(--line);
     scroll-margin-top:80px;
   }
@@ -331,19 +492,25 @@
     width:36px;height:36px;
     border-radius:9px;
     background:var(--iconbg);
+    border:1.5px solid var(--line);
     display:flex;align-items:center;justify-content:center;
   }
   .tool-head .icon svg{width:18px;height:18px;}
-  .tool-head .title{font-weight:700;font-size:17px;}
+  .tool-head .title{
+    font-weight:700;
+    font-size:15.5px;
+    text-transform:uppercase;
+    font-family:'JetBrains Mono', monospace;
+  }
 
   form{
     width:100%;
     display:flex;
     gap:10px;
     background:var(--sunken);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:8px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:6px;
   }
   input[type="url"], form input[type="text"]{
     flex:1;
@@ -360,18 +527,19 @@
 
   button{
     background:var(--ink);
-    color:var(--bg);
-    border:none;
+    color:#fff;
+    border:1.5px solid var(--line);
     border-radius:9px;
-    padding:0 26px;
+    padding:0 24px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
-    font-size:14px;
+    font-size:13.5px;
+    text-transform:uppercase;
     cursor:pointer;
-    transition:transform .15s ease, background .15s ease;
+    transition:transform .12s ease, background .12s ease;
     white-space:nowrap;
   }
-  button:hover{background:var(--cyan); color:#fff;}
+  button:hover{background:var(--cyan); border-color:var(--cyan);}
   button:active{transform:scale(0.97);}
   button:disabled{opacity:0.5;cursor:wait;}
 
@@ -386,7 +554,7 @@
   .status{
     margin-top:20px;
     font-family:'JetBrains Mono', monospace;
-    font-size:13px;
+    font-size:12.5px;
     color:var(--warn);
     display:none;
     text-align:center;
@@ -397,10 +565,10 @@
   .result{
     display:none;
     width:100%;
-    margin-top:24px;
+    margin-top:22px;
     background:var(--sunken);
-    border:1px solid var(--line);
-    border-radius:16px;
+    border:1.5px solid var(--line);
+    border-radius:14px;
     overflow:hidden;
   }
   .result.show{display:block;}
@@ -408,15 +576,16 @@
   .result-top{
     display:flex;
     gap:16px;
-    padding:20px;
-    border-bottom:1px solid var(--line);
+    padding:18px;
+    border-bottom:1.5px solid var(--line);
   }
   .thumb{
-    width:96px;
-    height:96px;
+    width:92px;
+    height:92px;
     border-radius:10px;
     object-fit:cover;
     background:var(--iconbg);
+    border:1.5px solid var(--line);
     flex-shrink:0;
   }
   .meta{min-width:0;}
@@ -427,7 +596,7 @@
     margin-bottom:6px;
   }
   .meta .title{
-    font-size:14px;
+    font-size:13.5px;
     line-height:1.45;
     color:var(--ink);
     display:-webkit-box;
@@ -443,36 +612,38 @@
   }
 
   .player{
-    padding:20px;
-    border-bottom:1px solid var(--line);
+    padding:18px;
+    border-bottom:1.5px solid var(--line);
   }
   .player video, .player img.preview{
     width:100%;
-    max-height:480px;
-    border-radius:12px;
+    max-height:460px;
+    border-radius:10px;
     background:#000;
     display:block;
     object-fit:contain;
+    border:1.5px solid var(--line);
   }
   .player audio{width:100%;}
 
   .download-main{
     width:100%;
-    margin-top:16px;
-    background:linear-gradient(90deg, var(--cyan), var(--pink));
+    margin-top:14px;
+    background:var(--cyan);
     color:#fff;
     border:1.5px solid var(--line);
     border-radius:10px;
-    padding:16px;
+    padding:15px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
-    font-size:15px;
+    font-size:14px;
+    text-transform:uppercase;
     cursor:pointer;
     box-shadow:3px 3px 0 var(--line);
-    transition:filter .15s ease, transform .15s ease;
+    transition:transform .12s ease;
   }
-  .download-main:hover{filter:brightness(1.08);}
-  .download-main:active{transform:scale(0.98);}
+  .download-main:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--line);}
+  .download-main:active{transform:translate(0,0); box-shadow:1px 1px 0 var(--line);}
   .download-main:disabled{opacity:0.55;cursor:wait;}
 
   .dl-progress{
@@ -490,11 +661,11 @@
     color:var(--dim3);
     text-transform:uppercase;
     letter-spacing:0.1em;
-    margin:22px 0 10px;
+    margin:20px 0 10px;
   }
 
   .links{
-    padding:0 20px 20px;
+    padding:0 18px 18px;
     display:flex;
     flex-direction:column;
     gap:10px;
@@ -504,9 +675,9 @@
     align-items:center;
     justify-content:space-between;
     background:var(--panel);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:10px;
-    padding:12px 16px;
+    padding:12px 14px;
     gap:12px;
   }
   .link-row .label{
@@ -519,7 +690,7 @@
     font-family:'JetBrains Mono', monospace;
     font-size:12px;
     font-weight:700;
-    color:var(--bg);
+    color:#fff;
     background:var(--ink);
     text-decoration:none;
     padding:8px 14px;
@@ -528,24 +699,39 @@
     cursor:pointer;
     flex-shrink:0;
   }
-  .link-row a:hover{background:var(--pink);color:#fff;}
+  .link-row a:hover{background:var(--cyan);}
 
   footer{
-    margin-top:60px;
+    margin-top:50px;
+    padding-top:16px;
+    border-top:2px dashed var(--line);
     font-family:'JetBrains Mono', monospace;
-    font-size:11px;
+    font-size:10.5px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
     color:var(--dim3);
-    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
   }
 
-  /* ---------- SHARED TOOL PANEL (dipakai untuk AI & Spotify juga) ---------- */
+  /* ---------- SHARED TOOL PANEL ---------- */
   .panel{
     display:none;
+    background:transparent;
+    border:none;
+    padding:0;
+    margin-top:0;
+    box-shadow:none;
+  }
+  #spotify-tool, #encfile-tool, #web2zip-tool, #web2apk-tool, #bypass-tool, #ytvid-tool, #musicplay-tool{
     background:var(--panel);
-    border:1.5px solid var(--line);
+    border:2px solid var(--line);
     border-radius:18px;
-    padding:24px;
-    margin-top:24px;
+    padding:22px;
+    margin-top:20px;
     box-shadow:4px 4px 0 var(--line);
   }
   .panel.show{display:block;}
@@ -553,17 +739,17 @@
   .welcome-cta{
     display:inline-block;
     margin-top:6px;
-    background:linear-gradient(90deg, var(--cyan), var(--pink));
+    background:var(--cyan);
     color:#fff;
   }
-  .welcome-cta:hover{opacity:0.9;background:linear-gradient(90deg, var(--cyan), var(--pink));}
+  .welcome-cta:hover{background:var(--pink);}
 
   /* ---------- SPOTIFY RESULTS ---------- */
   .track-list{
     display:flex;
     flex-direction:column;
     gap:10px;
-    margin-top:20px;
+    margin-top:18px;
   }
   .track-row{
     display:flex;
@@ -571,20 +757,21 @@
     align-items:center;
     gap:14px;
     background:var(--sunken);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:12px;
     padding:14px 16px;
   }
   .track-row img{
-    width:56px;height:56px;
+    width:54px;height:54px;
     border-radius:10px;
     object-fit:cover;
     flex-shrink:0;
     background:var(--iconbg);
+    border:1.5px solid var(--line);
   }
   .track-info{min-width:0;flex:1;}
   .track-info .t-title{
-    font-size:15px;
+    font-size:14.5px;
     font-weight:700;
     white-space:nowrap;
     overflow:hidden;
@@ -612,12 +799,13 @@
     width:100%;
     padding-top:10px;
     margin-top:2px;
-    border-top:1px solid var(--line);
+    border-top:1.5px solid var(--line);
   }
   .track-row a.track-dl{
     font-family:'JetBrains Mono', monospace;
     font-size:11px;
     font-weight:700;
+    text-transform:uppercase;
     color:#fff;
     background:var(--cyan);
     text-decoration:none;
@@ -648,7 +836,7 @@
     display:flex;
     gap:8px;
     background:var(--sunken);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:12px;
     padding:6px;
     margin-bottom:14px;
@@ -662,11 +850,12 @@
     padding:10px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
-    font-size:13px;
+    font-size:12.5px;
+    text-transform:uppercase;
     cursor:pointer;
   }
   .mode-btn:hover{background:transparent; color:var(--ink);}
-  .mode-btn.active{background:var(--panel); color:var(--ink);}
+  .mode-btn.active{background:var(--panel); color:var(--ink); border:1.5px solid var(--line);}
 
   #encFileForm, #web2apkForm{
     display:flex;
@@ -678,7 +867,7 @@
   }
   .file-drop{
     background:var(--sunken);
-    border:1px dashed var(--line);
+    border:1.5px dashed var(--line);
     border-radius:14px;
     padding:22px 16px;
     text-align:center;
@@ -696,9 +885,9 @@
     display:flex;
     gap:10px;
     background:var(--sunken);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:8px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:6px;
   }
   .key-row input[type="text"]{
     flex:1;
@@ -723,7 +912,7 @@
     min-height:140px;
     resize:vertical;
     background:var(--sunken);
-    border:1px solid var(--line);
+    border:1.5px solid var(--line);
     border-radius:12px;
     color:var(--ink);
     font-family:'JetBrains Mono', monospace;
@@ -736,21 +925,602 @@
   @media (max-width:480px){
     form{flex-direction:column;}
     button{padding:14px;}
+    .status-card-head{flex-direction:row;}
+  }
+
+  /* ================= NAVBAR (beranda v2) ================= */
+  .navbar{
+    position:sticky;
+    top:0;
+    z-index:40;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:12px 20px;
+    background:rgba(255,255,255,0.94);
+    backdrop-filter:blur(10px);
+    border-bottom:2px solid var(--line);
+  }
+  .navbar-inner{
+    max-width:1080px;
+    margin:0 auto;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .nav-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+    cursor:pointer;
+  }
+  .nav-logo-mark{
+    width:34px;height:34px;
+    border-radius:9px;
+    background:var(--cyan);
+    border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    font-weight:700;
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    box-shadow:2px 2px 0 var(--line);
+    flex-shrink:0;
+  }
+  .nav-logo-text{line-height:1.15;}
+  .nav-logo-text b{
+    display:block;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.02em;
+  }
+  .nav-logo-text span{
+    display:block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:8.5px;
+    letter-spacing:0.14em;
+    color:var(--dim2);
+    text-transform:uppercase;
+  }
+
+  .nav-links{
+    display:none;
+    align-items:center;
+    gap:4px;
+    flex:1;
+    justify-content:center;
+  }
+  .nav-link{
+    background:none;
+    border:none;
+    color:var(--dim);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500;
+    font-size:13.5px;
+    padding:9px 12px;
+    border-radius:9px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .nav-link:hover{color:var(--ink); background:var(--sunken);}
+  .nav-link.active{color:var(--cyan); background:var(--cyan-bg); font-weight:700;}
+
+  .nav-dropdown-wrap{position:relative;}
+  .nav-dropdown-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+  .nav-dropdown-btn svg{width:13px;height:13px; transition:transform .15s ease;}
+  .nav-dropdown-wrap.open .nav-dropdown-btn svg{transform:rotate(180deg);}
+  .nav-dropdown-menu{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    box-shadow:4px 4px 0 var(--line);
+    padding:8px;
+    min-width:190px;
+    display:none;
+    flex-direction:column;
+    gap:2px;
+    z-index:50;
+  }
+  .nav-dropdown-wrap.open .nav-dropdown-menu{display:flex;}
+  .nav-dropdown-menu button{
+    background:none;
+    border:none;
+    color:var(--ink);
+    text-align:left;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500;
+    font-size:13px;
+    padding:9px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    white-space:nowrap;
+    text-transform:none;
+  }
+  .nav-dropdown-menu button:hover{background:var(--sunken); color:var(--cyan);}
+
+  .nav-cta{
+    flex-shrink:0;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    background:var(--cyan);
+    color:#fff;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:10px 16px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    cursor:pointer;
+    box-shadow:2px 2px 0 var(--line);
+    white-space:nowrap;
+  }
+  .nav-cta svg{width:14px;height:14px;}
+  .nav-cta:hover{background:var(--pink);}
+
+  .navbar .hamburger{display:flex;}
+
+  @media (min-width:840px){
+    .nav-links{display:flex;}
+    .navbar .hamburger{display:none;}
+  }
+
+  /* ================= HERO V2 ================= */
+  .hero-v2{
+    max-width:720px;
+    margin:0 auto;
+    text-align:center;
+    padding:44px 4px 8px;
+  }
+  .hero-badge-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:999px;
+    padding:8px 16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--dim);
+    box-shadow:2px 2px 0 var(--line);
+    margin-bottom:22px;
+  }
+  .hero-title{
+    font-size:clamp(32px, 7vw, 52px);
+    line-height:1.02;
+    margin:0 0 14px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    text-transform:uppercase;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .hero-title .accent{color:var(--cyan);}
+  .hero-v2-sub{
+    color:var(--dim);
+    font-size:15px;
+    max-width:480px;
+    margin:0 auto 30px;
+    line-height:1.6;
+  }
+
+  .hero-search-row{
+    display:flex;
+    gap:10px;
+    background:var(--panel);
+    border:2px solid var(--line);
+    border-radius:16px;
+    padding:8px;
+    box-shadow:5px 5px 0 var(--line);
+    margin-bottom:12px;
+  }
+  .hero-search-row input{
+    flex:1;
+    min-width:0;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+    padding:14px 14px;
+  }
+  .hero-search-row input::placeholder{color:var(--dim3);}
+  .hero-search-row button{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    background:var(--cyan);
+    flex-shrink:0;
+  }
+  .hero-search-row button svg{width:15px;height:15px;}
+  .hero-hint{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--dim3);
+    margin-bottom:34px;
+  }
+  .hero-hint b{color:var(--dim);}
+
+  /* ---- platform icon row ---- */
+  .platform-icon-row{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:22px;
+    margin-bottom:8px;
+  }
+  .platform-icon-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:9px;
+    cursor:pointer;
+    background:none;
+    border:none;
+  }
+  .platform-icon-circle{
+    width:52px;height:52px;
+    border-radius:16px;
+    border:1.5px solid var(--line);
+    background:var(--iconbg);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:3px 3px 0 var(--line);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .platform-icon-circle svg{width:24px;height:24px;}
+  .platform-icon-item:hover .platform-icon-circle{transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--cyan); border-color:var(--cyan);}
+  .platform-icon-item span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    color:var(--dim);
+  }
+
+  /* ================= SECTION CARD (fitur / platform / cara) ================= */
+  .section-card{
+    background:var(--panel);
+    border:2px solid var(--line);
+    border-radius:20px;
+    padding:24px 22px;
+    box-shadow:5px 5px 0 var(--line);
+    margin:34px 0;
+  }
+  .section-card-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  }
+  .section-card-head h2{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:18px;
+    margin:0 0 4px;
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+  }
+  .section-card-head h2 svg{width:19px;height:19px; stroke:var(--cyan); flex-shrink:0;}
+  .section-card-head p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--dim);
+  }
+  .section-link-btn{
+    flex-shrink:0;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:9px;
+    padding:9px 14px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:12px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .section-link-btn:hover{border-color:var(--cyan); color:var(--cyan);}
+
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap:12px;
+  }
+  .feature-card{
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    background:var(--sunken);
+  }
+  .feature-card .ficon{
+    width:34px;height:34px;
+    border-radius:9px;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:10px;
+  }
+  .feature-card .ficon svg{width:17px;height:17px;}
+  .feature-card h3{
+    font-size:13.5px;
+    margin:0 0 6px;
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+  }
+  .feature-card p{
+    font-size:12px;
+    color:var(--dim);
+    margin:0;
+    line-height:1.5;
+  }
+
+  /* platform support — accordion (klik expand di tempat) */
+  .accordion-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .accordion-item{
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    background:var(--sunken);
+    overflow:hidden;
+    transition:border-color .15s ease;
+  }
+  .accordion-item.open{border-color:var(--cyan);}
+  .accordion-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    background:none;
+    border:none;
+    padding:14px 16px;
+    cursor:pointer;
+    text-align:left;
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--ink);
+  }
+  .accordion-head:hover{background:var(--panel);}
+  .accordion-head .icon{
+    width:36px;height:36px;
+    border-radius:10px;
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .accordion-head .icon svg{width:18px;height:18px;}
+  .accordion-head .meta{flex:1; min-width:0;}
+  .accordion-head .pname{
+    font-weight:700;
+    font-size:13.5px;
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+  }
+  .accordion-head .pdesc{
+    font-size:11.5px;
+    color:var(--dim);
+    line-height:1.4;
+    margin-top:2px;
+  }
+  .accordion-chevron{
+    width:20px;height:20px;
+    flex-shrink:0;
+    stroke:var(--dim2);
+    transition:transform .2s ease, stroke .2s ease;
+  }
+  .accordion-item.open .accordion-chevron{transform:rotate(180deg); stroke:var(--cyan);}
+  .accordion-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .accordion-item.open .accordion-body{max-height:2400px;}
+  .accordion-body-inner{
+    padding:0 16px 18px;
+    border-top:1.5px solid var(--line);
+    padding-top:16px;
+  }
+  .accordion-body-inner .tool,
+  .accordion-body-inner #spotify-tool,
+  .accordion-body-inner #encfile-tool,
+  .accordion-body-inner #web2zip-tool,
+  .accordion-body-inner #web2apk-tool,
+  .accordion-body-inner #bypass-tool,
+  .accordion-body-inner #ytvid-tool,
+  .accordion-body-inner #musicplay-tool{
+    background:transparent;
+    border:none;
+    padding:0;
+    margin-top:0;
+    box-shadow:none;
+  }
+
+  /* steps */
+  .steps-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+    gap:20px;
+  }
+  .step-item{display:flex; gap:14px; align-items:flex-start;}
+  .step-num{
+    width:32px;height:32px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:var(--cyan);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    border:1.5px solid var(--line);
+  }
+  .step-item h3{
+    font-size:13.5px;
+    margin:0 0 4px;
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+  }
+  .step-item p{
+    font-size:12px;
+    color:var(--dim);
+    margin:0;
+    line-height:1.5;
+  }
+
+  /* ================= FOOTER V2 ================= */
+  .footer-v2{
+    margin-top:44px;
+    padding-top:28px;
+    border-top:2px dashed var(--line);
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    gap:22px;
+    margin-bottom:26px;
+  }
+  .footer-brand-block b{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .footer-brand-block p{
+    font-size:12px;
+    color:var(--dim);
+    line-height:1.6;
+    margin:0 0 14px;
+  }
+  .footer-social{display:flex; gap:8px;}
+  .footer-social a{
+    width:32px;height:32px;
+    border-radius:8px;
+    border:1.5px solid var(--line);
+    background:var(--panel);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink);
+    text-decoration:none;
+  }
+  .footer-social a svg{width:15px;height:15px;}
+  .footer-social a:hover{background:var(--cyan); color:#fff; border-color:var(--cyan);}
+
+  .footer-col h4{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--dim2);
+    margin:0 0 12px;
+  }
+  .footer-col ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px;}
+  .footer-col a, .footer-col button{
+    background:none;
+    border:none;
+    padding:0;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:12.5px;
+    color:var(--dim);
+    cursor:pointer;
+    text-align:left;
+    text-decoration:none;
+  }
+  .footer-col a:hover, .footer-col button:hover{color:var(--cyan);}
+  .footer-info-row{display:flex; align-items:center; justify-content:space-between; font-size:12px;}
+  .footer-info-row .fdot{width:7px;height:7px;border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); display:inline-block; margin-right:6px;}
+
+  .footer-bottom{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    padding-top:18px;
+    border-top:1.5px solid var(--line);
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    color:var(--dim3);
+  }
+
+  @media (max-width:760px){
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:480px){
+    .footer-grid{grid-template-columns:1fr;}
+    .hero-search-row{flex-direction:column;}
   }
 </style>
 </head>
 <body>
 
-<!-- ================= TOP BAR ================= -->
-<div class="topbar">
-  <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-  <div class="brand">Dinz Code<span class="dot">.</span></div>
-  <div style="width:42px;"></div>
+<!-- ================= NAVBAR ================= -->
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="nav-logo" data-target="beranda">
+      <div class="nav-logo-mark">D</div>
+      <div class="nav-logo-text"><b>DINZ</b><span>Downloader</span></div>
+    </div>
+
+    <nav class="nav-links">
+      <button class="nav-link active" data-target="beranda">Beranda</button>
+      <button class="nav-link" data-target="layanan">Downloader</button>
+      <button class="nav-link" data-tool="tiktok">TikTok</button>
+      <button class="nav-link" data-tool="instagram">Instagram</button>
+      <button class="nav-link" data-tool="ytmp4">YouTube</button>
+      <button class="nav-link" data-tool="spotify">Spotify</button>
+      <div class="nav-dropdown-wrap" id="navToolsDropdown">
+        <button class="nav-link nav-dropdown-btn" id="navToolsBtn" type="button">
+          Tools
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <button data-tool="encfile">Enc/Dec File</button>
+          <button data-tool="web2zip">Web to ZIP</button>
+          <button data-tool="web2apk">Web to APK</button>
+          <button data-tool="bypass">Bypass Link</button>
+          <button data-tool="ytvid">Pemutar Video</button>
+          <button data-tool="musicplay">Pemutar Lagu</button>
+        </div>
+      </div>
+    </nav>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <button class="nav-cta" id="navSupportBtn" data-action="support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      Bantuan
+    </button>
+  </div>
 </div>
 
-<!-- ================= MENU OVERLAY ================= -->
+<!-- ================= MENU OVERLAY (mobile) ================= -->
 <div class="menu-overlay" id="menuOverlay">
   <div class="menu-head">
     <h2>Menu</h2>
@@ -759,17 +1529,14 @@
     </button>
   </div>
   <div class="menu-list">
-    <button class="menu-item" data-target="beranda">
+    <button class="menu-item menu-item-current" tabindex="-1" aria-disabled="true">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
       Beranda
-    </button>
-    <button class="menu-item" data-target="layanan">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-      Semua Layanan
+      <span class="tag">Halaman ini</span>
     </button>
     <button class="menu-item support" data-action="support">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-      Support
+      Bantuan
     </button>
   </div>
 </div>
@@ -778,42 +1545,90 @@
 <div class="wrap">
 
   <div id="beranda" class="welcome">
-    <div class="eyebrow">multi downloader</div>
-    <h1>Selamat datang di<br><span class="rip">Web Downloader Dinz</span>.</h1>
-    <p class="sub">Unduh video &amp; lagu dari TikTok, Instagram, YouTube, Facebook, CapCut, sampai Spotify — tinggal tempel link atau ketik judul, sisanya berjalan otomatis.</p>
 
-    <div class="hero-badges">
-      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg><b>7</b>&nbsp;layanan</div>
-      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg>100% gratis</div>
-      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>tanpa watermark</div>
-      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>proses cepat</div>
+    <!-- ===== HERO ===== -->
+    <div class="hero-v2">
+      <div class="hero-badge-pill">🔥 Cepat &middot; Gratis &middot; Tanpa Login</div>
+      <h1 class="hero-title"><span class="accent">DINZ</span> DOWNLOADER</h1>
+      <p class="hero-v2-sub">Unduh video, musik, dan konten favoritmu dari berbagai platform dengan mudah dan cepat &mdash; tinggal tempel link, sisanya berjalan otomatis.</p>
+
+      <div class="platform-icon-row">
+        <button class="platform-icon-item" data-tool="tiktok">
+          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#14151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg></div>
+          <span>TikTok</span>
+        </button>
+        <button class="platform-icon-item" data-tool="instagram">
+          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#E1306C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></div>
+          <span>Instagram</span>
+        </button>
+        <button class="platform-icon-item" data-tool="ytmp4">
+          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><polygon points="10 9 15 12 10 15 10 9" fill="#FF0000" stroke="none"/></svg></div>
+          <span>YouTube</span>
+        </button>
+        <button class="platform-icon-item" data-tool="facebook">
+          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#1877F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></div>
+          <span>Facebook</span>
+        </button>
+        <button class="platform-icon-item" data-tool="capcut">
+          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#14151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z"/></svg></div>
+          <span>CapCut</span>
+        </button>
+        <button class="platform-icon-item" data-tool="spotify">
+          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#1ED760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg></div>
+          <span>Spotify</span>
+        </button>
+      </div>
     </div>
 
-    <div class="hero-cta-row">
-      <button class="hero-cta" id="heroCtaBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
-        Mulai Unduh
-      </button>
-      <button class="hero-cta secondary" id="heroSupportBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        Butuh bantuan?
-      </button>
+    <!-- ===== FITUR UNGGULAN ===== -->
+    <div class="section-card">
+      <div class="section-card-head">
+        <div>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Fitur Unggulan</h2>
+          <p>Kenapa memilih Dinz Downloader?</p>
+        </div>
+        <button class="section-link-btn" data-target="layanan">Lihat Semua</button>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+          <h3>Super Cepat</h3>
+          <p>Proses berjalan otomatis begitu link ditempel, tanpa antrean panjang.</p>
+        </div>
+        <div class="feature-card">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg></div>
+          <h3>Aman &amp; Gratis</h3>
+          <p>100% gratis dan tanpa perlu login atau daftar akun apapun.</p>
+        </div>
+        <div class="feature-card">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+          <h3>Multi Platform</h3>
+          <p>Mendukung TikTok, Instagram, YouTube, Facebook, CapCut &amp; Spotify.</p>
+        </div>
+        <div class="feature-card">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF4D6D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#FF4D6D" stroke="none"/></svg></div>
+          <h3>Kualitas Terbaik</h3>
+          <p>Unduh dengan kualitas terbaik yang tersedia dari sumber aslinya.</p>
+        </div>
+      </div>
     </div>
 
-    <div class="quick-label">Akses cepat</div>
-    <div class="quick-grid" id="quickAccessGrid"></div>
+    <!-- ===== SEMUA LAYANAN (langsung di beranda) ===== -->
+    <div class="section-card">
+      <div class="section-card-head">
+        <div>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Semua Layanan</h2>
+          <p>Semua tool ada di sini, tinggal pilih</p>
+        </div>
+      </div>
+      <div class="accordion-list" id="accordionList"></div>
+    </div>
+
   </div>
 
-  <div id="layananWrap" class="panel">
-    <div id="layanan">
-      <div class="section-label">Semua Layanan</div>
-      <div class="grid" id="serviceGrid"></div>
-    </div>
 
-    <div id="toolsContainer"></div>
-  </div>
 
-  <!-- ===== PANEL: CARI LAGU SPOTIFY ===== -->
+<!-- ===== PANEL: CARI LAGU SPOTIFY ===== -->
   <div class="panel" id="spotify-tool">
     <div class="tool-head">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg></div>
@@ -964,7 +1779,59 @@
     </div>
   </div>
 
-  <footer>dibuat oleh dinz code &amp; di kembangkan oleh dinz code &middot; cepat - aman</footer>
+    <footer class="footer-v2">
+    <div class="footer-grid">
+      <div class="footer-brand-block">
+        <b><span class="nav-logo-mark" style="width:26px;height:26px;font-size:12px;border-radius:7px;">D</span>Dinz Downloader</b>
+        <p>Tool gratis untuk mengunduh video, musik, dan konten dari berbagai platform favoritmu dengan mudah dan cepat.</p>
+        <div class="footer-social">
+          <a href="#" id="footerSupportLink" data-action="support" aria-label="Bantuan via WhatsApp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><button data-tool="tiktok">TikTok</button></li>
+          <li><button data-tool="instagram">Instagram</button></li>
+          <li><button data-tool="ytmp4">YouTube</button></li>
+          <li><button data-tool="facebook">Facebook</button></li>
+          <li><button data-tool="capcut">CapCut</button></li>
+          <li><button data-tool="spotify">Spotify</button></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <ul>
+          <li><button data-tool="encfile">Enc/Dec File</button></li>
+          <li><button data-tool="web2zip">Web to ZIP</button></li>
+          <li><button data-tool="web2apk">Web to APK</button></li>
+          <li><button data-tool="bypass">Bypass Link</button></li>
+          <li><button data-tool="ytvid">Pemutar Video</button></li>
+          <li><button data-tool="musicplay">Pemutar Lagu</button></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Info</h4>
+        <ul>
+          <li class="footer-info-row"><span><span class="fdot"></span>Status Server</span><span>Online</span></li>
+          <li class="footer-info-row"><span>Login</span><span>Tidak perlu</span></li>
+          <li class="footer-info-row"><span>Biaya</span><span>100% Gratis</span></li>
+          <li><button data-action="support">Hubungi Kami</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Dinz Downloader. All rights reserved.</span>
+      <span>Made with &hearts; by Dinz Code</span>
+    </div>
+  </footer>
+
 </div>
 
 </div>
@@ -1120,47 +1987,74 @@ hamburgerBtn.addEventListener('click', openMenu);
 menuCloseBtn.addEventListener('click', closeMenu);
 
 function openLayanan(){
-  document.getElementById('layananWrap').classList.add('show');
-  document.getElementById('layanan').scrollIntoView({behavior:'smooth', block:'start'});
+  const el = document.getElementById('accordionList');
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-document.querySelectorAll('.menu-item').forEach(item=>{
-  item.addEventListener('click', ()=>{
-    const target = item.dataset.target;
-    const action = item.dataset.action;
-    closeMenu();
-    if(action === 'support'){
-      window.open('https://wa.me/6287791200371?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
-      return;
-    }
-    if(target === 'layanan'){
-      openLayanan();
-      return;
-    }
-    if(target){
-      document.getElementById(target).scrollIntoView({behavior:'smooth', block:'start'});
-    }
+/* Handler terpadu: dipakai oleh menu mobile, navbar desktop, hero,
+   platform icon row, dan footer — semuanya baca data-target /
+   data-action / data-tool yang sama. TOOL_NAV baru terisi penuh
+   setelah SERVICES & EXTRA_TOOLS diproses di bawah, tapi karena ini
+   cuma daftar listener (bukan pemanggilan langsung), aman karena
+   baru dieksekusi saat user benar-benar klik.*/
+function runNavAction(el){
+  const target = el.dataset.target;
+  const action = el.dataset.action;
+  const tool = el.dataset.tool;
+  closeMenu();
+  const dropdown = document.getElementById('navToolsDropdown');
+  if(dropdown) dropdown.classList.remove('open');
+
+  if(action === 'support'){
+    window.open('https://wa.me/6287791200371?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
+    return;
+  }
+  if(tool){
+    if(TOOL_NAV[tool]) TOOL_NAV[tool]();
+    return;
+  }
+  if(target === 'layanan'){
+    openLayanan();
+    return;
+  }
+  if(target){
+    const el2 = document.getElementById(target);
+    if(el2) el2.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+document.querySelectorAll('.menu-item, .nav-link, .nav-logo, .section-link-btn, .platform-icon-item, .footer-col button, .footer-col a, #navSupportBtn, #footerSupportLink, .nav-dropdown-menu button').forEach(item=>{
+  if(item.id === 'navToolsBtn') return; /* tombol dropdown ditangani terpisah di bawah */
+  item.addEventListener('click', (e)=>{
+    if(item.tagName === 'A') e.preventDefault();
+    runNavAction(item);
+  });
+});
+
+/* dropdown "Tools" di navbar desktop */
+const navToolsDropdown = document.getElementById('navToolsDropdown');
+const navToolsBtn = document.getElementById('navToolsBtn');
+if(navToolsBtn && navToolsDropdown){
+  navToolsBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    navToolsDropdown.classList.toggle('open');
+  });
+  document.addEventListener('click', (e)=>{
+    if(!navToolsDropdown.contains(e.target)) navToolsDropdown.classList.remove('open');
+  });
+}
+
+/* highlight nav-link aktif secara sederhana saat diklik */
+document.querySelectorAll('.nav-link[data-target], .nav-link[data-tool]').forEach(link=>{
+  link.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+    link.classList.add('active');
   });
 });
 
 /* ============================================================
-   SERVICE GRID
+   HELPER UMUM
 ============================================================ */
-const serviceGrid = document.getElementById('serviceGrid');
-const toolsContainer = document.getElementById('toolsContainer');
-const allPanels = ['spotify-tool', 'encfile-tool', 'web2zip-tool', 'web2apk-tool', 'bypass-tool', 'ytvid-tool', 'musicplay-tool'];
-
-function showPanel(panelId, scroll){
-  allPanels.forEach(id=>{
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.classList.toggle('show', id === panelId);
-  });
-  if(scroll){
-    const target = document.getElementById(panelId);
-    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-}
 
 function fmtDuration(sec){
   if(sec === null || sec === undefined) return '';
@@ -1412,64 +2306,108 @@ function buildToolBlock(svc){
 
 const TOOL_NAV = {};
 
-SERVICES.forEach(svc=>{
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.id = svc.id;
-  card.innerHTML = `
-    <div class="icon">${ICONS[svc.id]}</div>
-    <div class="name">${svc.name}</div>
-    <div class="desc">${svc.desc}</div>
-  `;
-  const activate = ()=>{
-    document.getElementById('layananWrap').classList.add('show');
-    document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === svc.id));
-    document.getElementById('tool-' + svc.id).scrollIntoView({behavior:'smooth', block:'start'});
-  };
-  card.addEventListener('click', activate);
-  TOOL_NAV[svc.id] = activate;
-  serviceGrid.appendChild(card);
+/* ============================================================
+   SEMUA LAYANAN — accordion di Beranda.
+   Klik header -> tool-nya (form input link, dsb) muncul langsung
+   di dalam item yang sama, nggak pindah ke section lain.
+   Untuk SERVICES, tool block dibangun sekali lalu disimpan
+   (lazy). Untuk EXTRA_TOOLS, panel statis yang sudah ada di HTML
+   dipindah (appendChild) ke dalam body accordion-nya.
+============================================================ */
+const accordionList = document.getElementById('accordionList');
 
-  toolsContainer.appendChild(buildToolBlock(svc));
+function buildAccordionItem(item, panelBuilder){
+  const wrap = document.createElement('div');
+  wrap.className = 'accordion-item';
+  wrap.dataset.id = item.id;
+  wrap.innerHTML = `
+    <button class="accordion-head" type="button">
+      <div class="icon">${ICONS[item.id]}</div>
+      <div class="meta">
+        <div class="pname">${item.name}</div>
+        <div class="pdesc">${item.desc}</div>
+      </div>
+      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="accordion-body">
+      <div class="accordion-body-inner"></div>
+    </div>
+  `;
+  const head = wrap.querySelector('.accordion-head');
+  const bodyInner = wrap.querySelector('.accordion-body-inner');
+  let loaded = false;
+
+  const open = ()=>{
+    if(!loaded){
+      bodyInner.appendChild(panelBuilder());
+      loaded = true;
+    }
+    wrap.classList.add('open');
+  };
+  const close = ()=> wrap.classList.remove('open');
+  const toggle = ()=>{
+    if(wrap.classList.contains('open')) close(); else open();
+  };
+
+  head.addEventListener('click', toggle);
+
+  TOOL_NAV[item.id] = ()=>{
+    open();
+    wrap.scrollIntoView({behavior:'smooth', block:'start'});
+  };
+
+  if(accordionList) accordionList.appendChild(wrap);
+  return wrap;
+}
+
+SERVICES.forEach(svc=>{
+  buildAccordionItem(svc, ()=>{
+    const block = buildToolBlock(svc);
+    block.classList.add('show');
+    return block;
+  });
 });
 
 EXTRA_TOOLS.forEach(tool=>{
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.dataset.id = tool.id;
-  card.innerHTML = `
-    <div class="icon">${ICONS[tool.id]}</div>
-    <div class="name">${tool.name}</div>
-    <div class="desc">${tool.desc}</div>
-  `;
-  const activate = ()=>{
-    document.querySelectorAll('.card').forEach(c=> c.classList.toggle('active', c.dataset.id === tool.id));
-    showPanel(tool.panel, true);
-  };
-  card.addEventListener('click', activate);
-  TOOL_NAV[tool.id] = activate;
-  serviceGrid.appendChild(card);
+  buildAccordionItem(tool, ()=>{
+    const panelEl = document.getElementById(tool.panel);
+    if(panelEl) panelEl.classList.add('show');
+    return panelEl || document.createElement('div');
+  });
 });
 
 /* ============================================================
-   BERANDA — akses cepat & tombol CTA
+   HERO SEARCH — deteksi platform otomatis dari link yang ditempel
 ============================================================ */
-const quickAccessGrid = document.getElementById('quickAccessGrid');
-[...SERVICES, ...EXTRA_TOOLS].forEach(item=>{
-  const q = document.createElement('div');
-  q.className = 'quick-item';
-  q.innerHTML = `
-    <div class="icon">${ICONS[item.id]}</div>
-    <div class="qname">${item.name}</div>
-  `;
-  q.addEventListener('click', ()=>{ if(TOOL_NAV[item.id]) TOOL_NAV[item.id](); });
-  quickAccessGrid.appendChild(q);
-});
-
-document.getElementById('heroCtaBtn').addEventListener('click', openLayanan);
-document.getElementById('heroSupportBtn').addEventListener('click', ()=>{
-  window.open('https://wa.me/6287791200371?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
-});
+const heroUrlForm = document.getElementById('heroUrlForm');
+const heroUrlInput = document.getElementById('heroUrlInput');
+const PLATFORM_DETECT = [
+  { id:'tiktok', test:/tiktok\.com/i },
+  { id:'instagram', test:/instagram\.com/i },
+  { id:'ytmp4', test:/youtu\.?be/i },
+  { id:'facebook', test:/facebook\.com|fb\.watch/i },
+  { id:'capcut', test:/capcut\.com/i },
+];
+if(heroUrlForm){
+  heroUrlForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const val = heroUrlInput.value.trim();
+    if(!val) return;
+    const found = PLATFORM_DETECT.find(p=>p.test.test(val));
+    if(!found){
+      openLayanan();
+      return;
+    }
+    if(TOOL_NAV[found.id]) TOOL_NAV[found.id]();
+    setTimeout(()=>{
+      const toolInput = document.querySelector('#tool-' + found.id + ' input[type="url"]');
+      if(toolInput){
+        toolInput.value = val;
+        document.querySelector('#tool-' + found.id + ' form').dispatchEvent(new Event('submit', {cancelable:true}));
+      }
+    }, 350);
+  });
+}
 
 /* ============================================================
    CARI LAGU SPOTIFY
@@ -2263,6 +3201,10 @@ musicplayForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   processMusicplay(musicplayInput.value.trim());
 });
+
+/* ============================================================
+   Selesai.
+============================================================ */
 </script>
 </body>
 </html>
