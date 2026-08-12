@@ -3584,6 +3584,32 @@ function aiParsePhotoIntent(msg){
   return query.length ? query : null;
 }
 
+/* Deteksi niat edit foto: butuh URL gambar (http/https) di pesan +
+   ada kata kerja edit ("edit", "ubah", "ganti", "ubah jadi", "buat jadi", dst).
+   Prompt yang dikirim ke API = pesan asli dikurangi URL-nya. */
+const AI_URL_RE = /https?:\/\/\S+/i;
+const AI_EDIT_WORD_RE = /\b(edit|ubah|ganti|rubah|jadikan|buat(?:lah)?\s+(?:dari|jadi)|ganti(?:in|kan)?)\b/i;
+
+function aiParseEditIntent(msg){
+  const text = msg.trim();
+  const urlMatch = text.match(AI_URL_RE);
+  if(!urlMatch) return null;
+  if(!AI_EDIT_WORD_RE.test(text)) return null;
+
+  const url = urlMatch[0].replace(/[),.]+$/, '');
+  const prompt = text.replace(url, '').trim();
+  if(!prompt) return null;
+  return { url, prompt };
+}
+
+/* Filter konten 18+/NSFW: kalau prompt edit mengandung indikasi begituan,
+   langsung di-skip tanpa manggil API sama sekali. */
+const AI_NSFW_RE = /\b(18\s*\+|nsfw|bugil|telanjang|bogel|toket|memek|kontol|ngentot|sange|seks(?:ual)?|porn\w*|xxx|nude\w*|naked|hentai|erotis|vulgar|mesum|birahi|payudara\s*terbuka|tanpa\s*busana)\b/i;
+
+function aiIsNsfwEditPrompt(prompt){
+  return AI_NSFW_RE.test(prompt);
+}
+
 /* Sebagian API publik gratis kayak gini nggak selalu kasih header CORS,
    jadi kalau fetch langsung gagal (biasanya karena itu), coba lagi lewat
    beberapa proxy publik bergantian sebelum benar-benar dianggap gagal
@@ -3685,10 +3711,97 @@ async function aiHandlePhotoSearch(query){
   }
 }
 
+/* Persona: dibikin biar gaya jawabnya senatural dan seluwes mungkin,
+   kayak ngobrol sama orang beneran — bukan template kaku ala bot,
+   dan nggak baku-baku amat kecuali topiknya emang formal. */
+const AI_PERSONA_PREFIX =
+  'Mulai sekarang, jawab dengan gaya ngobrol yang natural dan santai, ' +
+  'kayak orang beneran lagi chatting, bukan kayak bot yang jawab kaku ' +
+  'atau muter-muter kasih disclaimer. Boleh pakai bahasa gaul/santai ' +
+  'sewajarnya, nyambung ke konteks obrolan, dan usahakan selalu kasih ' +
+  'jawaban yang paling masuk akal atas apa pun yang ditanyakan user, ' +
+  'sesuai kemampuanmu — jangan nolak atau lempar balik pertanyaan kalau ' +
+  'sebenarnya masih bisa dicoba dijawab. Berikut pesan dari user: ';
+
+function aiAddSingleImageBubble(caption, imageUrl){
+  const wrap = document.createElement('div');
+  wrap.className = 'ai-bubble ai-bubble-bot';
+
+  if(caption){
+    const capEl = document.createElement('div');
+    capEl.textContent = caption;
+    capEl.style.marginBottom = '8px';
+    wrap.appendChild(capEl);
+  }
+
+  const a = document.createElement('a');
+  a.href = imageUrl;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  const img = document.createElement('img');
+  img.src = imageUrl;
+  img.loading = 'lazy';
+  img.alt = 'Hasil edit foto';
+  img.style.cssText = 'display:block;max-width:100%;border-radius:9px;';
+  a.appendChild(img);
+  wrap.appendChild(a);
+
+  aiChatBox.appendChild(wrap);
+  aiScrollToBottom();
+}
+
+/* Ambil URL gambar hasil edit dari berbagai kemungkinan bentuk respons API */
+function aiExtractEditedImageUrl(data){
+  if(typeof data === 'string' && /^https?:\/\//i.test(data)) return data;
+  if(!data || typeof data !== 'object') return null;
+  const candidates = [
+    data.result && data.result.url,
+    data.result && data.result.image,
+    data.result && data.result.image_url,
+    typeof data.result === 'string' ? data.result : null,
+    data.url,
+    data.image,
+    data.image_url,
+    data.data && data.data.url,
+    typeof data.data === 'string' ? data.data : null
+  ];
+  return candidates.find(c => typeof c === 'string' && /^https?:\/\//i.test(c)) || null;
+}
+
+async function aiHandlePhotoEdit(url, prompt){
+  if(aiIsNsfwEditPrompt(prompt)){
+    aiAddErrorBubble('Sori, permintaan edit yang mengarah ke konten 18+/dewasa nggak bisa aku proses ya.');
+    return;
+  }
+
+  const loadingEl = aiAddLoadingBubble('Lagi edit fotonya...');
+  try{
+    const apiUrl = `https://api.synoxcloud.xyz/edit/nanobanana?url=${encodeURIComponent(url)}&prompt=${encodeURIComponent(prompt)}`;
+    const res = await aiFetchWithFallback(apiUrl, 'server edit foto');
+
+    const data = await res.json().catch(async ()=> await res.text());
+    if(data && typeof data === 'object' && data.status === false){
+      throw new Error(data.message || 'Gagal mengedit foto');
+    }
+
+    const editedUrl = aiExtractEditedImageUrl(data);
+    loadingEl.remove();
+    if(!editedUrl){
+      aiAddErrorBubble('Hasil edit fotonya nggak kebaca, coba lagi ya.');
+      return;
+    }
+    aiAddSingleImageBubble('Ini hasil editannya:', editedUrl);
+  }catch(err){
+    loadingEl.remove();
+    aiAddErrorBubble('Gagal: ' + err.message);
+  }
+}
+
 async function aiHandleChat(message){
   const loadingEl = aiAddLoadingBubble('Mengetik...');
   try{
-    const apiUrl = `https://api.nexray.eu.cc/ai/claude?text=${encodeURIComponent(message)}`;
+    const promptedMessage = AI_PERSONA_PREFIX + message;
+    const apiUrl = `https://api.nexray.eu.cc/ai/claude?text=${encodeURIComponent(promptedMessage)}`;
     const res = await aiFetchWithFallback(apiUrl, 'server AI');
 
     const data = await res.json().catch(async ()=> await res.text());
@@ -3728,11 +3841,14 @@ async function processAiMessage(raw){
     if(file){
       /* Belum ada API untuk edit/analisa foto yang dikirim user,
          jadi kasih tau dengan jelas daripada pura-pura berhasil. */
-      aiAddErrorBubble('Maaf, fitur kirim foto untuk diedit/dianalisa belum tersambung ke API (belum ada endpoint-nya). Kalau kamu punya API untuk itu, kasih tau ya biar aku sambungkan.');
+      aiAddErrorBubble('Waduh, sori nih, aku belum bisa "lihat" isi fotonya — belum ada endpoint buat itu. Coba ceritain aja isinya, nanti aku bantu tanggapi.');
       return;
     }
+    const editIntent = aiParseEditIntent(message);
     const photoQuery = aiParsePhotoIntent(message);
-    if(photoQuery){
+    if(editIntent){
+      await aiHandlePhotoEdit(editIntent.url, editIntent.prompt);
+    }else if(photoQuery){
       await aiHandlePhotoSearch(photoQuery);
     }else{
       await aiHandleChat(message);
