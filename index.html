@@ -3613,30 +3613,78 @@ function aiIsNsfwEditPrompt(prompt){
 /* Sebagian API publik gratis kayak gini nggak selalu kasih header CORS,
    jadi kalau fetch langsung gagal (biasanya karena itu), coba lagi lewat
    beberapa proxy publik bergantian sebelum benar-benar dianggap gagal
-   (satu proxy doang sering ikut down/dibatasi). */
+   (satu proxy doang sering ikut down/dibatasi). Tiap percobaan dikasih
+   batas waktu biar gak nge-hang selamanya kalau server/proxy lelet. */
 const AI_CORS_PROXIES = [
   url => 'https://corsproxy.io/?url=' + encodeURIComponent(url),
   url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
   url => 'https://thingproxy.freeboard.io/fetch/' + url
 ];
+const AI_FETCH_TIMEOUT_MS = 45000;
+
+async function aiFetchTimed(url, options){
+  const controller = new AbortController();
+  const timer = setTimeout(()=> controller.abort(), AI_FETCH_TIMEOUT_MS);
+  try{
+    return await fetch(url, { ...(options||{}), signal: controller.signal });
+  }finally{
+    clearTimeout(timer);
+  }
+}
 
 async function aiFetchWithFallback(url, failLabel){
   try{
-    const res = await fetch(url);
+    const res = await aiFetchTimed(url);
     if(!res.ok) throw new Error('status ' + res.status);
     return res;
   }catch(directErr){
     for(const buildProxyUrl of AI_CORS_PROXIES){
       try{
-        const res = await fetch(buildProxyUrl(url));
+        const res = await aiFetchTimed(buildProxyUrl(url));
         if(!res.ok) continue;
         return res;
       }catch(proxyErr){
         continue;
       }
     }
-    throw new Error('Tidak bisa menghubungi ' + failLabel + ' (langsung maupun lewat semua proxy cadangan). Kemungkinan domainnya diblokir jaringan/provider internet kamu, atau server API sedang down.');
+    throw new Error('Tidak bisa menghubungi ' + failLabel + ' (langsung maupun lewat semua proxy cadangan, atau kelamaan/timeout). Kemungkinan domainnya diblokir jaringan/provider internet kamu, server API lagi lambat/down, atau proxy cadangannya lagi dibatasi.');
   }
+}
+
+/* Upload file lokal (misal foto dari HP) ke Nexray CDN biar dapet URL publik,
+   soalnya API edit foto butuh URL, bukan file mentah. */
+function aiExtractUploadedUrl(data){
+  if(typeof data === 'string' && /^https?:\/\//i.test(data)) return data;
+  if(!data || typeof data !== 'object') return null;
+  const candidates = [
+    data.result && data.result.url,
+    data.result && data.result.file_url,
+    data.result && data.result.link,
+    typeof data.result === 'string' ? data.result : null,
+    data.url,
+    data.file_url,
+    data.link,
+    data.data && data.data.url,
+    typeof data.data === 'string' ? data.data : null
+  ];
+  return candidates.find(c => typeof c === 'string' && /^https?:\/\//i.test(c)) || null;
+}
+
+async function aiUploadFile(file){
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await aiFetchTimed('https://api.nexray.eu.cc/upload', {
+    method: 'POST',
+    body: formData
+  });
+  if(!res.ok) throw new Error('Upload gagal (status ' + res.status + ')');
+  const data = await res.json().catch(async ()=> await res.text());
+  if(data && typeof data === 'object' && data.status === false){
+    throw new Error(data.message || 'Upload gagal');
+  }
+  const url = aiExtractUploadedUrl(data);
+  if(!url) throw new Error('Upload berhasil tapi URL hasil upload nggak kebaca');
+  return url;
 }
 
 /* Ambil field teks jawaban dari berbagai kemungkinan bentuk respons API */
@@ -3839,9 +3887,24 @@ async function processAiMessage(raw){
 
   try{
     if(file){
-      /* Belum ada API untuk edit/analisa foto yang dikirim user,
-         jadi kasih tau dengan jelas daripada pura-pura berhasil. */
-      aiAddErrorBubble('Waduh, sori nih, aku belum bisa "lihat" isi fotonya — belum ada endpoint buat itu. Coba ceritain aja isinya, nanti aku bantu tanggapi.');
+      const editPrompt = message.trim();
+      if(!editPrompt){
+        aiAddErrorBubble('Foto udah kekirim, tapi mau diedit jadi kayak gimana nih? Tulis instruksinya ya (misal: "buat langit jadi sunset").');
+        return;
+      }
+      if(aiIsNsfwEditPrompt(editPrompt)){
+        aiAddErrorBubble('Sori, permintaan edit yang mengarah ke konten 18+/dewasa nggak bisa aku proses ya.');
+        return;
+      }
+      const uploadingEl = aiAddLoadingBubble('Ngirim fotonya dulu...');
+      try{
+        const hostedUrl = await aiUploadFile(file);
+        uploadingEl.remove();
+        await aiHandlePhotoEdit(hostedUrl, editPrompt);
+      }catch(err){
+        uploadingEl.remove();
+        aiAddErrorBubble('Gagal upload foto: ' + err.message);
+      }
       return;
     }
     const editIntent = aiParseEditIntent(message);
