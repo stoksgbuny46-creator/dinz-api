@@ -562,6 +562,162 @@
   .status.show{display:block;}
   .status.error{color:var(--pink);}
 
+  /* ---------- AI CHAT (halaman penuh, seperti app chat) ---------- */
+  .page.ai-page.active{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    display:flex;
+    flex-direction:column;
+    background:var(--bg);
+    padding:0;
+    margin:0;
+    max-width:none;
+  }
+  .ai-page .page-head{
+    flex-shrink:0;
+    margin:0;
+    padding:14px 16px;
+    background:var(--panel);
+    border-bottom:2px solid var(--line);
+  }
+  .ai-page .page-head h1{font-size:15.5px;}
+  .ai-header-icon{
+    width:36px;height:36px;
+    flex-shrink:0;
+    border-radius:9px;
+    background:var(--iconbg);
+    border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ai-header-icon svg{width:18px;height:18px;}
+
+  .ai-chat-box{
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:16px 16px 8px;
+  }
+  .ai-bubble{
+    max-width:85%;
+    padding:10px 13px;
+    border-radius:14px;
+    border:1.5px solid var(--line);
+    font-size:13px;
+    line-height:1.5;
+    word-wrap:break-word;
+    white-space:pre-wrap;
+  }
+  .ai-bubble-bot{
+    align-self:flex-start;
+    background:var(--sunken);
+    border-bottom-left-radius:4px;
+  }
+  .ai-bubble-user{
+    align-self:flex-end;
+    background:var(--ink);
+    color:#fff;
+    border-bottom-right-radius:4px;
+  }
+  .ai-bubble-loading{
+    align-self:flex-start;
+    background:var(--sunken);
+    color:var(--dim2);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    border-bottom-left-radius:4px;
+  }
+  .ai-bubble-error{
+    align-self:flex-start;
+    background:#FFE3E8;
+    border-color:var(--pink);
+    color:#B4123A;
+  }
+  .ai-photo-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:8px;
+    margin-top:8px;
+  }
+  .ai-photo-grid a{
+    display:block;
+    border-radius:10px;
+    overflow:hidden;
+    border:1.5px solid var(--line);
+    background:var(--iconbg);
+  }
+  .ai-photo-grid img{
+    width:100%;
+    height:110px;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* bar input bawah, nempel seperti app chat pada umumnya */
+  .ai-input-bar{
+    flex-shrink:0;
+    padding:10px 12px calc(12px + env(safe-area-inset-bottom));
+    background:var(--panel);
+    border-top:2px solid var(--line);
+  }
+  .ai-input-bar form{padding:6px;}
+  .ai-attach-btn{
+    background:var(--sunken);
+    color:var(--ink);
+    border:1.5px solid var(--line);
+    border-radius:9px;
+    width:44px;
+    height:44px;
+    flex-shrink:0;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .ai-attach-btn svg{width:19px;height:19px;}
+  .ai-attach-btn:hover{background:var(--cyan-bg); border-color:var(--cyan);}
+  .ai-attach-preview{
+    display:none;
+    margin:0 0 8px;
+  }
+  .ai-attach-preview.show{display:flex;}
+  .ai-attach-chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--sunken);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:6px 10px 6px 6px;
+  }
+  .ai-attach-chip img{
+    width:34px;height:34px;
+    border-radius:7px;
+    object-fit:cover;
+    border:1.5px solid var(--line);
+  }
+  .ai-attach-chip span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--dim);
+    max-width:160px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .ai-attach-chip button{
+    background:transparent;
+    color:var(--dim2);
+    border:none;
+    padding:2px 4px;
+    font-size:15px;
+    line-height:1;
+  }
+  .ai-attach-chip button:hover{background:transparent; color:var(--pink);}
+
   .result{
     display:none;
     width:100%;
@@ -1356,6 +1512,106 @@
     box-shadow:none;
   }
 
+  /* ---------- PAGE SWITCHING (Beranda / Downloader / Tools) ---------- */
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* ---------- BADGE UNGGULAN ---------- */
+  .feature-card{position:relative; padding-right:78px;}
+  .badge-star{
+    position:absolute;
+    top:12px;right:12px;
+    display:inline-flex;
+    align-items:center;
+    gap:3px;
+    background:var(--yellow);
+    border:1.5px solid var(--line);
+    border-radius:999px;
+    padding:3px 8px 3px 6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  .badge-star svg{width:10px;height:10px;}
+
+  /* ---------- KATEGORI CTA (di Beranda) ---------- */
+  .category-cta-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .category-cta{
+    display:block;
+    width:100%;
+    border:2px solid var(--line);
+    border-radius:16px;
+    padding:20px;
+    background:var(--panel);
+    cursor:pointer;
+    box-shadow:4px 4px 0 var(--line);
+    text-align:left;
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--ink);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .category-cta:hover{transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--cyan); border-color:var(--cyan);}
+  .category-cta .cicon{
+    width:42px;height:42px;
+    border-radius:12px;
+    background:var(--iconbg);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;
+  }
+  .category-cta .cicon svg{width:21px;height:21px; stroke:var(--cyan);}
+  .category-cta h3{
+    margin:0 0 6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14.5px;
+    text-transform:uppercase;
+  }
+  .category-cta p{margin:0; font-size:12px; color:var(--dim); line-height:1.5;}
+  .category-cta .ccount{
+    margin-top:12px;
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--cyan);
+  }
+  @media (max-width:600px){.category-cta-grid{grid-template-columns:1fr;}}
+
+  /* ---------- HEADER HALAMAN (Downloader / Tools) ---------- */
+  .page-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:26px 0 20px;
+  }
+  .page-head .back-btn{
+    width:40px;height:40px;
+    flex-shrink:0;
+    border-radius:11px;
+    border:1.5px solid var(--line);
+    background:var(--panel);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:2px 2px 0 var(--line);
+  }
+  .page-head .back-btn svg{width:19px;height:19px;}
+  .page-head .back-btn:hover{border-color:var(--cyan);}
+  .page-head h1{
+    margin:0;
+    font-size:20px;
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+  }
+  .page-head p{margin:2px 0 0; font-size:12.5px; color:var(--dim);}
+
   /* steps */
   .steps-grid{
     display:grid;
@@ -1488,25 +1744,9 @@
 
     <nav class="nav-links">
       <button class="nav-link active" data-target="beranda">Beranda</button>
-      <button class="nav-link" data-target="layanan">Downloader</button>
-      <button class="nav-link" data-tool="tiktok">TikTok</button>
-      <button class="nav-link" data-tool="instagram">Instagram</button>
-      <button class="nav-link" data-tool="ytmp4">YouTube</button>
-      <button class="nav-link" data-tool="spotify">Spotify</button>
-      <div class="nav-dropdown-wrap" id="navToolsDropdown">
-        <button class="nav-link nav-dropdown-btn" id="navToolsBtn" type="button">
-          Tools
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="nav-dropdown-menu">
-          <button data-tool="encfile">Enc/Dec File</button>
-          <button data-tool="web2zip">Web to ZIP</button>
-          <button data-tool="web2apk">Web to APK</button>
-          <button data-tool="bypass">Bypass Link</button>
-          <button data-tool="ytvid">Pemutar Video</button>
-          <button data-tool="musicplay">Pemutar Lagu</button>
-        </div>
-      </div>
+      <button class="nav-link" data-target="downloader">Downloader</button>
+      <button class="nav-link" data-target="tools">Tools</button>
+      <button class="nav-link" data-target="ai">AI</button>
     </nav>
 
     <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
@@ -1529,10 +1769,21 @@
     </button>
   </div>
   <div class="menu-list">
-    <button class="menu-item menu-item-current" tabindex="-1" aria-disabled="true">
+    <button class="menu-item" id="menuItemBeranda" data-target="beranda">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
       Beranda
-      <span class="tag">Halaman ini</span>
+    </button>
+    <button class="menu-item" data-target="downloader">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+      Downloader
+    </button>
+    <button class="menu-item" data-target="tools">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.6 5.6l-6 6 2 2 6-6a4 4 0 0 0 5.6-5.6l-2.3 2.3-2-2 2.3-2.3z"/></svg>
+      Tools
+    </button>
+    <button class="menu-item" data-target="ai">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M12 7V3"/><circle cx="8.5" cy="13.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" stroke="none"/><path d="M8 17h8"/></svg>
+      AI
     </button>
     <button class="menu-item support" data-action="support">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -1544,40 +1795,13 @@
 <!-- ================= MAIN CONTENT ================= -->
 <div class="wrap">
 
-  <div id="beranda" class="welcome">
+  <div id="beranda" class="welcome page active">
 
     <!-- ===== HERO ===== -->
     <div class="hero-v2">
       <div class="hero-badge-pill">🔥 Cepat &middot; Gratis &middot; Tanpa Login</div>
       <h1 class="hero-title"><span class="accent">DINZ</span> DOWNLOADER</h1>
       <p class="hero-v2-sub">Unduh video, musik, dan konten favoritmu dari berbagai platform dengan mudah dan cepat &mdash; tinggal tempel link, sisanya berjalan otomatis.</p>
-
-      <div class="platform-icon-row">
-        <button class="platform-icon-item" data-tool="tiktok">
-          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#14151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg></div>
-          <span>TikTok</span>
-        </button>
-        <button class="platform-icon-item" data-tool="instagram">
-          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#E1306C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></div>
-          <span>Instagram</span>
-        </button>
-        <button class="platform-icon-item" data-tool="ytmp4">
-          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><polygon points="10 9 15 12 10 15 10 9" fill="#FF0000" stroke="none"/></svg></div>
-          <span>YouTube</span>
-        </button>
-        <button class="platform-icon-item" data-tool="facebook">
-          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#1877F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></div>
-          <span>Facebook</span>
-        </button>
-        <button class="platform-icon-item" data-tool="capcut">
-          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#14151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z"/></svg></div>
-          <span>CapCut</span>
-        </button>
-        <button class="platform-icon-item" data-tool="spotify">
-          <div class="platform-icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="#1ED760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg></div>
-          <span>Spotify</span>
-        </button>
-      </div>
     </div>
 
     <!-- ===== FITUR UNGGULAN ===== -->
@@ -1587,25 +1811,28 @@
           <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Fitur Unggulan</h2>
           <p>Kenapa memilih Dinz Downloader?</p>
         </div>
-        <button class="section-link-btn" data-target="layanan">Lihat Semua</button>
       </div>
       <div class="feature-grid">
         <div class="feature-card">
+          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
           <h3>Super Cepat</h3>
           <p>Proses berjalan otomatis begitu link ditempel, tanpa antrean panjang.</p>
         </div>
         <div class="feature-card">
+          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg></div>
           <h3>Aman &amp; Gratis</h3>
           <p>100% gratis dan tanpa perlu login atau daftar akun apapun.</p>
         </div>
         <div class="feature-card">
+          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
           <h3>Multi Platform</h3>
           <p>Mendukung TikTok, Instagram, YouTube, Facebook, CapCut &amp; Spotify.</p>
         </div>
         <div class="feature-card">
+          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#FF4D6D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#FF4D6D" stroke="none"/></svg></div>
           <h3>Kualitas Terbaik</h3>
           <p>Unduh dengan kualitas terbaik yang tersedia dari sumber aslinya.</p>
@@ -1613,17 +1840,72 @@
       </div>
     </div>
 
-    <!-- ===== SEMUA LAYANAN (langsung di beranda) ===== -->
-    <div class="section-card">
-      <div class="section-card-head">
-        <div>
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Semua Layanan</h2>
-          <p>Semua tool ada di sini, tinggal pilih</p>
-        </div>
+    <!-- ===== KATEGORI: Downloader / Tools (dihapus atas permintaan user) ===== -->
+
+  </div>
+
+  <!-- ================= HALAMAN: DOWNLOADER ================= -->
+  <div id="downloader" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="beranda" aria-label="Kembali ke beranda">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Downloader</h1>
+        <p>Semua layanan unduh video &amp; musik ada di sini</p>
       </div>
-      <div class="accordion-list" id="accordionList"></div>
+    </div>
+    <div class="section-card">
+      <div class="accordion-list" id="accordionListDownloader"></div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: TOOLS ================= -->
+  <div id="tools" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="beranda" aria-label="Kembali ke beranda">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Tools</h1>
+        <p>Enc/Dec File, Web to ZIP/APK, Bypass Link, Pemutar Video &amp; Lagu</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="accordion-list" id="accordionListTools"></div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: AI ================= -->
+  <div id="ai" class="page ai-page">
+    <div class="page-head">
+      <button class="back-btn" data-target="beranda" aria-label="Kembali ke beranda">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div class="ai-header-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M12 7V3"/><circle cx="8.5" cy="13.5" r="1.2" fill="#2F6FED" stroke="none"/><circle cx="15.5" cy="13.5" r="1.2" fill="#2F6FED" stroke="none"/><path d="M8 17h8"/></svg></div>
+      <div>
+        <h1>Asisten AI</h1>
+        <p>Chat, atau ketik "cari foto ..." buat cari gambar</p>
+      </div>
     </div>
 
+    <div class="ai-chat-box" id="aiChatBox">
+      <div class="ai-bubble ai-bubble-bot">
+        Halo! Ketik pesan buat ngobrol denganku, atau ketik <b>"cari foto kucing"</b> / <b>"cari gambar naruto"</b> buat cari foto.
+      </div>
+    </div>
+
+    <div class="ai-input-bar">
+      <div class="ai-attach-preview" id="aiAttachPreview"></div>
+      <form id="aiForm">
+        <button type="button" class="ai-attach-btn" id="aiAttachBtn" aria-label="Lampirkan foto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <input type="file" id="aiFileInput" accept="image/*" hidden>
+        <input type="text" id="aiInput" placeholder="Tulis pesan, atau &quot;cari foto naruto&quot;...">
+        <button type="submit" id="aiSendBtn">Kirim</button>
+      </form>
+    </div>
   </div>
 
 
@@ -1859,14 +2141,19 @@ const ICONS = {
 /* ============================================================
    EXTRA TOOLS (bukan downloader, punya panel sendiri)
 ============================================================ */
+/* Tools = bukan downloader (enc/dec, converter, bypass, pemutar) */
 const EXTRA_TOOLS = [
-  { id:'spotify', name:'Spotify', desc:'Cari & download lagu', panel:'spotify-tool' },
   { id:'encfile', name:'Enc/Dec File', desc:'Encrypt & decrypt isi file', panel:'encfile-tool' },
   { id:'web2zip', name:'Web to ZIP', desc:'Unduh website jadi file ZIP', panel:'web2zip-tool' },
   { id:'web2apk', name:'Web to APK', desc:'Ubah website jadi APK Android', panel:'web2apk-tool' },
   { id:'bypass', name:'Bypass Link', desc:'Ubah link sfile jadi link langsung', panel:'bypass-tool' },
   { id:'ytvid', name:'Pemutar Video', desc:'Cari & putar video YouTube', panel:'ytvid-tool' },
   { id:'musicplay', name:'Pemutar Lagu', desc:'Cari & putar lagu langsung, tanpa unduh', panel:'musicplay-tool' },
+];
+
+/* Downloader ekstra = pakai panel statis sendiri (bukan dari SERVICES) */
+const DOWNLOAD_EXTRAS = [
+  { id:'spotify', name:'Spotify', desc:'Cari & download lagu', panel:'spotify-tool' },
 ];
 
 /* ============================================================
@@ -1986,24 +2273,34 @@ function closeMenu(){ menuOverlay.classList.remove('open'); }
 hamburgerBtn.addEventListener('click', openMenu);
 menuCloseBtn.addEventListener('click', closeMenu);
 
-function openLayanan(){
-  const el = document.getElementById('accordionList');
-  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+/* ============================================================
+   PAGE SWITCHING — Beranda / Downloader / Tools
+============================================================ */
+const PAGES = ['beranda', 'downloader', 'tools', 'ai'];
+
+function showPage(id, scrollTop){
+  if(PAGES.indexOf(id) === -1) id = 'beranda';
+  PAGES.forEach(p=>{
+    const el = document.getElementById(p);
+    if(el) el.classList.toggle('active', p === id);
+  });
+  document.querySelectorAll('.nav-link[data-target]').forEach(l=>{
+    l.classList.toggle('active', l.dataset.target === id);
+  });
+  if(scrollTop !== false) window.scrollTo({top:0, behavior:'auto'});
 }
 
 /* Handler terpadu: dipakai oleh menu mobile, navbar desktop, hero,
-   platform icon row, dan footer — semuanya baca data-target /
-   data-action / data-tool yang sama. TOOL_NAV baru terisi penuh
-   setelah SERVICES & EXTRA_TOOLS diproses di bawah, tapi karena ini
-   cuma daftar listener (bukan pemanggilan langsung), aman karena
-   baru dieksekusi saat user benar-benar klik.*/
+   platform icon row, kategori CTA, dan footer — semuanya baca
+   data-target / data-action / data-tool yang sama. TOOL_NAV baru
+   terisi penuh setelah SERVICES & EXTRA_TOOLS diproses di bawah,
+   tapi karena ini cuma daftar listener (bukan pemanggilan langsung),
+   aman karena baru dieksekusi saat user benar-benar klik.*/
 function runNavAction(el){
   const target = el.dataset.target;
   const action = el.dataset.action;
   const tool = el.dataset.tool;
   closeMenu();
-  const dropdown = document.getElementById('navToolsDropdown');
-  if(dropdown) dropdown.classList.remove('open');
 
   if(action === 'support'){
     window.open('https://wa.me/6287791200371?text=Halo%2C%20saya%20butuh%20bantuan%20soal%20downloader', '_blank', 'noopener');
@@ -2013,42 +2310,15 @@ function runNavAction(el){
     if(TOOL_NAV[tool]) TOOL_NAV[tool]();
     return;
   }
-  if(target === 'layanan'){
-    openLayanan();
-    return;
-  }
   if(target){
-    const el2 = document.getElementById(target);
-    if(el2) el2.scrollIntoView({behavior:'smooth', block:'start'});
+    showPage(target);
   }
 }
 
-document.querySelectorAll('.menu-item, .nav-link, .nav-logo, .section-link-btn, .platform-icon-item, .footer-col button, .footer-col a, #navSupportBtn, #footerSupportLink, .nav-dropdown-menu button').forEach(item=>{
-  if(item.id === 'navToolsBtn') return; /* tombol dropdown ditangani terpisah di bawah */
+document.querySelectorAll('.menu-item, .nav-link, .nav-logo, .back-btn, .footer-col button, .footer-col a, #navSupportBtn, #footerSupportLink').forEach(item=>{
   item.addEventListener('click', (e)=>{
     if(item.tagName === 'A') e.preventDefault();
     runNavAction(item);
-  });
-});
-
-/* dropdown "Tools" di navbar desktop */
-const navToolsDropdown = document.getElementById('navToolsDropdown');
-const navToolsBtn = document.getElementById('navToolsBtn');
-if(navToolsBtn && navToolsDropdown){
-  navToolsBtn.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    navToolsDropdown.classList.toggle('open');
-  });
-  document.addEventListener('click', (e)=>{
-    if(!navToolsDropdown.contains(e.target)) navToolsDropdown.classList.remove('open');
-  });
-}
-
-/* highlight nav-link aktif secara sederhana saat diklik */
-document.querySelectorAll('.nav-link[data-target], .nav-link[data-tool]').forEach(link=>{
-  link.addEventListener('click', ()=>{
-    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
-    link.classList.add('active');
   });
 });
 
@@ -2314,9 +2584,10 @@ const TOOL_NAV = {};
    (lazy). Untuk EXTRA_TOOLS, panel statis yang sudah ada di HTML
    dipindah (appendChild) ke dalam body accordion-nya.
 ============================================================ */
-const accordionList = document.getElementById('accordionList');
+const accordionListDownloader = document.getElementById('accordionListDownloader');
+const accordionListTools = document.getElementById('accordionListTools');
 
-function buildAccordionItem(item, panelBuilder){
+function buildAccordionItem(item, panelBuilder, container, pageId){
   const wrap = document.createElement('div');
   wrap.className = 'accordion-item';
   wrap.dataset.id = item.id;
@@ -2352,28 +2623,39 @@ function buildAccordionItem(item, panelBuilder){
   head.addEventListener('click', toggle);
 
   TOOL_NAV[item.id] = ()=>{
+    showPage(pageId, false);
     open();
-    wrap.scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(()=> wrap.scrollIntoView({behavior:'smooth', block:'start'}), 30);
   };
 
-  if(accordionList) accordionList.appendChild(wrap);
+  if(container) container.appendChild(wrap);
   return wrap;
 }
 
+/* Downloader = SERVICES (link-based) + DOWNLOAD_EXTRAS (search-based, mis. Spotify) */
 SERVICES.forEach(svc=>{
   buildAccordionItem(svc, ()=>{
     const block = buildToolBlock(svc);
     block.classList.add('show');
     return block;
-  });
+  }, accordionListDownloader, 'downloader');
 });
 
+DOWNLOAD_EXTRAS.forEach(tool=>{
+  buildAccordionItem(tool, ()=>{
+    const panelEl = document.getElementById(tool.panel);
+    if(panelEl) panelEl.classList.add('show');
+    return panelEl || document.createElement('div');
+  }, accordionListDownloader, 'downloader');
+});
+
+/* Tools = fitur non-downloader (enc/dec, converter, bypass, pemutar) */
 EXTRA_TOOLS.forEach(tool=>{
   buildAccordionItem(tool, ()=>{
     const panelEl = document.getElementById(tool.panel);
     if(panelEl) panelEl.classList.add('show');
     return panelEl || document.createElement('div');
-  });
+  }, accordionListTools, 'tools');
 });
 
 /* ============================================================
@@ -2395,7 +2677,7 @@ if(heroUrlForm){
     if(!val) return;
     const found = PLATFORM_DETECT.find(p=>p.test.test(val));
     if(!found){
-      openLayanan();
+      showPage('downloader');
       return;
     }
     if(TOOL_NAV[found.id]) TOOL_NAV[found.id]();
@@ -3200,6 +3482,298 @@ async function processMusicplay(query){
 musicplayForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   processMusicplay(musicplayInput.value.trim());
+});
+
+/* ============================================================
+   MENU AI (Chat AI + Cari Foto, satu kolom input)
+   Alur: user ketik pesan ->
+     - kalau diawali kata "cari foto" / "cari gambar" / "foto" / "gambar"
+       -> query sisanya dikirim ke nexray search/pinterest -> tampilkan
+          hasil sebagai grid foto yang bisa diklik.
+     - selain itu -> dikirim ke api-xemoz gpt-5.5.php sebagai obrolan
+       biasa -> tampilkan balasan teks AI.
+============================================================ */
+const aiChatBox = document.getElementById('aiChatBox');
+const aiForm = document.getElementById('aiForm');
+const aiInput = document.getElementById('aiInput');
+const aiSendBtn = document.getElementById('aiSendBtn');
+const aiAttachBtn = document.getElementById('aiAttachBtn');
+const aiFileInput = document.getElementById('aiFileInput');
+const aiAttachPreview = document.getElementById('aiAttachPreview');
+let aiAttachedFile = null;
+
+function aiScrollToBottom(){
+  aiChatBox.scrollTop = aiChatBox.scrollHeight;
+}
+
+function aiAddUserBubble(text){
+  const el = document.createElement('div');
+  el.className = 'ai-bubble ai-bubble-user';
+  el.textContent = text;
+  aiChatBox.appendChild(el);
+  aiScrollToBottom();
+}
+
+function aiAddLoadingBubble(text){
+  const el = document.createElement('div');
+  el.className = 'ai-bubble ai-bubble-loading';
+  el.textContent = text;
+  aiChatBox.appendChild(el);
+  aiScrollToBottom();
+  return el;
+}
+
+function aiAddBotTextBubble(text){
+  const el = document.createElement('div');
+  el.className = 'ai-bubble ai-bubble-bot';
+  el.textContent = text;
+  aiChatBox.appendChild(el);
+  aiScrollToBottom();
+}
+
+function aiAddErrorBubble(text){
+  const el = document.createElement('div');
+  el.className = 'ai-bubble ai-bubble-error';
+  el.textContent = text;
+  aiChatBox.appendChild(el);
+  aiScrollToBottom();
+}
+
+function aiAddPhotoGridBubble(caption, photos){
+  const wrap = document.createElement('div');
+  wrap.className = 'ai-bubble ai-bubble-bot';
+
+  const capEl = document.createElement('div');
+  capEl.textContent = caption;
+  wrap.appendChild(capEl);
+
+  const grid = document.createElement('div');
+  grid.className = 'ai-photo-grid';
+  photos.forEach(url=>{
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    const img = document.createElement('img');
+    img.src = url;
+    img.loading = 'lazy';
+    img.alt = 'Hasil foto';
+    a.appendChild(img);
+    grid.appendChild(a);
+  });
+  wrap.appendChild(grid);
+
+  aiChatBox.appendChild(wrap);
+  aiScrollToBottom();
+}
+
+/* Deteksi niat cari foto: "cari foto ...", "cari gambar ...",
+   "foto ...", "gambar ...", "search photo ...", dst. */
+function aiParsePhotoIntent(msg){
+  const m = msg.trim().match(/^(?:cari\s+)?(?:foto|gambar|photo|picture|pic|image|images)\s*[:\-]?\s*(.*)$/i);
+  if(!m) return null;
+  const q = (m[1] || '').trim();
+  return q.length ? q : null;
+}
+
+/* Ambil field teks jawaban dari berbagai kemungkinan bentuk respons API */
+function aiExtractChatText(data){
+  if(typeof data === 'string') return data;
+  if(!data || typeof data !== 'object') return null;
+  const candidates = [
+    data.result && data.result.message,
+    data.result && data.result.text,
+    data.result && data.result.answer,
+    data.result && data.result.response,
+    typeof data.result === 'string' ? data.result : null,
+    data.message,
+    data.answer,
+    data.response,
+    data.text,
+    data.output,
+    data.data && data.data.message,
+    typeof data.data === 'string' ? data.data : null
+  ];
+  for(const c of candidates){
+    if(typeof c === 'string' && c.trim()) return c.trim();
+  }
+  return null;
+}
+
+/* Ambil daftar URL foto dari berbagai kemungkinan bentuk respons API */
+function aiExtractPhotoUrls(data){
+  if(!data || typeof data !== 'object') return [];
+  let list = null;
+  if(Array.isArray(data.result)) list = data.result;
+  else if(data.result && Array.isArray(data.result.data)) list = data.result.data;
+  else if(Array.isArray(data.data)) list = data.data;
+  else if(Array.isArray(data)) list = data;
+  if(!list) return [];
+
+  const urls = [];
+  list.forEach(item=>{
+    if(typeof item === 'string'){
+      urls.push(item);
+      return;
+    }
+    if(item && typeof item === 'object'){
+      const u = item.url || item.image || item.img || item.link || item.thumbnail || item.src || item.image_url;
+      if(typeof u === 'string' && u.trim()) urls.push(u.trim());
+    }
+  });
+  return urls.filter(u=>/^https?:\/\//i.test(u));
+}
+
+async function aiHandlePhotoSearch(query){
+  const loadingEl = aiAddLoadingBubble('Mencari foto "' + query + '"...');
+  try{
+    const apiUrl = `https://api.nexray.eu.cc/search/pinterest?q=${encodeURIComponent(query)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server pencari foto (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server pencari foto mengembalikan status ' + res.status);
+
+    const data = await res.json();
+    if(!data || data.status === false) throw new Error((data && data.message) || 'Gagal mencari foto');
+
+    const photos = aiExtractPhotoUrls(data).slice(0, 12);
+    loadingEl.remove();
+    if(!photos.length){
+      aiAddErrorBubble('Foto untuk "' + query + '" tidak ditemukan, coba kata kunci lain.');
+      return;
+    }
+    aiAddPhotoGridBubble('Ini hasil foto untuk "' + query + '":', photos);
+  }catch(err){
+    loadingEl.remove();
+    aiAddErrorBubble('Gagal: ' + err.message);
+  }
+}
+
+async function aiHandleChat(message){
+  const loadingEl = aiAddLoadingBubble('Mengetik...');
+  try{
+    const apiUrl = `https://api-xemoz-official.my.id/api/ai/gpt-5.5.php?pesan=${encodeURIComponent(message)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server AI (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server AI mengembalikan status ' + res.status);
+
+    const data = await res.json().catch(async ()=> await res.text());
+    if(data && typeof data === 'object' && data.status === false){
+      throw new Error(data.message || 'Gagal mendapat balasan AI');
+    }
+
+    const reply = aiExtractChatText(data);
+    loadingEl.remove();
+    if(!reply){
+      aiAddErrorBubble('AI tidak memberikan balasan yang bisa dibaca, coba lagi.');
+      return;
+    }
+    aiAddBotTextBubble(reply);
+  }catch(err){
+    loadingEl.remove();
+    aiAddErrorBubble('Gagal: ' + err.message);
+  }
+}
+
+async function processAiMessage(raw){
+  const message = raw.trim();
+  const file = aiAttachedFile;
+  if(!message && !file) return;
+
+  if(file){
+    aiAddUserImageBubble(file, message);
+  }else{
+    aiAddUserBubble(message);
+  }
+  aiClearAttachment();
+
+  aiSendBtn.disabled = true;
+  aiSendBtn.textContent = 'Mengirim...';
+
+  try{
+    if(file){
+      /* Belum ada API untuk edit/analisa foto yang dikirim user,
+         jadi kasih tau dengan jelas daripada pura-pura berhasil. */
+      aiAddErrorBubble('Maaf, fitur kirim foto untuk diedit/dianalisa belum tersambung ke API (belum ada endpoint-nya). Kalau kamu punya API untuk itu, kasih tau ya biar aku sambungkan.');
+      return;
+    }
+    const photoQuery = aiParsePhotoIntent(message);
+    if(photoQuery){
+      await aiHandlePhotoSearch(photoQuery);
+    }else{
+      await aiHandleChat(message);
+    }
+  }finally{
+    aiSendBtn.disabled = false;
+    aiSendBtn.textContent = 'Kirim';
+  }
+}
+
+aiForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const val = aiInput.value;
+  aiInput.value = '';
+  processAiMessage(val);
+});
+
+/* ---- lampiran foto ("+") ---- */
+function aiAddUserImageBubble(file, caption){
+  const wrap = document.createElement('div');
+  wrap.className = 'ai-bubble ai-bubble-user';
+  const img = document.createElement('img');
+  img.src = URL.createObjectURL(file);
+  img.style.cssText = 'display:block;max-width:100%;border-radius:9px;margin-bottom:' + (caption ? '8px' : '0');
+  wrap.appendChild(img);
+  if(caption){
+    const cap = document.createElement('div');
+    cap.textContent = caption;
+    wrap.appendChild(cap);
+  }
+  aiChatBox.appendChild(wrap);
+  aiScrollToBottom();
+}
+
+function aiClearAttachment(){
+  aiAttachedFile = null;
+  aiFileInput.value = '';
+  aiAttachPreview.innerHTML = '';
+  aiAttachPreview.classList.remove('show');
+}
+
+aiAttachBtn.addEventListener('click', ()=>{
+  aiFileInput.click();
+});
+
+aiFileInput.addEventListener('change', ()=>{
+  const file = aiFileInput.files && aiFileInput.files[0];
+  if(!file) return;
+  aiAttachedFile = file;
+
+  aiAttachPreview.innerHTML = '';
+  const chip = document.createElement('div');
+  chip.className = 'ai-attach-chip';
+  const img = document.createElement('img');
+  img.src = URL.createObjectURL(file);
+  chip.appendChild(img);
+  const name = document.createElement('span');
+  name.textContent = file.name;
+  chip.appendChild(name);
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.textContent = '\u00d7';
+  removeBtn.setAttribute('aria-label', 'Hapus lampiran');
+  removeBtn.addEventListener('click', aiClearAttachment);
+  chip.appendChild(removeBtn);
+
+  aiAttachPreview.appendChild(chip);
+  aiAttachPreview.classList.add('show');
 });
 
 /* ============================================================
