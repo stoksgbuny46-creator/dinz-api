@@ -3586,23 +3586,30 @@ function aiParsePhotoIntent(msg){
 
 /* Sebagian API publik gratis kayak gini nggak selalu kasih header CORS,
    jadi kalau fetch langsung gagal (biasanya karena itu), coba lagi lewat
-   proxy publik sebelum benar-benar dianggap gagal. */
-const AI_CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+   beberapa proxy publik bergantian sebelum benar-benar dianggap gagal
+   (satu proxy doang sering ikut down/dibatasi). */
+const AI_CORS_PROXIES = [
+  url => 'https://corsproxy.io/?url=' + encodeURIComponent(url),
+  url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+  url => 'https://thingproxy.freeboard.io/fetch/' + url
+];
 
 async function aiFetchWithFallback(url, failLabel){
-  let res;
   try{
-    res = await fetch(url);
+    const res = await fetch(url);
     if(!res.ok) throw new Error('status ' + res.status);
     return res;
   }catch(directErr){
-    try{
-      res = await fetch(AI_CORS_PROXY + encodeURIComponent(url));
-      if(!res.ok) throw new Error('status ' + res.status);
-      return res;
-    }catch(proxyErr){
-      throw new Error('Tidak bisa menghubungi ' + failLabel + ' (langsung maupun lewat proxy cadangan). Kemungkinan server API sedang down atau memblokir akses dari browser.');
+    for(const buildProxyUrl of AI_CORS_PROXIES){
+      try{
+        const res = await fetch(buildProxyUrl(url));
+        if(!res.ok) continue;
+        return res;
+      }catch(proxyErr){
+        continue;
+      }
     }
+    throw new Error('Tidak bisa menghubungi ' + failLabel + ' (langsung maupun lewat semua proxy cadangan). Kemungkinan domainnya diblokir jaringan/provider internet kamu, atau server API sedang down.');
   }
 }
 
@@ -3611,6 +3618,7 @@ function aiExtractChatText(data){
   if(typeof data === 'string') return data;
   if(!data || typeof data !== 'object') return null;
   const candidates = [
+    data.result && data.result.reply,
     data.result && data.result.message,
     data.result && data.result.text,
     data.result && data.result.answer,
@@ -3642,16 +3650,17 @@ function aiExtractPhotoUrls(data){
 
   const urls = [];
   list.forEach(item=>{
-    if(typeof item === 'string'){
+    if(typeof item === 'string' && /^https?:\/\//i.test(item)){
       urls.push(item);
       return;
     }
     if(item && typeof item === 'object'){
-      const u = item.url || item.image || item.img || item.link || item.thumbnail || item.src || item.image_url;
-      if(typeof u === 'string' && u.trim()) urls.push(u.trim());
+      const candidates = [item.images_url, item.image_url, item.url, item.image, item.img, item.thumbnail, item.src, item.link];
+      const u = candidates.find(c => typeof c === 'string' && /^https?:\/\//i.test(c));
+      if(u) urls.push(u);
     }
   });
-  return urls.filter(u=>/^https?:\/\//i.test(u));
+  return urls;
 }
 
 async function aiHandlePhotoSearch(query){
