@@ -3567,20 +3567,32 @@ function aiAddPhotoGridBubble(caption, photos){
   aiScrollToBottom();
 }
 
-/* Deteksi niat cari foto: "cari foto ...", "carikan foto ...", "cariin gambar ...",
-   "foto ...", "gambar ...", "search photo ...", dst — kata kuncinya boleh
-   didahului imbuhan "cari/carikan/cariin/tolong cari/search/temukan". */
+/* Deteksi niat cari foto: dilonggarin biar nangkep berbagai gaya kalimat
+   natural ("kirimin foto kucing", "mau liat gambar pantai", "ada foto mobil?",
+   "cariin foto anjing dong"), bukan cuma pola kaku "cari foto X".
+   Kalau pesannya ada URL, itu lebih cocok dianggap niat EDIT, bukan search,
+   jadi di-skip di sini (biar ditangani aiParseEditIntent). */
+const AI_PHOTO_WORD_RE = /\b(foto(?:-foto)?|gambar|photo|picture|pic|image|images)\b/i;
+const AI_PHOTO_STOPWORDS = new Set([
+  'tolong','cari','carikan','cariin','search','temukan','minta','mintain',
+  'mintakan','kirim','kirimin','kirimkan','mau','pengen','pingin','lihat',
+  'liat','lihatin','liatin','ada','dong','ya','nya','dulu','please','coba',
+  'kasih','kasi','bisa','bisakah','tampilkan','tampilin','tunjukin','tunjukkan',
+  'foto','foto-foto','gambar','photo','picture','pic','image','images'
+]);
+
 function aiParsePhotoIntent(msg){
   const text = msg.trim();
-  const photoWordRe = /\b(foto|gambar|photo|picture|pic|image|images)\b/i;
-  if(!photoWordRe.test(text)) return null;
+  if(!text) return null;
+  if(AI_URL_RE.test(text)) return null; // ada link -> itu niat edit, bukan cari
+  if(!AI_PHOTO_WORD_RE.test(text)) return null;
 
-  const hasSearchWord = /\b(cari(?:kan|in)?|search|temukan)\b/i.test(text);
-  const startsWithTrigger = /^(?:tolong\s+)?(?:cari(?:kan|in)?|search|temukan)?\s*(?:foto|gambar|photo|picture|pic|image|images)\b/i.test(text);
-  if(!hasSearchWord && !startsWithTrigger) return null;
-
-  const stripRe = /^.*?\b(?:foto|gambar|photo|picture|pic|image|images)\b\s*[:\-]?\s*/i;
-  const query = text.replace(stripRe, '').trim();
+  const words = text.split(/\s+/);
+  const kept = words.filter(w => {
+    const bare = w.toLowerCase().replace(/[?.,!:;"']+$/, '');
+    return bare.length && !AI_PHOTO_STOPWORDS.has(bare);
+  });
+  const query = kept.join(' ').trim();
   return query.length ? query : null;
 }
 
