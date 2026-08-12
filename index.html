@@ -1898,11 +1898,11 @@
     <div class="ai-input-bar">
       <div class="ai-attach-preview" id="aiAttachPreview"></div>
       <form id="aiForm">
+        <input type="file" id="aiFileInput" accept="image/*" hidden>
+        <input type="text" id="aiInput" placeholder="Tulis pesan, atau &quot;cari foto naruto&quot;...">
         <button type="button" class="ai-attach-btn" id="aiAttachBtn" aria-label="Lampirkan foto">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <input type="file" id="aiFileInput" accept="image/*" hidden>
-        <input type="text" id="aiInput" placeholder="Tulis pesan, atau &quot;cari foto naruto&quot;...">
         <button type="submit" id="aiSendBtn">Kirim</button>
       </form>
     </div>
@@ -3567,13 +3567,43 @@ function aiAddPhotoGridBubble(caption, photos){
   aiScrollToBottom();
 }
 
-/* Deteksi niat cari foto: "cari foto ...", "cari gambar ...",
-   "foto ...", "gambar ...", "search photo ...", dst. */
+/* Deteksi niat cari foto: "cari foto ...", "carikan foto ...", "cariin gambar ...",
+   "foto ...", "gambar ...", "search photo ...", dst — kata kuncinya boleh
+   didahului imbuhan "cari/carikan/cariin/tolong cari/search/temukan". */
 function aiParsePhotoIntent(msg){
-  const m = msg.trim().match(/^(?:cari\s+)?(?:foto|gambar|photo|picture|pic|image|images)\s*[:\-]?\s*(.*)$/i);
-  if(!m) return null;
-  const q = (m[1] || '').trim();
-  return q.length ? q : null;
+  const text = msg.trim();
+  const photoWordRe = /\b(foto|gambar|photo|picture|pic|image|images)\b/i;
+  if(!photoWordRe.test(text)) return null;
+
+  const hasSearchWord = /\b(cari(?:kan|in)?|search|temukan)\b/i.test(text);
+  const startsWithTrigger = /^(?:tolong\s+)?(?:cari(?:kan|in)?|search|temukan)?\s*(?:foto|gambar|photo|picture|pic|image|images)\b/i.test(text);
+  if(!hasSearchWord && !startsWithTrigger) return null;
+
+  const stripRe = /^.*?\b(?:foto|gambar|photo|picture|pic|image|images)\b\s*[:\-]?\s*/i;
+  const query = text.replace(stripRe, '').trim();
+  return query.length ? query : null;
+}
+
+/* Sebagian API publik gratis kayak gini nggak selalu kasih header CORS,
+   jadi kalau fetch langsung gagal (biasanya karena itu), coba lagi lewat
+   proxy publik sebelum benar-benar dianggap gagal. */
+const AI_CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
+async function aiFetchWithFallback(url, failLabel){
+  let res;
+  try{
+    res = await fetch(url);
+    if(!res.ok) throw new Error('status ' + res.status);
+    return res;
+  }catch(directErr){
+    try{
+      res = await fetch(AI_CORS_PROXY + encodeURIComponent(url));
+      if(!res.ok) throw new Error('status ' + res.status);
+      return res;
+    }catch(proxyErr){
+      throw new Error('Tidak bisa menghubungi ' + failLabel + ' (langsung maupun lewat proxy cadangan). Kemungkinan server API sedang down atau memblokir akses dari browser.');
+    }
+  }
 }
 
 /* Ambil field teks jawaban dari berbagai kemungkinan bentuk respons API */
@@ -3628,13 +3658,7 @@ async function aiHandlePhotoSearch(query){
   const loadingEl = aiAddLoadingBubble('Mencari foto "' + query + '"...');
   try{
     const apiUrl = `https://api.nexray.eu.cc/search/pinterest?q=${encodeURIComponent(query)}`;
-    let res;
-    try{
-      res = await fetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server pencari foto (kemungkinan diblokir CORS, offline, atau server sumber down)');
-    }
-    if(!res.ok) throw new Error('Server pencari foto mengembalikan status ' + res.status);
+    const res = await aiFetchWithFallback(apiUrl, 'server pencari foto');
 
     const data = await res.json();
     if(!data || data.status === false) throw new Error((data && data.message) || 'Gagal mencari foto');
@@ -3656,13 +3680,7 @@ async function aiHandleChat(message){
   const loadingEl = aiAddLoadingBubble('Mengetik...');
   try{
     const apiUrl = `https://api-xemoz-official.my.id/api/ai/gpt-5.5.php?pesan=${encodeURIComponent(message)}`;
-    let res;
-    try{
-      res = await fetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server AI (kemungkinan diblokir CORS, offline, atau server sumber down)');
-    }
-    if(!res.ok) throw new Error('Server AI mengembalikan status ' + res.status);
+    const res = await aiFetchWithFallback(apiUrl, 'server AI');
 
     const data = await res.json().catch(async ()=> await res.text());
     if(data && typeof data === 'object' && data.status === false){
