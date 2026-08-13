@@ -3274,12 +3274,86 @@ function setStickerStatus(msg, isError){
   stickerStatus.classList.toggle('error', !!isError);
 }
 
+/* Ambil URL gambar dari berbagai bentuk respons Stickerly/API.
+   Beberapa versi API tidak memakai field yang sama dan kadang URL
+   berada di dalam object/array bertingkat. */
+function normalizeStickerUrl(value){
+  if(typeof value !== 'string' || !value.trim()) return '';
+  let u = value.trim();
+  if(u.startsWith('//')) u = 'https:' + u;
+  if(!/^https?:\/\//i.test(u)) return '';
+  return u;
+}
+
+function extractStickerUrl(item){
+  if(!item) return '';
+  if(typeof item === 'string') return normalizeStickerUrl(item);
+  if(Array.isArray(item)){
+    for(const v of item){
+      const found = extractStickerUrl(v);
+      if(found) return found;
+    }
+    return '';
+  }
+  if(typeof item !== 'object') return '';
+
+  const priorityKeys = [
+    'stickerUrl','sticker_url','imageUrl','image_url','mediaUrl','media_url',
+    'downloadUrl','download_url','fileUrl','file_url','url','image','sticker',
+    'thumbnail','thumb','src','contentUrl','content_url'
+  ];
+  for(const key of priorityKeys){
+    const found = extractStickerUrl(item[key]);
+    if(found) return found;
+  }
+
+  for(const value of Object.values(item)){
+    const found = extractStickerUrl(value);
+    if(found) return found;
+  }
+  return '';
+}
+
+function collectStickerItems(value, out=[], seen=new Set()){
+  if(!value || typeof value !== 'object' || seen.has(value)) return out;
+  seen.add(value);
+  if(Array.isArray(value)){
+    for(const item of value) collectStickerItems(item, out, seen);
+    return out;
+  }
+  const imgUrl = extractStickerUrl(value);
+  if(imgUrl) out.push({data:value, url:imgUrl});
+  for(const child of Object.values(value)){
+    if(child && typeof child === 'object') collectStickerItems(child, out, seen);
+  }
+  return out;
+}
+
+function stickerProxyUrl(imgUrl){
+  /* Dipakai untuk preview/fetch jika host gambar menolak CORS/hotlink. */
+  return 'https://images.weserv.nl/?url=' + encodeURIComponent(imgUrl);
+}
+
+async function fetchStickerBlob(imgUrl){
+  let lastError = null;
+  for(const candidate of [imgUrl, stickerProxyUrl(imgUrl)]){
+    try{
+      const res = await fetch(candidate, {mode:'cors', cache:'no-store'});
+      if(!res.ok) throw new Error('status ' + res.status);
+      const blob = await res.blob();
+      if(blob.size < 100) throw new Error('file stiker kosong');
+      if(!blob.type.startsWith('image/')) throw new Error('respons bukan gambar');
+      return blob;
+    }catch(err){ lastError = err; }
+  }
+  throw lastError || new Error('gambar stiker tidak dapat diambil');
+}
+
 async function urlToFile(imgUrl, idx){
-  const res = await fetch(imgUrl);
-  if(!res.ok) throw new Error('status ' + res.status);
-  const blob = await res.blob();
-  const filename = 'stiker-' + (idx + 1) + '.' + (blob.type.split('/')[1] || 'png');
-  return new File([blob], filename, {type: blob.type || 'image/png'});
+  const blob = await fetchStickerBlob(imgUrl);
+  let ext = (blob.type.split('/')[1] || 'png').toLowerCase();
+  if(ext === 'jpeg') ext = 'jpg';
+  return new File([blob], 'stiker-' + (idx + 1) + '.' + ext, {type: blob.type || 'image/png'});
 }
 
 function downloadBlobFile(file){
@@ -3294,21 +3368,26 @@ function downloadBlobFile(file){
 }
 
 function buildStickerCell(item, idx){
-  const imgUrl = item.url || item.image || item.thumbnail || item.sticker || '';
+  const imgUrl = item.url || extractStickerUrl(item.data || item);
   const cell = document.createElement('div');
   cell.className = 'sticker-cell';
 
   const img = document.createElement('img');
-  img.src = imgUrl;
   img.alt = 'stiker ' + (idx + 1);
   img.loading = 'lazy';
+  img.src = imgUrl ? imgUrl : '';
+  img.onerror = ()=>{
+    if(img.dataset.proxied === '1') return;
+    img.dataset.proxied = '1';
+    if(imgUrl) img.src = stickerProxyUrl(imgUrl);
+  };
   cell.appendChild(img);
 
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.textContent = 'Kirim ke WhatsApp';
   btn.addEventListener('click', async ()=>{
-    if(!imgUrl){ return; }
+    if(!imgUrl){ setStickerStatus('URL stiker tidak tersedia.', true); return; }
     const originalLabel = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Menyiapkan...';
@@ -3318,12 +3397,10 @@ function buildStickerCell(item, idx){
         await navigator.share({files:[file], title:'Stiker'});
       }else{
         downloadBlobFile(file);
-        window.open('https://wa.me/', '_blank', 'noopener');
+        setStickerStatus('Stiker diunduh. Browser ini tidak mendukung kirim file langsung, buka WhatsApp dan kirim dari galeri.', false);
       }
     }catch(err){
-      if(err && err.name !== 'AbortError'){
-        window.open(imgUrl, '_blank', 'noopener');
-      }
+      if(err && err.name !== 'AbortError') setStickerStatus('Gagal menyiapkan stiker: ' + (err.message || err), true);
     }finally{
       btn.disabled = false;
       btn.textContent = originalLabel;
@@ -3339,29 +3416,24 @@ stickerSendAllBtn.addEventListener('click', async ()=>{
   const originalLabel = stickerSendAllBtn.textContent;
   stickerSendAllBtn.disabled = true;
   stickerSendAllBtn.textContent = 'Menyiapkan semua stiker...';
-  setStickerStatus('Mengunduh ' + currentStickerUrls.length + ' stiker untuk dikirim...', false);
+  setStickerStatus('Menyiapkan ' + currentStickerUrls.length + ' stiker...', false);
 
   try{
     const files = [];
     for(let i = 0; i < currentStickerUrls.length; i++){
-      try{
-        files.push(await urlToFile(currentStickerUrls[i], i));
-      }catch(e){ /* lewati stiker yang gagal diambil, lanjut yang lain */ }
+      try{ files.push(await urlToFile(currentStickerUrls[i], i)); }catch(e){}
     }
     if(files.length === 0) throw new Error('Tidak ada stiker yang berhasil disiapkan');
 
     if(navigator.canShare && navigator.canShare({files})){
       await navigator.share({files, title:'Sticker Pack'});
-      setStickerStatus('Berhasil membuka menu bagikan, pilih WhatsApp untuk kirim semua stiker.', false);
+      setStickerStatus('Berhasil membuka menu bagikan. Pilih WhatsApp untuk mengirim stiker.', false);
     }else{
       files.forEach(downloadBlobFile);
-      window.open('https://wa.me/', '_blank', 'noopener');
-      setStickerStatus('Bagikan banyak file tidak didukung browser ini, semua stiker diunduh, kirim manual dari galeri.', false);
+      setStickerStatus(files.length + ' stiker berhasil diunduh. Browser tidak mendukung berbagi banyak file sekaligus.', false);
     }
   }catch(err){
-    if(err && err.name !== 'AbortError'){
-      setStickerStatus('Gagal: ' + err.message, true);
-    }
+    if(err && err.name !== 'AbortError') setStickerStatus('Gagal: ' + (err.message || err), true);
   }finally{
     stickerSendAllBtn.disabled = false;
     stickerSendAllBtn.textContent = originalLabel;
@@ -3381,31 +3453,41 @@ async function searchSticker(query){
     const apiUrl = `https://api.nexray.eu.cc/search/stickerly?q=${encodeURIComponent(query)}`;
     let res;
     try{
-      res = await fetch(apiUrl);
+      res = await fetch(apiUrl, {cache:'no-store'});
     }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+      throw new Error('Tidak bisa menghubungi server API.');
     }
     if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-    const data = await res.json();
+
+    const text = await res.text();
+    let data;
+    try{ data = JSON.parse(text); }
+    catch(e){ throw new Error('API stiker mengembalikan respons yang bukan JSON.'); }
+
     if(data && data.status === false) throw new Error(data.message || 'Stiker tidak ditemukan');
 
-    const results = data.result || data.results || data.data || [];
-    if(!Array.isArray(results) || results.length === 0){
-      throw new Error('Stiker tidak ditemukan');
+    const rawResults = data?.result ?? data?.results ?? data?.data ?? data;
+    const candidates = collectStickerItems(rawResults);
+    const unique = [];
+    const seenUrls = new Set();
+    for(const item of candidates){
+      if(!item.url || seenUrls.has(item.url)) continue;
+      seenUrls.add(item.url);
+      unique.push(item);
     }
 
-    results.forEach((item, idx) => {
-      const imgUrl = item.url || item.image || item.thumbnail || item.sticker || '';
-      if(imgUrl) currentStickerUrls.push(imgUrl);
+    if(unique.length === 0) throw new Error('Stiker tidak ditemukan atau URL gambar tidak tersedia.');
+
+    unique.forEach((item, idx)=>{
+      currentStickerUrls.push(item.url);
       stickerGrid.appendChild(buildStickerCell(item, idx));
     });
-    if(currentStickerUrls.length > 0){
-      stickerSendAllBtn.style.display = 'block';
-      stickerSendAllBtn.textContent = 'Kirim Semua ke WhatsApp (' + currentStickerUrls.length + ')';
-    }
-    setStickerStatus('', false);
+
+    stickerSendAllBtn.style.display = 'block';
+    stickerSendAllBtn.textContent = 'Kirim Semua ke WhatsApp (' + currentStickerUrls.length + ')';
+    setStickerStatus('Ditemukan ' + currentStickerUrls.length + ' stiker.', false);
   }catch(err){
-    setStickerStatus('Gagal: ' + err.message, true);
+    setStickerStatus('Gagal: ' + (err.message || err), true);
   }finally{
     stickerSendBtn.disabled = false;
     stickerSendBtn.textContent = 'Cari';
@@ -3732,9 +3814,8 @@ function findApkUrlDeep(value, seen = new Set()){
   }
 
   const priority = [
-    'apk','apk_url','apkUrl','download','download_url','downloadUrl',
-    'direct_download','directDownload','file','file_url','fileUrl',
-    'link','url','output'
+    'apk','apk_url','apkUrl','download_url','downloadUrl','direct_download',
+    'directDownload','file_url','fileUrl','file','download','link','output','url'
   ];
   for(const key of priority){
     if(isLikelyApkUrl(value[key])) return value[key];
@@ -3747,44 +3828,47 @@ function findApkUrlDeep(value, seen = new Set()){
   return null;
 }
 
-/* Jika endpoint mengembalikan HTML, cari href ke file .apk.
-   Jadi error "Unexpected token '<'" tidak lagi muncul. */
-function findApkUrlInHtml(html){
+/* Cari link download walaupun server tidak menuliskan ekstensi .apk.
+   Beberapa endpoint mengembalikan halaman HTML yang berisi tombol/link
+   download dengan URL seperti /download/... atau download.php?id=... . */
+function findDownloadLinkInHtml(html, baseUrl){
   if(typeof html !== 'string') return null;
-  const patterns = [
-    /(?:href|src)=["']([^"']+\.apk(?:\?[^"']*)?)["']/ig,
-    /https?:\/\/[^\s"'<>]+\.apk(?:\?[^\s"'<>]*)?/ig
-  ];
-  for(const re of patterns){
-    const m = re.exec(html);
-    if(m) return m[1] || m[0];
+  const urls = [];
+  const add = v => {
+    if(!v || typeof v !== 'string') return;
+    try{
+      const u = new URL(v, baseUrl).href;
+      if(/^https?:\/\//i.test(u) && !urls.includes(u)) urls.push(u);
+    }catch(e){}
+  };
+
+  let m;
+  const attrRe = /(?:href|src|data-url|data-download|data-href)=["']([^"']+)["']/ig;
+  while((m = attrRe.exec(html))){
+    const v = m[1];
+    if(/\.apk(?:[?#].*)?$/i.test(v) || /(?:download|apk|file|redirect|mirror)/i.test(v)) add(v);
   }
-  return null;
+
+  const rawRe = /https?:\/\/[^\s"'<>]+/ig;
+  while((m = rawRe.exec(html))){
+    const v = m[0].replace(/[),.;]+$/,'');
+    if(/\.apk(?:[?#].*)?$/i.test(v) || /(?:download|apk|file|redirect|mirror)/i.test(v)) add(v);
+  }
+
+  return urls[0] || null;
 }
 
-/* Endpoint bisa mengembalikan JSON, file APK langsung, atau halaman
-   perantara yang berisi link APK. Semua format ditangani di sini. */
-async function resolveHappymodDownload(pageUrl, item){
-  /* Prioritas pertama: link APK yang sudah dikirim oleh API pencarian. */
-  const directFromSearch = findApkUrlDeep(item);
-  if(directFromSearch && directFromSearch !== pageUrl) return {type:'url', url:directFromSearch};
+function findApkUrlInHtml(html, baseUrl){
+  return findDownloadLinkInHtml(html, baseUrl);
+}
 
-  if(!pageUrl) throw new Error('Link APK tidak tersedia dari hasil pencarian');
-
-  const apiUrl = `https://api-xemoz-official.my.id/api/download/happymod.php?url=${encodeURIComponent(pageUrl)}`;
-  let res;
-  try{
-    res = await corsFetch(apiUrl);
-  }catch(e){
-    throw new Error('Server download tidak bisa dihubungi');
-  }
-  if(!res.ok) throw new Error('Server download HTTP ' + res.status);
+async function inspectDownloadResponse(res, baseUrl, depth = 0){
+  if(!res || !res.ok) throw new Error('Server download HTTP ' + (res && res.status || 'unknown'));
 
   const contentType = (res.headers.get('content-type') || '').toLowerCase();
-  const finalUrl = res.url || '';
+  const finalUrl = res.url || baseUrl || '';
 
-  /* Bila response sudah berupa APK/binary, simpan sebagai blob. */
-  if(/application\/vnd\.android\.package-archive|application\/octet-stream|application\/zip/i.test(contentType) || /\.apk(?:$|\?)/i.test(finalUrl)){
+  if(/application\/vnd\.android\.package-archive|application\/octet-stream|application\/zip/i.test(contentType) || /\.apk(?:$|[?#])/i.test(finalUrl)){
     const blob = await res.blob();
     if(blob.size < 1024) throw new Error('File APK yang diterima terlalu kecil/rusak');
     return {type:'blob', blob};
@@ -3796,19 +3880,56 @@ async function resolveHappymodDownload(pageUrl, item){
 
   if(data){
     if(data.status === false) throw new Error(data.message || 'API gagal menyiapkan APK');
-    const link = findApkUrlDeep(data);
-    if(link && link !== pageUrl) return {type:'url', url:link};
+    const direct = findApkUrlDeep(data);
+    if(direct && depth < 2) return fetchAndInspectApk(direct, depth + 1);
   }
 
-  const htmlLink = findApkUrlInHtml(text);
-  if(htmlLink && htmlLink !== pageUrl){
-    return {type:'url', url:new URL(htmlLink, apiUrl).href};
+  const link = findDownloadLinkInHtml(text, finalUrl || baseUrl);
+  if(link && depth < 2){
+    return fetchAndInspectApk(link, depth + 1);
   }
 
   if(/<!doctype html|<html[\s>]|<body[\s>]/i.test(text)){
-    throw new Error('Server mengembalikan halaman HTML, bukan file/link APK');
+    throw new Error('Server mengembalikan halaman HTML tanpa link APK langsung');
   }
-  throw new Error('Link APK langsung tidak ditemukan');
+  throw new Error('Respons server bukan file/link APK yang valid');
+}
+
+async function fetchAndInspectApk(url, depth = 0){
+  if(!isHttpUrl(url)) throw new Error('Link download tidak valid');
+  let res;
+  try{
+    res = await corsFetch(url);
+  }catch(e){
+    throw new Error('Tidak bisa mengambil file APK dari server sumber');
+  }
+  return inspectDownloadResponse(res, url, depth);
+}
+
+/* Endpoint bisa mengembalikan JSON, file APK langsung, atau halaman
+   perantara. Semua jalur diproses otomatis tanpa membuka HappyMod. */
+async function resolveHappymodDownload(pageUrl, item){
+  const directFromSearch = findApkUrlDeep(item);
+  if(directFromSearch && directFromSearch !== pageUrl){
+    return fetchAndInspectApk(directFromSearch);
+  }
+
+  if(!pageUrl) throw new Error('Link download APK tidak tersedia dari hasil pencarian');
+
+  const apiUrl = `https://api-xemoz-official.my.id/api/download/happymod.php?url=${encodeURIComponent(pageUrl)}`;
+  try{
+    return await fetchAndInspectApk(apiUrl);
+  }catch(apiErr){
+    /* Fallback: ambil halaman sumber melalui corsFetch, cari tombol/link
+       download di HTML, lalu ambil file tersebut. Browser tidak diarahkan
+       ke halaman sumber. */
+    try{
+      const sourceRes = await corsFetch(pageUrl);
+      return await inspectDownloadResponse(sourceRes, pageUrl);
+    }catch(sourceErr){
+      throw new Error(apiErr.message || sourceErr.message || 'Link APK tidak ditemukan');
+    }
+  }
 }
 
 async function downloadApkResult(result, filename){
@@ -3823,7 +3944,7 @@ async function downloadApkResult(result, filename){
     setTimeout(()=>URL.revokeObjectURL(blobUrl), 3000);
     return;
   }
-  await downloadAndOpenApk(result.url, filename);
+  throw new Error('Hasil download APK tidak valid');
 }
 
 function buildApkRow(item){
@@ -3856,14 +3977,14 @@ function buildApkRow(item){
     const originalLabel = dlBtn.textContent;
     dlBtn.textContent = 'Mengunduh...';
     dlBtn.style.pointerEvents = 'none';
-    dlProgress.textContent = 'Menyiapkan file APK langsung...';
+    dlProgress.textContent = 'Mencari file APK langsung...';
     try{
       const result = await resolveHappymodDownload(pageUrl, item);
       const filename = safeFileName(title) + '.apk';
       await downloadApkResult(result, filename);
       dlProgress.textContent = 'Download APK berhasil. Cek notifikasi/folder unduhan.';
     }catch(err){
-      dlProgress.textContent = 'Gagal download langsung: ' + (err.message || 'server APK bermasalah');
+      dlProgress.textContent = 'Gagal download APK: ' + (err.message || 'server tidak menyediakan file APK');
     }finally{
       dlBtn.textContent = originalLabel;
       dlBtn.style.pointerEvents = '';
