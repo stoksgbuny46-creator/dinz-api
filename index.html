@@ -2066,8 +2066,9 @@
       <input type="text" id="stickerInput" placeholder="Kata kunci stiker, mis. naruto..." required>
       <button type="submit" id="stickerSendBtn">Cari</button>
     </form>
-    <div class="hint">Ketik kata kunci, lalu tap "Kirim ke WhatsApp" pada stiker yang disuka untuk membuka menu bagikan HP dan pilih WhatsApp. Kalau HP tidak mendukung bagikan file, stiker akan diunduh dulu supaya bisa dikirim manual.</div>
+    <div class="hint">Ketik kata kunci, lalu tap "Kirim Semua ke WhatsApp" untuk mengirim seluruh stiker sekaligus dalam satu kali bagikan, atau tap stiker satuan untuk kirim satu-satu. Kalau HP tidak mendukung bagikan file, stiker akan diunduh dulu supaya bisa dikirim manual.</div>
     <div class="status" id="stickerStatus"></div>
+    <button type="button" class="download-main" id="stickerSendAllBtn" style="display:none;">Kirim Semua ke WhatsApp</button>
     <div class="sticker-grid" id="stickerGrid"></div>
   </div>
 
@@ -2152,7 +2153,7 @@
       <input type="text" id="happymodInput" placeholder="Nama aplikasi/game, mis. Minecraft..." required>
       <button type="submit" id="happymodSendBtn">Cari</button>
     </form>
-    <div class="hint">Cari APK mod dari HappyMod. Klik "Download APK" untuk mengunduh &amp; langsung pasang di HP — kalau link unduh otomatis tidak tersedia, halaman HappyMod-nya akan dibuka supaya bisa diunduh manual di sana.</div>
+    <div class="hint">Cari APK lalu download langsung dari website. Tidak perlu membuka halaman sumber.</div>
     <div class="status" id="happymodStatus"></div>
     <div class="track-list" id="apkList"></div>
   </div>
@@ -2243,7 +2244,7 @@ const EXTRA_TOOLS = [
   { id:'bypass', name:'Bypass Link', desc:'Ubah link sfile jadi link langsung', panel:'bypass-tool' },
   { id:'ytvid', name:'Pemutar Video', desc:'Cari & putar video YouTube', panel:'ytvid-tool' },
   { id:'musicplay', name:'Pemutar Lagu', desc:'Cari & putar lagu langsung, tanpa unduh', panel:'musicplay-tool' },
-  { id:'happymod', name:'Cari APK', desc:'Cari & download APK mod dari HappyMod', panel:'happymod-tool' },
+  { id:'happymod', name:'Cari APK', desc:'Cari & download APK langsung', panel:'happymod-tool' },
 ];
 
 /* Downloader ekstra = pakai panel statis sendiri (bukan dari SERVICES) */
@@ -2506,7 +2507,7 @@ function mediaExt(type){
 /* Unduh APK sebagai blob lalu langsung navigasi ke blob URL itu.
    Di Chrome Android ini biasanya memicu prompt installer begitu
    file selesai diunduh, tanpa user harus buka folder Download manual.
-   Dipakai oleh fitur Cari APK (HappyMod). */
+   Dipakai oleh fitur Cari APK. */
 async function downloadAndOpenApk(fileUrl, filename){
   let blob;
   try{
@@ -3242,10 +3243,19 @@ encDownloadBtn.addEventListener('click', ()=>{
    CARI STIKER
    Alur: user ketik kata kunci -> dikirim ke nexray search/stickerly
    -> hasil (gambar stiker) ditampilkan sebagai grid. Tombol "Kirim
-   ke WhatsApp" pakai Web Share API (navigator.share dengan file)
-   supaya muncul menu bagikan HP dan user tinggal pilih WhatsApp.
-   Kalau HP/browser tidak mendukung share file, fallback: stiker
-   diunduh dulu supaya bisa dikirim manual dari galeri/file manager.
+   Semua ke WhatsApp" pakai Web Share API (navigator.share dengan
+   banyak file sekaligus) supaya muncul menu bagikan HP dan user
+   tinggal pilih WhatsApp lalu semua stiker terkirim jadi satu set.
+   Tombol per-stiker tetap ada untuk kirim satu-satu. Kalau HP/browser
+   tidak mendukung share file, fallback: stiker diunduh dulu supaya
+   bisa dikirim manual dari galeri/file manager.
+
+   Catatan: browser web tidak punya akses ke API internal WhatsApp
+   untuk membuat "sticker pack" resmi (tray stiker permanen) — itu
+   cuma bisa dibuat lewat aplikasi Android khusus yang didaftarkan
+   ke WhatsApp. Yang dilakukan di sini adalah membagikan sekumpulan
+   gambar stiker sekaligus dalam satu kali share, cara paling dekat
+   yang bisa dilakukan dari web.
 ============================================================ */
 document.getElementById('stickerIconSlot').innerHTML = ICONS.sticker;
 
@@ -3254,11 +3264,33 @@ const stickerInput = document.getElementById('stickerInput');
 const stickerSendBtn = document.getElementById('stickerSendBtn');
 const stickerStatus = document.getElementById('stickerStatus');
 const stickerGrid = document.getElementById('stickerGrid');
+const stickerSendAllBtn = document.getElementById('stickerSendAllBtn');
+
+let currentStickerUrls = [];
 
 function setStickerStatus(msg, isError){
   stickerStatus.textContent = msg;
   stickerStatus.classList.toggle('show', !!msg);
   stickerStatus.classList.toggle('error', !!isError);
+}
+
+async function urlToFile(imgUrl, idx){
+  const res = await fetch(imgUrl);
+  if(!res.ok) throw new Error('status ' + res.status);
+  const blob = await res.blob();
+  const filename = 'stiker-' + (idx + 1) + '.' + (blob.type.split('/')[1] || 'png');
+  return new File([blob], filename, {type: blob.type || 'image/png'});
+}
+
+function downloadBlobFile(file){
+  const blobUrl = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(blobUrl), 4000);
 }
 
 function buildStickerCell(item, idx){
@@ -3281,23 +3313,11 @@ function buildStickerCell(item, idx){
     btn.disabled = true;
     btn.textContent = 'Menyiapkan...';
     try{
-      const res = await fetch(imgUrl);
-      if(!res.ok) throw new Error('status ' + res.status);
-      const blob = await res.blob();
-      const filename = 'stiker-' + (idx + 1) + '.' + (blob.type.split('/')[1] || 'png');
-      const file = new File([blob], filename, {type: blob.type || 'image/png'});
-
+      const file = await urlToFile(imgUrl, idx);
       if(navigator.canShare && navigator.canShare({files:[file]})){
         await navigator.share({files:[file], title:'Stiker'});
       }else{
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(()=> URL.revokeObjectURL(blobUrl), 4000);
+        downloadBlobFile(file);
         window.open('https://wa.me/', '_blank', 'noopener');
       }
     }catch(err){
@@ -3314,9 +3334,45 @@ function buildStickerCell(item, idx){
   return cell;
 }
 
+stickerSendAllBtn.addEventListener('click', async ()=>{
+  if(currentStickerUrls.length === 0) return;
+  const originalLabel = stickerSendAllBtn.textContent;
+  stickerSendAllBtn.disabled = true;
+  stickerSendAllBtn.textContent = 'Menyiapkan semua stiker...';
+  setStickerStatus('Mengunduh ' + currentStickerUrls.length + ' stiker untuk dikirim...', false);
+
+  try{
+    const files = [];
+    for(let i = 0; i < currentStickerUrls.length; i++){
+      try{
+        files.push(await urlToFile(currentStickerUrls[i], i));
+      }catch(e){ /* lewati stiker yang gagal diambil, lanjut yang lain */ }
+    }
+    if(files.length === 0) throw new Error('Tidak ada stiker yang berhasil disiapkan');
+
+    if(navigator.canShare && navigator.canShare({files})){
+      await navigator.share({files, title:'Sticker Pack'});
+      setStickerStatus('Berhasil membuka menu bagikan, pilih WhatsApp untuk kirim semua stiker.', false);
+    }else{
+      files.forEach(downloadBlobFile);
+      window.open('https://wa.me/', '_blank', 'noopener');
+      setStickerStatus('Bagikan banyak file tidak didukung browser ini, semua stiker diunduh, kirim manual dari galeri.', false);
+    }
+  }catch(err){
+    if(err && err.name !== 'AbortError'){
+      setStickerStatus('Gagal: ' + err.message, true);
+    }
+  }finally{
+    stickerSendAllBtn.disabled = false;
+    stickerSendAllBtn.textContent = originalLabel;
+  }
+});
+
 async function searchSticker(query){
   if(!query) return;
   stickerGrid.innerHTML = '';
+  currentStickerUrls = [];
+  stickerSendAllBtn.style.display = 'none';
   stickerSendBtn.disabled = true;
   stickerSendBtn.textContent = 'Mencari...';
   setStickerStatus('Mencari stiker...', false);
@@ -3338,7 +3394,15 @@ async function searchSticker(query){
       throw new Error('Stiker tidak ditemukan');
     }
 
-    results.forEach((item, idx) => stickerGrid.appendChild(buildStickerCell(item, idx)));
+    results.forEach((item, idx) => {
+      const imgUrl = item.url || item.image || item.thumbnail || item.sticker || '';
+      if(imgUrl) currentStickerUrls.push(imgUrl);
+      stickerGrid.appendChild(buildStickerCell(item, idx));
+    });
+    if(currentStickerUrls.length > 0){
+      stickerSendAllBtn.style.display = 'block';
+      stickerSendAllBtn.textContent = 'Kirim Semua ke WhatsApp (' + currentStickerUrls.length + ')';
+    }
     setStickerStatus('', false);
   }catch(err){
     setStickerStatus('Gagal: ' + err.message, true);
@@ -3610,7 +3674,7 @@ musicplayForm.addEventListener('submit', (e)=>{
    hasil pencarian Spotify. Tombol "Download APK" coba ambil link
    file langsung lewat endpoint download/happymod.php (kalau field-nya
    tidak dikenali/endpoint tidak tersedia, fallback: buka halaman
-   HappyMod-nya di tab baru supaya tetap bisa diunduh manual). Kalau
+   halaman sumber di tab baru supaya tetap bisa diunduh manual). Kalau
    link file berhasil didapat, dipakai downloadAndOpenApk (fungsi yang
    sama dipakai Web to APK) supaya installer Android langsung kebuka.
 ============================================================ */
@@ -3721,30 +3785,20 @@ function buildApkRow(item){
     }
     const originalLabel = dlBtn.textContent;
     dlBtn.textContent = 'Menyiapkan...';
-    dlProgress.textContent = 'Mengambil link download APK...';
+    dlProgress.textContent = 'Mengambil file APK langsung...';
     try{
       const fileUrl = await resolveHappymodDownload(pageUrl);
       const filename = safeFileName(title) + '.apk';
       await downloadAndOpenApk(fileUrl, filename);
-      dlProgress.textContent = 'APK terunduh & sedang dibuka. Kalau installer tidak langsung muncul, buka lewat notifikasi unduhan lalu izinkan "Pasang aplikasi tak dikenal" untuk browser ini.';
+      dlProgress.textContent = 'APK berhasil dikirim ke unduhan website.';
     }catch(err){
-      dlProgress.textContent = 'Link unduh otomatis tidak tersedia, membuka halaman HappyMod supaya bisa diunduh manual...';
-      window.open(pageUrl, '_blank', 'noopener');
+      dlProgress.textContent = 'Gagal download langsung: ' + err.message;
     }finally{
       dlBtn.textContent = originalLabel;
     }
   });
   actions.appendChild(dlBtn);
 
-  if(pageUrl){
-    const openLink = document.createElement('a');
-    openLink.href = pageUrl;
-    openLink.target = '_blank';
-    openLink.rel = 'noopener';
-    openLink.className = 'track-open';
-    openLink.textContent = 'Buka di HappyMod ↗';
-    actions.appendChild(openLink);
-  }
 
   row.appendChild(actions);
   row.appendChild(dlProgress);
