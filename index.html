@@ -3631,6 +3631,19 @@ musicplayForm.addEventListener('submit', (e)=>{
 ============================================================ */
 document.getElementById('happymodIconSlot').innerHTML = ICONS.happymod;
 
+/* API HappyMod (api-xemoz-official.my.id) tidak mengirim header CORS,
+   jadi fetch langsung dari browser diblokir. Coba fetch langsung dulu,
+   kalau gagal (TypeError network/CORS) baru lewat proxy CORS publik. */
+async function corsFetch(url){
+  try{
+    const direct = await fetch(url);
+    return direct;
+  }catch(directErr){
+    const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+    return fetch(proxied);
+  }
+}
+
 const happymodForm = document.getElementById('happymodForm');
 const happymodInput = document.getElementById('happymodInput');
 const happymodSendBtn = document.getElementById('happymodSendBtn');
@@ -3661,7 +3674,7 @@ async function resolveHappymodDownload(pageUrl){
   const apiUrl = `https://api-xemoz-official.my.id/api/download/happymod.php?url=${encodeURIComponent(pageUrl)}`;
   let res;
   try{
-    res = await fetch(apiUrl);
+    res = await corsFetch(apiUrl);
   }catch(networkErr){
     throw new Error('Tidak bisa menghubungi server download');
   }
@@ -3747,7 +3760,7 @@ async function searchHappymod(query){
     const apiUrl = `https://api-xemoz-official.my.id/api/search/happymod.php?q=${encodeURIComponent(query)}`;
     let res;
     try{
-      res = await fetch(apiUrl);
+      res = await corsFetch(apiUrl);
     }catch(networkErr){
       throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
     }
