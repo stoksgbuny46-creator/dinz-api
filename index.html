@@ -882,7 +882,7 @@
     margin-top:0;
     box-shadow:none;
   }
-  #spotify-tool, #encfile-tool, #web2zip-tool, #web2apk-tool, #webclone-tool, #bypass-tool, #ytvid-tool, #musicplay-tool{
+  #spotify-tool, #encfile-tool, #sticker-tool, #bypass-tool, #ytvid-tool, #musicplay-tool{
     background:var(--panel);
     border:2px solid var(--line);
     border-radius:18px;
@@ -987,6 +987,53 @@
     width:100%;
   }
 
+  /* ---------- STICKER RESULTS ---------- */
+  .sticker-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(96px, 1fr));
+    gap:12px;
+    margin-top:18px;
+  }
+  .sticker-cell{
+    background:var(--sunken);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:8px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .sticker-cell img{
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:contain;
+    border-radius:8px;
+    background:var(--iconbg);
+  }
+  .sticker-cell button{
+    width:100%;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--cyan);
+    border:none;
+    padding:8px 6px;
+    border-radius:7px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .sticker-cell button:hover{background:var(--pink);}
+  .sticker-cell button:disabled{opacity:0.6; cursor:default;}
+  .sticker-cell .sticker-note{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    color:var(--dim2);
+    text-align:center;
+  }
+
   /* ---------- ENC/DEC FILE ---------- */
   .mode-switch{
     display:flex;
@@ -1013,7 +1060,7 @@
   .mode-btn:hover{background:transparent; color:var(--ink);}
   .mode-btn.active{background:var(--panel); color:var(--ink); border:1.5px solid var(--line);}
 
-  #encFileForm, #web2apkForm{
+  #encFileForm{
     display:flex;
     flex-direction:column;
     background:transparent;
@@ -1563,9 +1610,7 @@
   .accordion-body-inner .tool,
   .accordion-body-inner #spotify-tool,
   .accordion-body-inner #encfile-tool,
-  .accordion-body-inner #web2zip-tool,
-  .accordion-body-inner #web2apk-tool,
-  .accordion-body-inner #webclone-tool,
+  .accordion-body-inner #sticker-tool,
   .accordion-body-inner #bypass-tool,
   .accordion-body-inner #ytvid-tool,
   .accordion-body-inner #musicplay-tool{
@@ -1932,7 +1977,7 @@
       </button>
       <div>
         <h1>Tools</h1>
-        <p>Enc/Dec File, Web to ZIP/APK, Bypass Link, Pemutar Video &amp; Lagu</p>
+        <p>Enc/Dec File, Cari Stiker, Bypass Link, Pemutar Video &amp; Lagu</p>
       </div>
     </div>
     <div class="section-card">
@@ -2011,57 +2056,19 @@
     </div>
   </div>
 
-  <!-- ===== PANEL: WEB TO ZIP ===== -->
-  <div class="panel" id="web2zip-tool">
+  <!-- ===== PANEL: CARI STIKER ===== -->
+  <div class="panel" id="sticker-tool">
     <div class="tool-head">
-      <div class="icon" id="web2zipIconSlot"></div>
-      <div class="title">Web to ZIP</div>
+      <div class="icon" id="stickerIconSlot"></div>
+      <div class="title">Cari Stiker</div>
     </div>
-    <form id="web2zipForm">
-      <input type="url" id="web2zipInput" placeholder="https://situs-tujuan.com" required>
-      <button type="submit" id="web2zipSendBtn">Proses</button>
+    <form id="stickerForm">
+      <input type="text" id="stickerInput" placeholder="Kata kunci stiker, mis. naruto..." required>
+      <button type="submit" id="stickerSendBtn">Cari</button>
     </form>
-    <div class="hint">Tempel URL website, hasilnya file .zip yang otomatis terunduh.</div>
-    <div class="status" id="web2zipStatus"></div>
-  </div>
-
-  <!-- ===== PANEL: WEB TO APK ===== -->
-  <div class="panel" id="web2apk-tool">
-    <div class="tool-head">
-      <div class="icon" id="web2apkIconSlot"></div>
-      <div class="title">Web to APK</div>
-    </div>
-    <form id="web2apkForm">
-      <div class="key-row">
-        <input type="text" id="web2apkNameInput" placeholder="Nama aplikasi (mis. Dinz Downloader)" required>
-      </div>
-      <div class="key-row">
-        <input type="url" id="web2apkUrlInput" placeholder="https://situs-tujuan.com" required>
-        <button type="submit" id="web2apkSendBtn">Buat APK</button>
-      </div>
-    </form>
-    <div class="hint">Isi nama aplikasi &amp; URL website. APK otomatis terunduh lalu langsung dibuka untuk dipasang — Android tetap akan minta izin "pasang aplikasi tak dikenal" sekali, itu proteksi bawaan HP dan bukan sesuatu yang bisa dilewati dari web.</div>
-    <div class="status" id="web2apkStatus"></div>
-  </div>
-
-  <!-- ===== PANEL: CLONE WEBSITE ===== -->
-  <div class="panel" id="webclone-tool">
-    <div class="tool-head">
-      <div class="icon" id="webcloneIconSlot"></div>
-      <div class="title">Clone Website</div>
-    </div>
-    <form id="webcloneForm">
-      <input type="url" id="webcloneInput" placeholder="https://situs-tujuan.com" required>
-      <button type="submit" id="webcloneSendBtn">Clone</button>
-    </form>
-    <div class="hint">Tempel URL website yang mau di-clone. Source code-nya diambil, dibungkus jadi .zip, lalu otomatis terunduh ke HP kamu.</div>
-    <div class="status" id="webcloneStatus"></div>
-    <div class="enc-result" id="webcloneResult">
-      <div class="other-quality" style="margin-top:0;">hasil</div>
-      <textarea id="webcloneResultText" class="enc-textarea" readonly></textarea>
-      <button type="button" class="download-main" id="webcloneDownloadBtn">Download ZIP</button>
-      <div class="dl-progress" id="webcloneProgress"></div>
-    </div>
+    <div class="hint">Ketik kata kunci, lalu tap "Kirim ke WhatsApp" pada stiker yang disuka untuk membuka menu bagikan HP dan pilih WhatsApp. Kalau HP tidak mendukung bagikan file, stiker akan diunduh dulu supaya bisa dikirim manual.</div>
+    <div class="status" id="stickerStatus"></div>
+    <div class="sticker-grid" id="stickerGrid"></div>
   </div>
 
   <!-- ===== PANEL: BYPASS LINK ===== -->
@@ -2135,6 +2142,21 @@
     </div>
   </div>
 
+  <!-- ===== PANEL: CARI APK (HAPPYMOD) ===== -->
+  <div class="panel" id="happymod-tool">
+    <div class="tool-head">
+      <div class="icon" id="happymodIconSlot"></div>
+      <div class="title">Cari APK</div>
+    </div>
+    <form id="happymodForm">
+      <input type="text" id="happymodInput" placeholder="Nama aplikasi/game, mis. Minecraft..." required>
+      <button type="submit" id="happymodSendBtn">Cari</button>
+    </form>
+    <div class="hint">Cari APK mod dari HappyMod. Klik "Download APK" untuk mengunduh &amp; langsung pasang di HP — kalau link unduh otomatis tidak tersedia, halaman HappyMod-nya akan dibuka supaya bisa diunduh manual di sana.</div>
+    <div class="status" id="happymodStatus"></div>
+    <div class="track-list" id="apkList"></div>
+  </div>
+
     <footer class="footer-v2">
     <div class="footer-grid">
       <div class="footer-brand-block">
@@ -2163,9 +2185,7 @@
         <h4>Tools</h4>
         <ul>
           <li><button data-tool="encfile">Enc/Dec File</button></li>
-          <li><button data-tool="web2zip">Web to ZIP</button></li>
-          <li><button data-tool="web2apk">Web to APK</button></li>
-          <li><button data-tool="webclone">Clone Website</button></li>
+          <li><button data-tool="sticker">Cari Stiker</button></li>
           <li><button data-tool="bypass">Bypass Link</button></li>
           <li><button data-tool="ytvid">Pemutar Video</button></li>
           <li><button data-tool="musicplay">Pemutar Lagu</button></li>
@@ -2206,12 +2226,11 @@ const ICONS = {
   spotify: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg>`,
   capcut: `<svg viewBox="0 0 24 24" fill="none" stroke="#00f6ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z" fill="#00f6ef" stroke="none"/></svg>`,
   encfile: `<svg viewBox="0 0 24 24" fill="none" stroke="#8f96ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-  web2zip: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>`,
-  web2apk: `<svg viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="19" x2="14" y2="19"/></svg>`,
-  webclone: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff9f4b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="9" height="9" rx="2"/><rect x="13" y="12" width="9" height="9" rx="2"/><path d="M8 12v3a2 2 0 0 0 2 2h3"/></svg>`,
+  sticker: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff9f4b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h8l6-6V7a4 4 0 0 0-4-4z"/><path d="M15 21v-4a2 2 0 0 1 2-2h4"/><circle cx="9" cy="9" r="1.3" fill="#ff9f4b" stroke="none"/><circle cx="14" cy="9" r="1.3" fill="#ff9f4b" stroke="none"/><path d="M8.5 13.5c1 1 4 1 5 0"/></svg>`,
   bypass: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 0 0 4 4l3-3a4 4 0 0 0-5.6-5.6l-1 1"/><path d="M15 12a4 4 0 0 0-4-4l-3 3a4 4 0 0 0 5.6 5.6l1-1"/></svg>`,
   ytvid: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ff4d4d" stroke="none"/></svg>`,
   musicplay: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  happymod: `<svg viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="19" x2="14" y2="19"/><circle cx="9" cy="9" r="2.4"/><path d="M13.5 11 17 14.5"/></svg>`,
 };
 
 /* ============================================================
@@ -2220,12 +2239,11 @@ const ICONS = {
 /* Tools = bukan downloader (enc/dec, converter, bypass, pemutar) */
 const EXTRA_TOOLS = [
   { id:'encfile', name:'Enc/Dec File', desc:'Encrypt & decrypt isi file', panel:'encfile-tool' },
-  { id:'web2zip', name:'Web to ZIP', desc:'Unduh website jadi file ZIP', panel:'web2zip-tool' },
-  { id:'web2apk', name:'Web to APK', desc:'Ubah website jadi APK Android', panel:'web2apk-tool' },
-  { id:'webclone', name:'Clone Website', desc:'Clone source code website jadi ZIP', panel:'webclone-tool' },
+  { id:'sticker', name:'Cari Stiker', desc:'Cari stiker & kirim langsung ke WhatsApp', panel:'sticker-tool' },
   { id:'bypass', name:'Bypass Link', desc:'Ubah link sfile jadi link langsung', panel:'bypass-tool' },
   { id:'ytvid', name:'Pemutar Video', desc:'Cari & putar video YouTube', panel:'ytvid-tool' },
   { id:'musicplay', name:'Pemutar Lagu', desc:'Cari & putar lagu langsung, tanpa unduh', panel:'musicplay-tool' },
+  { id:'happymod', name:'Cari APK', desc:'Cari & download APK mod dari HappyMod', panel:'happymod-tool' },
 ];
 
 /* Downloader ekstra = pakai panel statis sendiri (bukan dari SERVICES) */
@@ -2485,8 +2503,35 @@ function mediaExt(type){
   return type === 'audio' ? '.mp3' : (type === 'image' ? '.jpg' : '.mp4');
 }
 
-/* Dipakai oleh Web to ZIP / Web to APK: cari field link hasil dari
-   respons JSON API, karena tiap API suka beda-beda nama field-nya. */
+/* Unduh APK sebagai blob lalu langsung navigasi ke blob URL itu.
+   Di Chrome Android ini biasanya memicu prompt installer begitu
+   file selesai diunduh, tanpa user harus buka folder Download manual.
+   Dipakai oleh fitur Cari APK (HappyMod). */
+async function downloadAndOpenApk(fileUrl, filename){
+  let blob;
+  try{
+    const res = await fetch(fileUrl);
+    if(!res.ok) throw new Error('status ' + res.status);
+    const raw = await res.blob();
+    blob = raw.type === 'application/vnd.android.package-archive'
+      ? raw
+      : new Blob([raw], {type:'application/vnd.android.package-archive'});
+  }catch(err){
+    window.open(fileUrl, '_blank', 'noopener');
+    return;
+  }
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>{ window.location.href = blobUrl; }, 400);
+}
+
+/* Cari field link hasil dari respons JSON API, karena tiap API suka
+   beda-beda nama field-nya. */
 function extractResultUrl(data){
   if(!data) return null;
   if(typeof data === 'string') return /^https?:\/\//i.test(data) ? data : null;
@@ -3194,254 +3239,118 @@ encDownloadBtn.addEventListener('click', ()=>{
 });
 
 /* ============================================================
-   WEB TO ZIP
-   Alur: user tempel URL website -> dikirim ke synoxcloud web2zip ->
-   kalau respons JSON, ambil link hasilnya lalu diunduh (forceDownload);
-   kalau respons langsung berupa file, unduh langsung dari blob-nya.
+   CARI STIKER
+   Alur: user ketik kata kunci -> dikirim ke nexray search/stickerly
+   -> hasil (gambar stiker) ditampilkan sebagai grid. Tombol "Kirim
+   ke WhatsApp" pakai Web Share API (navigator.share dengan file)
+   supaya muncul menu bagikan HP dan user tinggal pilih WhatsApp.
+   Kalau HP/browser tidak mendukung share file, fallback: stiker
+   diunduh dulu supaya bisa dikirim manual dari galeri/file manager.
 ============================================================ */
-document.getElementById('web2zipIconSlot').innerHTML = ICONS.web2zip;
+document.getElementById('stickerIconSlot').innerHTML = ICONS.sticker;
 
-const web2zipForm = document.getElementById('web2zipForm');
-const web2zipInput = document.getElementById('web2zipInput');
-const web2zipSendBtn = document.getElementById('web2zipSendBtn');
-const web2zipStatus = document.getElementById('web2zipStatus');
+const stickerForm = document.getElementById('stickerForm');
+const stickerInput = document.getElementById('stickerInput');
+const stickerSendBtn = document.getElementById('stickerSendBtn');
+const stickerStatus = document.getElementById('stickerStatus');
+const stickerGrid = document.getElementById('stickerGrid');
 
-function setWeb2zipStatus(msg, isError){
-  web2zipStatus.textContent = msg;
-  web2zipStatus.classList.toggle('show', !!msg);
-  web2zipStatus.classList.toggle('error', !!isError);
+function setStickerStatus(msg, isError){
+  stickerStatus.textContent = msg;
+  stickerStatus.classList.toggle('show', !!msg);
+  stickerStatus.classList.toggle('error', !!isError);
 }
 
-/* Beberapa API balikin JSON berisi link file, sebagian lagi langsung
-   nge-stream file-nya. Fungsi ini nangani dua-duanya. */
-async function downloadFromApiResponse(res, apiUrl, filename){
-  const ctype = (res.headers.get('content-type') || '').toLowerCase();
-  if(ctype.includes('json')){
+function buildStickerCell(item, idx){
+  const imgUrl = item.url || item.image || item.thumbnail || item.sticker || '';
+  const cell = document.createElement('div');
+  cell.className = 'sticker-cell';
+
+  const img = document.createElement('img');
+  img.src = imgUrl;
+  img.alt = 'stiker ' + (idx + 1);
+  img.loading = 'lazy';
+  cell.appendChild(img);
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Kirim ke WhatsApp';
+  btn.addEventListener('click', async ()=>{
+    if(!imgUrl){ return; }
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Menyiapkan...';
+    try{
+      const res = await fetch(imgUrl);
+      if(!res.ok) throw new Error('status ' + res.status);
+      const blob = await res.blob();
+      const filename = 'stiker-' + (idx + 1) + '.' + (blob.type.split('/')[1] || 'png');
+      const file = new File([blob], filename, {type: blob.type || 'image/png'});
+
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:'Stiker'});
+      }else{
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=> URL.revokeObjectURL(blobUrl), 4000);
+        window.open('https://wa.me/', '_blank', 'noopener');
+      }
+    }catch(err){
+      if(err && err.name !== 'AbortError'){
+        window.open(imgUrl, '_blank', 'noopener');
+      }
+    }finally{
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
+  });
+  cell.appendChild(btn);
+
+  return cell;
+}
+
+async function searchSticker(query){
+  if(!query) return;
+  stickerGrid.innerHTML = '';
+  stickerSendBtn.disabled = true;
+  stickerSendBtn.textContent = 'Mencari...';
+  setStickerStatus('Mencari stiker...', false);
+
+  try{
+    const apiUrl = `https://api.nexray.eu.cc/search/stickerly?q=${encodeURIComponent(query)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
     const data = await res.json();
-    if(data && data.status === false) throw new Error(data.message || 'Gagal memproses permintaan');
-    const link = extractResultUrl(data);
-    if(!link) throw new Error('Link hasil tidak ditemukan pada respons API');
-    await forceDownload(link, filename);
-    return;
-  }
-  try{
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=> URL.revokeObjectURL(blobUrl), 4000);
-  }catch(err){
-    window.open(apiUrl, '_blank', 'noopener');
-  }
-}
+    if(data && data.status === false) throw new Error(data.message || 'Stiker tidak ditemukan');
 
-async function processWeb2zip(url){
-  if(!url) return;
-  web2zipSendBtn.disabled = true;
-  web2zipSendBtn.textContent = 'Memproses...';
-  setWeb2zipStatus('Membuat file ZIP dari website...', false);
-
-  try{
-    const apiUrl = `https://api.synoxcloud.xyz/tools/web2zip?url=${encodeURIComponent(url)}`;
-    let res;
-    try{
-      res = await fetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    const results = data.result || data.results || data.data || [];
+    if(!Array.isArray(results) || results.length === 0){
+      throw new Error('Stiker tidak ditemukan');
     }
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
 
-    const filename = safeFileName(url.replace(/^https?:\/\//i,'').replace(/\/+$/,'')) + '.zip';
-    await downloadFromApiResponse(res, apiUrl, filename);
-    setWeb2zipStatus('Selesai, cek folder unduhan.', false);
+    results.forEach((item, idx) => stickerGrid.appendChild(buildStickerCell(item, idx)));
+    setStickerStatus('', false);
   }catch(err){
-    setWeb2zipStatus('Gagal: ' + err.message, true);
+    setStickerStatus('Gagal: ' + err.message, true);
   }finally{
-    web2zipSendBtn.disabled = false;
-    web2zipSendBtn.textContent = 'Proses';
-    setTimeout(()=>{ if(!web2zipStatus.classList.contains('error')) setWeb2zipStatus('', false); }, 5000);
+    stickerSendBtn.disabled = false;
+    stickerSendBtn.textContent = 'Cari';
   }
 }
 
-web2zipForm.addEventListener('submit', (e)=>{
+stickerForm.addEventListener('submit', (e)=>{
   e.preventDefault();
-  processWeb2zip(web2zipInput.value.trim());
-});
-
-/* ============================================================
-   WEB TO APK
-   Alur: user isi nama app + URL website -> synoxcloud web2apk ->
-   APK-nya diunduh otomatis, lalu langsung dibuka (window.location)
-   supaya installer Android muncul sendiri. Catatan: Android tetap
-   mewajibkan konfirmasi izin "pasang aplikasi tak dikenal" untuk
-   browser yang dipakai — ini proteksi sistem, bukan sesuatu yang
-   bisa dilewati dari halaman web manapun.
-============================================================ */
-document.getElementById('web2apkIconSlot').innerHTML = ICONS.web2apk;
-
-const web2apkForm = document.getElementById('web2apkForm');
-const web2apkNameInput = document.getElementById('web2apkNameInput');
-const web2apkUrlInput = document.getElementById('web2apkUrlInput');
-const web2apkSendBtn = document.getElementById('web2apkSendBtn');
-const web2apkStatus = document.getElementById('web2apkStatus');
-
-function setWeb2apkStatus(msg, isError){
-  web2apkStatus.textContent = msg;
-  web2apkStatus.classList.toggle('show', !!msg);
-  web2apkStatus.classList.toggle('error', !!isError);
-}
-
-/* Unduh APK sebagai blob lalu langsung navigasi ke blob URL itu.
-   Di Chrome Android ini biasanya memicu prompt installer begitu
-   file selesai diunduh, tanpa user harus buka folder Download manual. */
-async function downloadAndOpenApk(fileUrl, filename){
-  let blob;
-  try{
-    const res = await fetch(fileUrl);
-    if(!res.ok) throw new Error('status ' + res.status);
-    const raw = await res.blob();
-    blob = raw.type === 'application/vnd.android.package-archive'
-      ? raw
-      : new Blob([raw], {type:'application/vnd.android.package-archive'});
-  }catch(err){
-    window.open(fileUrl, '_blank', 'noopener');
-    return;
-  }
-  const blobUrl = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>{ window.location.href = blobUrl; }, 400);
-}
-
-async function processWeb2apk(appName, websiteUrl){
-  if(!appName || !websiteUrl) return;
-  web2apkSendBtn.disabled = true;
-  web2apkSendBtn.textContent = 'Membuat APK...';
-  setWeb2apkStatus('Membuat APK dari website, proses ini bisa makan waktu lebih lama...', false);
-
-  try{
-    const apiUrl = `https://api.synoxcloud.xyz/tools/web2apk?appName=${encodeURIComponent(appName)}&websiteUrl=${encodeURIComponent(websiteUrl)}`;
-    let res;
-    try{
-      res = await fetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
-    }
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-
-    const filename = safeFileName(appName) + '.apk';
-    const ctype = (res.headers.get('content-type') || '').toLowerCase();
-
-    if(ctype.includes('json')){
-      const data = await res.json();
-      if(data && data.status === false) throw new Error(data.message || 'Gagal membuat APK');
-      const link = extractResultUrl(data);
-      if(!link) throw new Error('Link APK tidak ditemukan pada respons API');
-      await downloadAndOpenApk(link, filename);
-    }else{
-      const raw = await res.blob();
-      const blob = raw.type === 'application/vnd.android.package-archive'
-        ? raw
-        : new Blob([raw], {type:'application/vnd.android.package-archive'});
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(()=>{ window.location.href = blobUrl; }, 400);
-    }
-
-    setWeb2apkStatus('APK terunduh & sedang dibuka. Kalau installer tidak langsung muncul, buka lewat notifikasi unduhan lalu izinkan "Pasang aplikasi tak dikenal" untuk browser ini.', false);
-  }catch(err){
-    setWeb2apkStatus('Gagal: ' + err.message, true);
-  }finally{
-    web2apkSendBtn.disabled = false;
-    web2apkSendBtn.textContent = 'Buat APK';
-  }
-}
-
-web2apkForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  processWeb2apk(web2apkNameInput.value.trim(), web2apkUrlInput.value.trim());
-});
-
-/* ============================================================
-   CLONE WEBSITE
-   Alur: user tempel URL website -> dikirim ke azbry webclone ->
-   ambil result.url (link zip di tmpfiles.org) & result.filename ->
-   langsung auto-download ke HP (forceDownload), tombol Download ZIP
-   tetap ada sebagai cadangan kalau auto-download-nya gagal/diblokir.
-============================================================ */
-document.getElementById('webcloneIconSlot').innerHTML = ICONS.webclone;
-
-const webcloneForm = document.getElementById('webcloneForm');
-const webcloneInput = document.getElementById('webcloneInput');
-const webcloneSendBtn = document.getElementById('webcloneSendBtn');
-const webcloneStatus = document.getElementById('webcloneStatus');
-const webcloneResult = document.getElementById('webcloneResult');
-const webcloneResultText = document.getElementById('webcloneResultText');
-const webcloneDownloadBtn = document.getElementById('webcloneDownloadBtn');
-const webcloneProgress = document.getElementById('webcloneProgress');
-
-function setWebcloneStatus(msg, isError){
-  webcloneStatus.textContent = msg;
-  webcloneStatus.classList.toggle('show', !!msg);
-  webcloneStatus.classList.toggle('error', !!isError);
-}
-
-async function processWebclone(url){
-  if(!url) return;
-  webcloneResult.classList.remove('show');
-  webcloneSendBtn.disabled = true;
-  webcloneSendBtn.textContent = 'Meng-clone...';
-  setWebcloneStatus('Mengambil source code website, bisa makan waktu beberapa detik...', false);
-
-  try{
-    const apiUrl = `https://api.azbry.com/api/tools/webclone?url=${encodeURIComponent(url)}`;
-    let res;
-    try{
-      res = await fetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
-    }
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-
-    const data = await res.json();
-    if(!data || data.status === false) throw new Error((data && data.message) || 'Gagal meng-clone website');
-
-    const zipUrl = extractResultUrl(data);
-    if(!zipUrl) throw new Error('Link hasil ZIP tidak ditemukan pada respons API');
-
-    const filename = (data.result && data.result.filename) || (safeFileName(url.replace(/^https?:\/\//i,'').replace(/\/+$/,'')) + '.zip');
-
-    webcloneResultText.value = zipUrl;
-    webcloneDownloadBtn.onclick = ()=> forceDownload(zipUrl, filename, webcloneDownloadBtn, webcloneProgress);
-    webcloneResult.classList.add('show');
-
-    setWebcloneStatus('Berhasil, mengunduh otomatis ke HP...', false);
-    await forceDownload(zipUrl, filename, webcloneDownloadBtn, webcloneProgress);
-    setWebcloneStatus('Selesai, cek folder unduhan HP kamu.', false);
-  }catch(err){
-    setWebcloneStatus('Gagal: ' + err.message, true);
-  }finally{
-    webcloneSendBtn.disabled = false;
-    webcloneSendBtn.textContent = 'Clone';
-  }
-}
-
-webcloneForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  processWebclone(webcloneInput.value.trim());
+  searchSticker(stickerInput.value.trim());
 });
 
 /* ============================================================
@@ -3692,6 +3601,193 @@ async function processMusicplay(query){
 musicplayForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   processMusicplay(musicplayInput.value.trim());
+});
+
+/* ============================================================
+   CARI APK (HAPPYMOD)
+   Alur: user ketik nama app -> dikirim ke api-xemoz search/happymod.php
+   -> tampilkan hasil (icon, judul, package) sebagai daftar mirip
+   hasil pencarian Spotify. Tombol "Download APK" coba ambil link
+   file langsung lewat endpoint download/happymod.php (kalau field-nya
+   tidak dikenali/endpoint tidak tersedia, fallback: buka halaman
+   HappyMod-nya di tab baru supaya tetap bisa diunduh manual). Kalau
+   link file berhasil didapat, dipakai downloadAndOpenApk (fungsi yang
+   sama dipakai Web to APK) supaya installer Android langsung kebuka.
+============================================================ */
+document.getElementById('happymodIconSlot').innerHTML = ICONS.happymod;
+
+/* API HappyMod (api-xemoz-official.my.id) tidak mengirim header CORS,
+   jadi fetch langsung dari browser diblokir. Coba fetch langsung dulu,
+   kalau gagal (TypeError network/CORS) baru dicoba lewat beberapa
+   proxy CORS publik satu-satu (proxy gratis suka down bergantian,
+   jadi dicoba lebih dari satu biar lebih tahan). */
+async function corsFetch(url){
+  try{
+    const direct = await fetch(url);
+    if(direct.ok) return direct;
+  }catch(directErr){}
+
+  const proxies = [
+    u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+    u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
+    u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+  ];
+
+  let lastErr = new Error('Semua proxy CORS gagal dihubungi');
+  for(const buildProxyUrl of proxies){
+    try{
+      const res = await fetch(buildProxyUrl(url));
+      if(res.ok) return res;
+      lastErr = new Error('Proxy mengembalikan status ' + res.status);
+    }catch(proxyErr){
+      lastErr = proxyErr;
+    }
+  }
+  throw lastErr;
+}
+
+const happymodForm = document.getElementById('happymodForm');
+const happymodInput = document.getElementById('happymodInput');
+const happymodSendBtn = document.getElementById('happymodSendBtn');
+const happymodStatus = document.getElementById('happymodStatus');
+const apkList = document.getElementById('apkList');
+
+function setHappymodStatus(msg, isError){
+  happymodStatus.textContent = msg;
+  happymodStatus.classList.toggle('show', !!msg);
+  happymodStatus.classList.toggle('error', !!isError);
+}
+
+/* Cari link file APK dari respons endpoint download, sambil buang
+   kandidat yang justru sama dengan URL halaman HappyMod-nya sendiri
+   (biar tidak salah dianggap link file padahal itu link halaman). */
+function extractApkFileUrl(data, pageUrl){
+  if(!data) return null;
+  const r = data.result || data.data || data;
+  if(typeof r === 'string') return (/^https?:\/\//i.test(r) && r !== pageUrl) ? r : null;
+  const candidates = [r.download, r.download_url, r.downloadUrl, r.apk, r.file, r.link, r.url, r.output];
+  const direct = candidates.find(u => typeof u === 'string' && /^https?:\/\//i.test(u) && u !== pageUrl);
+  if(direct) return direct;
+  const deep = deepFindUrls(data).map(x=>x.value).find(u => u !== pageUrl && !/happymod\.net/i.test(u));
+  return deep || null;
+}
+
+async function resolveHappymodDownload(pageUrl){
+  const apiUrl = `https://api-xemoz-official.my.id/api/download/happymod.php?url=${encodeURIComponent(pageUrl)}`;
+  let res;
+  try{
+    res = await corsFetch(apiUrl);
+  }catch(networkErr){
+    throw new Error('Tidak bisa menghubungi server download');
+  }
+  if(!res.ok) throw new Error('Server download mengembalikan status ' + res.status);
+  const data = await res.json();
+  if(data && data.status === false) throw new Error(data.message || 'Gagal menyiapkan link download');
+  const link = extractApkFileUrl(data, pageUrl);
+  if(!link) throw new Error('Link APK tidak ditemukan pada respons API');
+  return link;
+}
+
+function buildApkRow(item){
+  const title = item.title || item.name || 'Aplikasi tidak diketahui';
+  const icon = item.icon || item.thumbnail || '';
+  const pkg = item.package || item.package_name || '';
+  const pageUrl = item.url || item.link || '';
+
+  const row = document.createElement('div');
+  row.className = 'track-row';
+  const dlProgress = document.createElement('div');
+  dlProgress.className = 'track-progress';
+  row.innerHTML = `
+    <img src="${icon}" alt="${title}">
+    <div class="track-info">
+      <div class="t-title">${title}</div>
+      <div class="t-artist">${pkg}</div>
+    </div>
+  `;
+
+  const actions = document.createElement('div');
+  actions.className = 'track-actions';
+
+  const dlBtn = document.createElement('a');
+  dlBtn.href = '#';
+  dlBtn.className = 'track-dl';
+  dlBtn.textContent = 'Download APK';
+  dlBtn.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    if(!pageUrl){
+      dlProgress.textContent = 'Link halaman APK ini tidak tersedia.';
+      return;
+    }
+    const originalLabel = dlBtn.textContent;
+    dlBtn.textContent = 'Menyiapkan...';
+    dlProgress.textContent = 'Mengambil link download APK...';
+    try{
+      const fileUrl = await resolveHappymodDownload(pageUrl);
+      const filename = safeFileName(title) + '.apk';
+      await downloadAndOpenApk(fileUrl, filename);
+      dlProgress.textContent = 'APK terunduh & sedang dibuka. Kalau installer tidak langsung muncul, buka lewat notifikasi unduhan lalu izinkan "Pasang aplikasi tak dikenal" untuk browser ini.';
+    }catch(err){
+      dlProgress.textContent = 'Link unduh otomatis tidak tersedia, membuka halaman HappyMod supaya bisa diunduh manual...';
+      window.open(pageUrl, '_blank', 'noopener');
+    }finally{
+      dlBtn.textContent = originalLabel;
+    }
+  });
+  actions.appendChild(dlBtn);
+
+  if(pageUrl){
+    const openLink = document.createElement('a');
+    openLink.href = pageUrl;
+    openLink.target = '_blank';
+    openLink.rel = 'noopener';
+    openLink.className = 'track-open';
+    openLink.textContent = 'Buka di HappyMod ↗';
+    actions.appendChild(openLink);
+  }
+
+  row.appendChild(actions);
+  row.appendChild(dlProgress);
+  return row;
+}
+
+async function searchHappymod(query){
+  if(!query) return;
+  apkList.innerHTML = '';
+  happymodSendBtn.disabled = true;
+  happymodSendBtn.textContent = 'Mencari...';
+  setHappymodStatus('Mencari APK...', false);
+
+  try{
+    const apiUrl = `https://api-xemoz-official.my.id/api/search/happymod.php?q=${encodeURIComponent(query)}`;
+    let res;
+    try{
+      res = await corsFetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+    const data = await res.json();
+    if(data.status === false) throw new Error(data.message || 'APK tidak ditemukan');
+
+    const results = data.results || data.result || data.data || [];
+    if(!Array.isArray(results) || results.length === 0){
+      throw new Error('APK tidak ditemukan');
+    }
+
+    results.forEach(item => apkList.appendChild(buildApkRow(item)));
+    setHappymodStatus('', false);
+  }catch(err){
+    setHappymodStatus('Gagal: ' + err.message, true);
+  }finally{
+    happymodSendBtn.disabled = false;
+    happymodSendBtn.textContent = 'Cari';
+  }
+}
+
+happymodForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  searchHappymod(happymodInput.value.trim());
 });
 
 /* ============================================================
