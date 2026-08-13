@@ -3668,44 +3668,31 @@ musicplayForm.addEventListener('submit', (e)=>{
 });
 
 /* ============================================================
-   CARI APK (HAPPYMOD)
-   Alur: user ketik nama app -> dikirim ke api-xemoz search/happymod.php
-   -> tampilkan hasil (icon, judul, package) sebagai daftar mirip
-   hasil pencarian Spotify. Tombol "Download APK" coba ambil link
-   file langsung lewat endpoint download/happymod.php (kalau field-nya
-   tidak dikenali/endpoint tidak tersedia, fallback: buka halaman
-   halaman sumber di tab baru supaya tetap bisa diunduh manual). Kalau
-   link file berhasil didapat, dipakai downloadAndOpenApk (fungsi yang
-   sama dipakai Web to APK) supaya installer Android langsung kebuka.
+   CARI APK
+   Cari APK -> ambil link/file APK langsung.
+   Tidak pernah membuka halaman sumber.
 ============================================================ */
 document.getElementById('happymodIconSlot').innerHTML = ICONS.happymod;
 
-/* API HappyMod (api-xemoz-official.my.id) tidak mengirim header CORS,
-   jadi fetch langsung dari browser diblokir. Coba fetch langsung dulu,
-   kalau gagal (TypeError network/CORS) baru dicoba lewat beberapa
-   proxy CORS publik satu-satu (proxy gratis suka down bergantian,
-   jadi dicoba lebih dari satu biar lebih tahan). */
 async function corsFetch(url){
   try{
-    const direct = await fetch(url);
+    const direct = await fetch(url, {redirect:'follow'});
     if(direct.ok) return direct;
-  }catch(directErr){}
+  }catch(e){}
 
   const proxies = [
     u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
     u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
-    u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+    u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u)
   ];
 
-  let lastErr = new Error('Semua proxy CORS gagal dihubungi');
-  for(const buildProxyUrl of proxies){
+  let lastErr = new Error('Semua jalur koneksi gagal');
+  for(const makeProxy of proxies){
     try{
-      const res = await fetch(buildProxyUrl(url));
+      const res = await fetch(makeProxy(url), {redirect:'follow'});
       if(res.ok) return res;
       lastErr = new Error('Proxy mengembalikan status ' + res.status);
-    }catch(proxyErr){
-      lastErr = proxyErr;
-    }
+    }catch(e){ lastErr = e; }
   }
   throw lastErr;
 }
@@ -3722,41 +3709,128 @@ function setHappymodStatus(msg, isError){
   happymodStatus.classList.toggle('error', !!isError);
 }
 
-/* Cari link file APK dari respons endpoint download, sambil buang
-   kandidat yang justru sama dengan URL halaman HappyMod-nya sendiri
-   (biar tidak salah dianggap link file padahal itu link halaman). */
-function extractApkFileUrl(data, pageUrl){
-  if(!data) return null;
-  const r = data.result || data.data || data;
-  if(typeof r === 'string') return (/^https?:\/\//i.test(r) && r !== pageUrl) ? r : null;
-  const candidates = [r.download, r.download_url, r.downloadUrl, r.apk, r.file, r.link, r.url, r.output];
-  const direct = candidates.find(u => typeof u === 'string' && /^https?:\/\//i.test(u) && u !== pageUrl);
-  if(direct) return direct;
-  const deep = deepFindUrls(data).map(x=>x.value).find(u => u !== pageUrl && !/happymod\.net/i.test(u));
-  return deep || null;
+function isHttpUrl(v){
+  return typeof v === 'string' && /^https?:\/\//i.test(v);
 }
 
-async function resolveHappymodDownload(pageUrl){
+function isLikelyApkUrl(v){
+  return isHttpUrl(v) && /\.apk(?:[?#].*)?$/i.test(v);
+}
+
+/* Ambil URL APK dari object JSON secara rekursif. */
+function findApkUrlDeep(value, seen = new Set()){
+  if(!value || typeof value !== 'object') return null;
+  if(seen.has(value)) return null;
+  seen.add(value);
+
+  if(Array.isArray(value)){
+    for(const item of value){
+      const found = findApkUrlDeep(item, seen);
+      if(found) return found;
+    }
+    return null;
+  }
+
+  const priority = [
+    'apk','apk_url','apkUrl','download','download_url','downloadUrl',
+    'direct_download','directDownload','file','file_url','fileUrl',
+    'link','url','output'
+  ];
+  for(const key of priority){
+    if(isLikelyApkUrl(value[key])) return value[key];
+  }
+
+  for(const key of Object.keys(value)){
+    const found = findApkUrlDeep(value[key], seen);
+    if(found) return found;
+  }
+  return null;
+}
+
+/* Jika endpoint mengembalikan HTML, cari href ke file .apk.
+   Jadi error "Unexpected token '<'" tidak lagi muncul. */
+function findApkUrlInHtml(html){
+  if(typeof html !== 'string') return null;
+  const patterns = [
+    /(?:href|src)=["']([^"']+\.apk(?:\?[^"']*)?)["']/ig,
+    /https?:\/\/[^\s"'<>]+\.apk(?:\?[^\s"'<>]*)?/ig
+  ];
+  for(const re of patterns){
+    const m = re.exec(html);
+    if(m) return m[1] || m[0];
+  }
+  return null;
+}
+
+/* Endpoint bisa mengembalikan JSON, file APK langsung, atau halaman
+   perantara yang berisi link APK. Semua format ditangani di sini. */
+async function resolveHappymodDownload(pageUrl, item){
+  /* Prioritas pertama: link APK yang sudah dikirim oleh API pencarian. */
+  const directFromSearch = findApkUrlDeep(item);
+  if(directFromSearch && directFromSearch !== pageUrl) return {type:'url', url:directFromSearch};
+
+  if(!pageUrl) throw new Error('Link APK tidak tersedia dari hasil pencarian');
+
   const apiUrl = `https://api-xemoz-official.my.id/api/download/happymod.php?url=${encodeURIComponent(pageUrl)}`;
   let res;
   try{
     res = await corsFetch(apiUrl);
-  }catch(networkErr){
-    throw new Error('Tidak bisa menghubungi server download');
+  }catch(e){
+    throw new Error('Server download tidak bisa dihubungi');
   }
-  if(!res.ok) throw new Error('Server download mengembalikan status ' + res.status);
-  const data = await res.json();
-  if(data && data.status === false) throw new Error(data.message || 'Gagal menyiapkan link download');
-  const link = extractApkFileUrl(data, pageUrl);
-  if(!link) throw new Error('Link APK tidak ditemukan pada respons API');
-  return link;
+  if(!res.ok) throw new Error('Server download HTTP ' + res.status);
+
+  const contentType = (res.headers.get('content-type') || '').toLowerCase();
+  const finalUrl = res.url || '';
+
+  /* Bila response sudah berupa APK/binary, simpan sebagai blob. */
+  if(/application\/vnd\.android\.package-archive|application\/octet-stream|application\/zip/i.test(contentType) || /\.apk(?:$|\?)/i.test(finalUrl)){
+    const blob = await res.blob();
+    if(blob.size < 1024) throw new Error('File APK yang diterima terlalu kecil/rusak');
+    return {type:'blob', blob};
+  }
+
+  const text = await res.text();
+  let data = null;
+  try{ data = JSON.parse(text); }catch(e){}
+
+  if(data){
+    if(data.status === false) throw new Error(data.message || 'API gagal menyiapkan APK');
+    const link = findApkUrlDeep(data);
+    if(link && link !== pageUrl) return {type:'url', url:link};
+  }
+
+  const htmlLink = findApkUrlInHtml(text);
+  if(htmlLink && htmlLink !== pageUrl){
+    return {type:'url', url:new URL(htmlLink, apiUrl).href};
+  }
+
+  if(/<!doctype html|<html[\s>]|<body[\s>]/i.test(text)){
+    throw new Error('Server mengembalikan halaman HTML, bukan file/link APK');
+  }
+  throw new Error('Link APK langsung tidak ditemukan');
+}
+
+async function downloadApkResult(result, filename){
+  if(result.type === 'blob'){
+    const blobUrl = URL.createObjectURL(result.blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(blobUrl), 3000);
+    return;
+  }
+  await downloadAndOpenApk(result.url, filename);
 }
 
 function buildApkRow(item){
   const title = item.title || item.name || 'Aplikasi tidak diketahui';
-  const icon = item.icon || item.thumbnail || '';
-  const pkg = item.package || item.package_name || '';
-  const pageUrl = item.url || item.link || '';
+  const icon = item.icon || item.thumbnail || item.image || '';
+  const pkg = item.package || item.package_name || item.packageName || '';
+  const pageUrl = item.url || item.link || item.page || '';
 
   const row = document.createElement('div');
   row.className = 'track-row';
@@ -3779,27 +3853,23 @@ function buildApkRow(item){
   dlBtn.textContent = 'Download APK';
   dlBtn.addEventListener('click', async (e)=>{
     e.preventDefault();
-    if(!pageUrl){
-      dlProgress.textContent = 'Link halaman APK ini tidak tersedia.';
-      return;
-    }
     const originalLabel = dlBtn.textContent;
-    dlBtn.textContent = 'Menyiapkan...';
-    dlProgress.textContent = 'Mengambil file APK langsung...';
+    dlBtn.textContent = 'Mengunduh...';
+    dlBtn.style.pointerEvents = 'none';
+    dlProgress.textContent = 'Menyiapkan file APK langsung...';
     try{
-      const fileUrl = await resolveHappymodDownload(pageUrl);
+      const result = await resolveHappymodDownload(pageUrl, item);
       const filename = safeFileName(title) + '.apk';
-      await downloadAndOpenApk(fileUrl, filename);
-      dlProgress.textContent = 'APK berhasil dikirim ke unduhan website.';
+      await downloadApkResult(result, filename);
+      dlProgress.textContent = 'Download APK berhasil. Cek notifikasi/folder unduhan.';
     }catch(err){
-      dlProgress.textContent = 'Gagal download langsung: ' + err.message;
+      dlProgress.textContent = 'Gagal download langsung: ' + (err.message || 'server APK bermasalah');
     }finally{
       dlBtn.textContent = originalLabel;
+      dlBtn.style.pointerEvents = '';
     }
   });
   actions.appendChild(dlBtn);
-
-
   row.appendChild(actions);
   row.appendChild(dlProgress);
   return row;
@@ -3814,20 +3884,20 @@ async function searchHappymod(query){
 
   try{
     const apiUrl = `https://api-xemoz-official.my.id/api/search/happymod.php?q=${encodeURIComponent(query)}`;
-    let res;
-    try{
-      res = await corsFetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
-    }
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-    const data = await res.json();
-    if(data.status === false) throw new Error(data.message || 'APK tidak ditemukan');
+    const res = await corsFetch(apiUrl);
+    if(!res.ok) throw new Error('Server pencarian HTTP ' + res.status);
 
-    const results = data.results || data.result || data.data || [];
-    if(!Array.isArray(results) || results.length === 0){
-      throw new Error('APK tidak ditemukan');
+    const text = await res.text();
+    let data;
+    try{
+      data = JSON.parse(text);
+    }catch(e){
+      throw new Error('Server pencarian mengembalikan HTML, bukan JSON');
     }
+
+    if(data.status === false) throw new Error(data.message || 'APK tidak ditemukan');
+    const results = data.results || data.result || data.data || [];
+    if(!Array.isArray(results) || results.length === 0) throw new Error('APK tidak ditemukan');
 
     results.forEach(item => apkList.appendChild(buildApkRow(item)));
     setHappymodStatus('', false);
