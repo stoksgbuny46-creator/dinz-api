@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dinz Code / All-in-One Downloader</title>
+<title>Dinz Code Like Yayass</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
@@ -2420,21 +2420,26 @@ document.querySelectorAll('.menu-item, .nav-link, .nav-logo, .back-btn, .footer-
    harga di STORE_PRODUCTS. Order nggak diproses otomatis — cuma
    membuka chat WA/Telegram dengan pesan yang udah keisi otomatis.
 ============================================================ */
-const STORE_WA_NUMBER = '6287791200371';       // TODO: ganti nomor WA admin
-const STORE_TG_USERNAME = 'firzxxstore';     // TODO: ganti username Telegram admin (tanpa @)
+const STORE_WA_NUMBER = '6281234567890';       // TODO: ganti nomor WA admin
+const STORE_TG_USERNAME = 'gantiusername';     // TODO: ganti username Telegram admin (tanpa @)
 
 const STORE_PRODUCTS = [
   {
     id: 'align-motion',
     name: 'Akun Premium Align Motion',
     desc: 'Akun premium/langganan Align Motion, siap pakai setelah order diproses admin.',
-    price: 'Rp 300p / tahun'
+    price: 'Rp 300 / tahun'
   },
   {
     id: 'bot-wa',
     name: 'Script Bot WA',
     desc: 'Script bot WhatsApp siap pakai, tinggal konfigurasi. Support & instalasi dibantu admin.',
     price: 'Rp 80.000'
+  },
+    id: 'bug-wa',
+    name: 'Aplikasi Bug Whatsapp Manta X Rat',
+    desc: 'Aplikasi Bug Whatsapp siap pakai, tinggal konfigurasi. Support & instalasi dibantu admin.',
+    price: 'Rp 60.000 (Full Update)'
   }
 ];
 
@@ -3781,12 +3786,28 @@ const AI_CORS_PROXIES = [
   url => 'https://thingproxy.freeboard.io/fetch/' + url
 ];
 const AI_FETCH_TIMEOUT_MS = 45000;
+/* Upload foto butuh waktu lebih lama daripada request teks biasa
+   (tergantung ukuran file & kecepatan koneksi HP), jadi dikasih
+   timeout lebih longgar biar nggak keburu di-abort padahal masih jalan. */
+const AI_UPLOAD_TIMEOUT_MS = 90000;
 
-async function aiFetchTimed(url, options){
+async function aiFetchTimed(url, options, timeoutMs){
+  const ms = timeoutMs || AI_FETCH_TIMEOUT_MS;
   const controller = new AbortController();
-  const timer = setTimeout(()=> controller.abort(), AI_FETCH_TIMEOUT_MS);
+  const timer = setTimeout(()=> {
+    // Kasih alasan yang jelas biar pesan errornya nggak generik
+    // ("signal is aborted without reason") dan gampang dikenali di catch.
+    try{ controller.abort(new Error('AI_FETCH_TIMEOUT')); }
+    catch(_){ controller.abort(); } // fallback buat browser lama yg gak support reason
+  }, ms);
   try{
     return await fetch(url, { ...(options||{}), signal: controller.signal });
+  }catch(err){
+    const isTimeout = (err && (err.message === 'AI_FETCH_TIMEOUT' || /abort/i.test(err.message || err.name || '')));
+    if(isTimeout){
+      throw new Error('Koneksi/server kelamaan merespons (lebih dari ' + Math.round(ms/1000) + ' detik). Coba lagi, atau cek koneksi internetnya.');
+    }
+    throw err;
   }finally{
     clearTimeout(timer);
   }
@@ -3833,11 +3854,34 @@ function aiExtractUploadedUrl(data){
 async function aiUploadFile(file){
   const formData = new FormData();
   formData.append('file', file);
-  const res = await aiFetchTimed('https://api.nexray.eu.cc/upload', {
-    method: 'POST',
-    body: formData
-  });
-  if(!res.ok) throw new Error('Upload gagal (status ' + res.status + ')');
+  let res;
+  try{
+    res = await aiFetchTimed('https://api.nexray.eu.cc/upload', {
+      method: 'POST',
+      body: formData
+    }, AI_UPLOAD_TIMEOUT_MS);
+    if(!res.ok) throw new Error('status ' + res.status);
+  }catch(directErr){
+    // Kalau upload langsung gagal (server nexray lelet/diblokir jaringan),
+    // coba lewat proxy cadangan sebelum benar-benar dianggap gagal.
+    let proxied = null;
+    for(const buildProxyUrl of AI_CORS_PROXIES){
+      try{
+        const r = await aiFetchTimed(buildProxyUrl('https://api.nexray.eu.cc/upload'), {
+          method: 'POST',
+          body: formData
+        }, AI_UPLOAD_TIMEOUT_MS);
+        if(r.ok){ proxied = r; break; }
+      }catch(_){ continue; }
+    }
+    if(!proxied){
+      const reason = /kelamaan merespons/i.test(directErr.message)
+        ? directErr.message
+        : 'Upload gagal (langsung maupun lewat proxy cadangan). Kemungkinan koneksi lambat, servernya lagi down, atau diblokir provider internet kamu.';
+      throw new Error(reason);
+    }
+    res = proxied;
+  }
   const data = await res.json().catch(async ()=> await res.text());
   if(data && typeof data === 'object' && data.status === false){
     throw new Error(data.message || 'Upload gagal');
