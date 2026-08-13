@@ -1809,7 +1809,6 @@
       <button class="nav-link active" data-target="beranda">Beranda</button>
       <button class="nav-link" data-target="downloader">Downloader</button>
       <button class="nav-link" data-target="tools">Tools</button>
-      <button class="nav-link" data-target="ai">AI</button>
       <button class="nav-link" data-target="store">Store</button>
     </nav>
 
@@ -1844,10 +1843,6 @@
     <button class="menu-item" data-target="tools">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.6 5.6l-6 6 2 2 6-6a4 4 0 0 0 5.6-5.6l-2.3 2.3-2-2 2.3-2.3z"/></svg>
       Tools
-    </button>
-    <button class="menu-item" data-target="ai">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M12 7V3"/><circle cx="8.5" cy="13.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" stroke="none"/><path d="M8 17h8"/></svg>
-      AI
     </button>
     <button class="menu-item" data-target="store">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4"/><circle cx="9" cy="21" r="1.5" fill="currentColor" stroke="none"/><circle cx="18" cy="21" r="1.5" fill="currentColor" stroke="none"/></svg>
@@ -1941,38 +1936,6 @@
     </div>
     <div class="section-card">
       <div class="accordion-list" id="accordionListTools"></div>
-    </div>
-  </div>
-
-  <!-- ================= HALAMAN: AI ================= -->
-  <div id="ai" class="page ai-page">
-    <div class="page-head">
-      <button class="back-btn" data-target="beranda" aria-label="Kembali ke beranda">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-      </button>
-      <div class="ai-header-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M12 7V3"/><circle cx="8.5" cy="13.5" r="1.2" fill="#2F6FED" stroke="none"/><circle cx="15.5" cy="13.5" r="1.2" fill="#2F6FED" stroke="none"/><path d="M8 17h8"/></svg></div>
-      <div>
-        <h1>Asisten AI</h1>
-        <p>Chat, atau ketik "cari foto ..." buat cari gambar</p>
-      </div>
-    </div>
-
-    <div class="ai-chat-box" id="aiChatBox">
-      <div class="ai-bubble ai-bubble-bot">
-        Halo! Ketik pesan buat ngobrol denganku, atau ketik <b>"cari foto kucing"</b> / <b>"cari gambar naruto"</b> buat cari foto.
-      </div>
-    </div>
-
-    <div class="ai-input-bar">
-      <div class="ai-attach-preview" id="aiAttachPreview"></div>
-      <form id="aiForm">
-        <input type="file" id="aiFileInput" accept="image/*" hidden>
-        <input type="text" id="aiInput" placeholder="Tulis pesan, atau &quot;cari foto naruto&quot;...">
-        <button type="button" class="ai-attach-btn" id="aiAttachBtn" aria-label="Lampirkan foto">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <button type="submit" id="aiSendBtn">Kirim</button>
-      </form>
     </div>
   </div>
 
@@ -2151,6 +2114,21 @@
     </div>
   </div>
 
+  <!-- ===== PANEL: CARI APK (HAPPYMOD) ===== -->
+  <div class="panel" id="happymod-tool">
+    <div class="tool-head">
+      <div class="icon" id="happymodIconSlot"></div>
+      <div class="title">Cari APK</div>
+    </div>
+    <form id="happymodForm">
+      <input type="text" id="happymodInput" placeholder="Nama aplikasi/game, mis. Minecraft..." required>
+      <button type="submit" id="happymodSendBtn">Cari</button>
+    </form>
+    <div class="hint">Cari APK mod dari HappyMod. Klik "Download APK" untuk mengunduh &amp; langsung pasang di HP — kalau link unduh otomatis tidak tersedia, halaman HappyMod-nya akan dibuka supaya bisa diunduh manual di sana.</div>
+    <div class="status" id="happymodStatus"></div>
+    <div class="track-list" id="apkList"></div>
+  </div>
+
     <footer class="footer-v2">
     <div class="footer-grid">
       <div class="footer-brand-block">
@@ -2226,6 +2204,7 @@ const ICONS = {
   bypass: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 0 0 4 4l3-3a4 4 0 0 0-5.6-5.6l-1 1"/><path d="M15 12a4 4 0 0 0-4-4l-3 3a4 4 0 0 0 5.6 5.6l1-1"/></svg>`,
   ytvid: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ff4d4d" stroke="none"/></svg>`,
   musicplay: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  happymod: `<svg viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="19" x2="14" y2="19"/><circle cx="9" cy="9" r="2.4"/><path d="M13.5 11 17 14.5"/></svg>`,
 };
 
 /* ============================================================
@@ -2239,6 +2218,7 @@ const EXTRA_TOOLS = [
   { id:'bypass', name:'Bypass Link', desc:'Ubah link sfile jadi link langsung', panel:'bypass-tool' },
   { id:'ytvid', name:'Pemutar Video', desc:'Cari & putar video YouTube', panel:'ytvid-tool' },
   { id:'musicplay', name:'Pemutar Lagu', desc:'Cari & putar lagu langsung, tanpa unduh', panel:'musicplay-tool' },
+  { id:'happymod', name:'Cari APK', desc:'Cari & download APK mod dari HappyMod', panel:'happymod-tool' },
 ];
 
 /* Downloader ekstra = pakai panel statis sendiri (bukan dari SERVICES) */
@@ -2366,7 +2346,7 @@ menuCloseBtn.addEventListener('click', closeMenu);
 /* ============================================================
    PAGE SWITCHING — Beranda / Downloader / Tools
 ============================================================ */
-const PAGES = ['beranda', 'downloader', 'tools', 'ai', 'store'];
+const PAGES = ['beranda', 'downloader', 'tools', 'store'];
 
 function showPage(id, scrollTop){
   if(PAGES.indexOf(id) === -1) id = 'beranda';
@@ -2436,6 +2416,7 @@ const STORE_PRODUCTS = [
     desc: 'Script bot WhatsApp siap pakai, tinggal konfigurasi. Support & instalasi dibantu admin.',
     price: 'Rp 80.000'
   },
+  {
     id: 'bug-wa',
     name: 'Aplikasi Bug Whatsapp Manta X Rat',
     desc: 'Aplikasi Bug Whatsapp siap pakai, tinggal konfigurasi. Support & instalasi dibantu admin.',
@@ -3638,552 +3619,160 @@ musicplayForm.addEventListener('submit', (e)=>{
 });
 
 /* ============================================================
-   MENU AI (Chat AI + Cari Foto, satu kolom input)
-   Alur: user ketik pesan ->
-     - kalau diawali kata "cari foto" / "cari gambar" / "foto" / "gambar"
-       -> query sisanya dikirim ke nexray search/pinterest -> tampilkan
-          hasil sebagai grid foto yang bisa diklik.
-     - selain itu -> dikirim ke api-xemoz gpt-5.5.php sebagai obrolan
-       biasa -> tampilkan balasan teks AI.
+   CARI APK (HAPPYMOD)
+   Alur: user ketik nama app -> dikirim ke api-xemoz search/happymod.php
+   -> tampilkan hasil (icon, judul, package) sebagai daftar mirip
+   hasil pencarian Spotify. Tombol "Download APK" coba ambil link
+   file langsung lewat endpoint download/happymod.php (kalau field-nya
+   tidak dikenali/endpoint tidak tersedia, fallback: buka halaman
+   HappyMod-nya di tab baru supaya tetap bisa diunduh manual). Kalau
+   link file berhasil didapat, dipakai downloadAndOpenApk (fungsi yang
+   sama dipakai Web to APK) supaya installer Android langsung kebuka.
 ============================================================ */
-const aiChatBox = document.getElementById('aiChatBox');
-const aiForm = document.getElementById('aiForm');
-const aiInput = document.getElementById('aiInput');
-const aiSendBtn = document.getElementById('aiSendBtn');
-const aiAttachBtn = document.getElementById('aiAttachBtn');
-const aiFileInput = document.getElementById('aiFileInput');
-const aiAttachPreview = document.getElementById('aiAttachPreview');
-let aiAttachedFile = null;
+document.getElementById('happymodIconSlot').innerHTML = ICONS.happymod;
 
-function aiScrollToBottom(){
-  aiChatBox.scrollTop = aiChatBox.scrollHeight;
+const happymodForm = document.getElementById('happymodForm');
+const happymodInput = document.getElementById('happymodInput');
+const happymodSendBtn = document.getElementById('happymodSendBtn');
+const happymodStatus = document.getElementById('happymodStatus');
+const apkList = document.getElementById('apkList');
+
+function setHappymodStatus(msg, isError){
+  happymodStatus.textContent = msg;
+  happymodStatus.classList.toggle('show', !!msg);
+  happymodStatus.classList.toggle('error', !!isError);
 }
 
-function aiAddUserBubble(text){
-  const el = document.createElement('div');
-  el.className = 'ai-bubble ai-bubble-user';
-  el.textContent = text;
-  aiChatBox.appendChild(el);
-  aiScrollToBottom();
+/* Cari link file APK dari respons endpoint download, sambil buang
+   kandidat yang justru sama dengan URL halaman HappyMod-nya sendiri
+   (biar tidak salah dianggap link file padahal itu link halaman). */
+function extractApkFileUrl(data, pageUrl){
+  if(!data) return null;
+  const r = data.result || data.data || data;
+  if(typeof r === 'string') return (/^https?:\/\//i.test(r) && r !== pageUrl) ? r : null;
+  const candidates = [r.download, r.download_url, r.downloadUrl, r.apk, r.file, r.link, r.url, r.output];
+  const direct = candidates.find(u => typeof u === 'string' && /^https?:\/\//i.test(u) && u !== pageUrl);
+  if(direct) return direct;
+  const deep = deepFindUrls(data).map(x=>x.value).find(u => u !== pageUrl && !/happymod\.net/i.test(u));
+  return deep || null;
 }
 
-function aiAddLoadingBubble(text){
-  const el = document.createElement('div');
-  el.className = 'ai-bubble ai-bubble-loading';
-  el.textContent = text;
-  aiChatBox.appendChild(el);
-  aiScrollToBottom();
-  return el;
-}
-
-function aiAddBotTextBubble(text){
-  const el = document.createElement('div');
-  el.className = 'ai-bubble ai-bubble-bot';
-  el.textContent = text;
-  aiChatBox.appendChild(el);
-  aiScrollToBottom();
-}
-
-function aiAddErrorBubble(text){
-  const el = document.createElement('div');
-  el.className = 'ai-bubble ai-bubble-error';
-  el.textContent = text;
-  aiChatBox.appendChild(el);
-  aiScrollToBottom();
-}
-
-function aiAddPhotoGridBubble(caption, photos){
-  const wrap = document.createElement('div');
-  wrap.className = 'ai-bubble ai-bubble-bot';
-
-  const capEl = document.createElement('div');
-  capEl.textContent = caption;
-  wrap.appendChild(capEl);
-
-  const grid = document.createElement('div');
-  grid.className = 'ai-photo-grid';
-  photos.forEach(url=>{
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    const img = document.createElement('img');
-    img.src = url;
-    img.loading = 'lazy';
-    img.alt = 'Hasil foto';
-    a.appendChild(img);
-    grid.appendChild(a);
-  });
-  wrap.appendChild(grid);
-
-  aiChatBox.appendChild(wrap);
-  aiScrollToBottom();
-}
-
-/* Deteksi niat cari foto: dilonggarin biar nangkep berbagai gaya kalimat
-   natural ("kirimin foto kucing", "mau liat gambar pantai", "ada foto mobil?",
-   "cariin foto anjing dong"), bukan cuma pola kaku "cari foto X".
-   Kalau pesannya ada URL, itu lebih cocok dianggap niat EDIT, bukan search,
-   jadi di-skip di sini (biar ditangani aiParseEditIntent). */
-const AI_PHOTO_WORD_RE = /\b(foto(?:-foto)?|gambar|photo|picture|pic|image|images)\b/i;
-const AI_PHOTO_STOPWORDS = new Set([
-  'tolong','cari','carikan','cariin','search','temukan','minta','mintain',
-  'mintakan','kirim','kirimin','kirimkan','mau','pengen','pingin','lihat',
-  'liat','lihatin','liatin','ada','dong','ya','nya','dulu','please','coba',
-  'kasih','kasi','bisa','bisakah','tampilkan','tampilin','tunjukin','tunjukkan',
-  'foto','foto-foto','gambar','photo','picture','pic','image','images'
-]);
-
-function aiParsePhotoIntent(msg){
-  const text = msg.trim();
-  if(!text) return null;
-  if(AI_URL_RE.test(text)) return null; // ada link -> itu niat edit, bukan cari
-  if(!AI_PHOTO_WORD_RE.test(text)) return null;
-
-  const words = text.split(/\s+/);
-  const kept = words.filter(w => {
-    const bare = w.toLowerCase().replace(/[?.,!:;"']+$/, '');
-    return bare.length && !AI_PHOTO_STOPWORDS.has(bare);
-  });
-  const query = kept.join(' ').trim();
-  return query.length ? query : null;
-}
-
-/* Deteksi niat edit foto: butuh URL gambar (http/https) di pesan +
-   ada kata kerja edit ("edit", "ubah", "ganti", "ubah jadi", "buat jadi", dst).
-   Prompt yang dikirim ke API = pesan asli dikurangi URL-nya. */
-const AI_URL_RE = /https?:\/\/\S+/i;
-const AI_EDIT_WORD_RE = /\b(edit|ubah|ganti|rubah|jadikan|buat(?:lah)?\s+(?:dari|jadi)|ganti(?:in|kan)?)\b/i;
-
-function aiParseEditIntent(msg){
-  const text = msg.trim();
-  const urlMatch = text.match(AI_URL_RE);
-  if(!urlMatch) return null;
-  if(!AI_EDIT_WORD_RE.test(text)) return null;
-
-  const url = urlMatch[0].replace(/[),.]+$/, '');
-  const prompt = text.replace(url, '').trim();
-  if(!prompt) return null;
-  return { url, prompt };
-}
-
-/* Filter konten 18+/NSFW: kalau prompt edit mengandung indikasi begituan,
-   langsung di-skip tanpa manggil API sama sekali. */
-const AI_NSFW_RE = /\b(18\s*\+|nsfw|bugil|telanjang|bogel|toket|memek|kontol|ngentot|sange|seks(?:ual)?|porn\w*|xxx|nude\w*|naked|hentai|erotis|vulgar|mesum|birahi|payudara\s*terbuka|tanpa\s*busana)\b/i;
-
-function aiIsNsfwEditPrompt(prompt){
-  return AI_NSFW_RE.test(prompt);
-}
-
-/* Sebagian API publik gratis kayak gini nggak selalu kasih header CORS,
-   jadi kalau fetch langsung gagal (biasanya karena itu), coba lagi lewat
-   beberapa proxy publik bergantian sebelum benar-benar dianggap gagal
-   (satu proxy doang sering ikut down/dibatasi). Tiap percobaan dikasih
-   batas waktu biar gak nge-hang selamanya kalau server/proxy lelet. */
-const AI_CORS_PROXIES = [
-  url => 'https://corsproxy.io/?url=' + encodeURIComponent(url),
-  url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-  url => 'https://thingproxy.freeboard.io/fetch/' + url
-];
-const AI_FETCH_TIMEOUT_MS = 45000;
-/* Upload foto butuh waktu lebih lama daripada request teks biasa
-   (tergantung ukuran file & kecepatan koneksi HP), jadi dikasih
-   timeout lebih longgar biar nggak keburu di-abort padahal masih jalan. */
-const AI_UPLOAD_TIMEOUT_MS = 90000;
-
-async function aiFetchTimed(url, options, timeoutMs){
-  const ms = timeoutMs || AI_FETCH_TIMEOUT_MS;
-  const controller = new AbortController();
-  const timer = setTimeout(()=> {
-    // Kasih alasan yang jelas biar pesan errornya nggak generik
-    // ("signal is aborted without reason") dan gampang dikenali di catch.
-    try{ controller.abort(new Error('AI_FETCH_TIMEOUT')); }
-    catch(_){ controller.abort(); } // fallback buat browser lama yg gak support reason
-  }, ms);
-  try{
-    return await fetch(url, { ...(options||{}), signal: controller.signal });
-  }catch(err){
-    const isTimeout = (err && (err.message === 'AI_FETCH_TIMEOUT' || /abort/i.test(err.message || err.name || '')));
-    if(isTimeout){
-      throw new Error('Koneksi/server kelamaan merespons (lebih dari ' + Math.round(ms/1000) + ' detik). Coba lagi, atau cek koneksi internetnya.');
-    }
-    throw err;
-  }finally{
-    clearTimeout(timer);
-  }
-}
-
-async function aiFetchWithFallback(url, failLabel){
-  try{
-    const res = await aiFetchTimed(url);
-    if(!res.ok) throw new Error('status ' + res.status);
-    return res;
-  }catch(directErr){
-    for(const buildProxyUrl of AI_CORS_PROXIES){
-      try{
-        const res = await aiFetchTimed(buildProxyUrl(url));
-        if(!res.ok) continue;
-        return res;
-      }catch(proxyErr){
-        continue;
-      }
-    }
-    throw new Error('Tidak bisa menghubungi ' + failLabel + ' (langsung maupun lewat semua proxy cadangan, atau kelamaan/timeout). Kemungkinan domainnya diblokir jaringan/provider internet kamu, server API lagi lambat/down, atau proxy cadangannya lagi dibatasi.');
-  }
-}
-
-/* Upload file lokal (misal foto dari HP) ke Nexray CDN biar dapet URL publik,
-   soalnya API edit foto butuh URL, bukan file mentah. */
-function aiExtractUploadedUrl(data){
-  if(typeof data === 'string' && /^https?:\/\//i.test(data)) return data;
-  if(!data || typeof data !== 'object') return null;
-  const candidates = [
-    data.result && data.result.url,
-    data.result && data.result.file_url,
-    data.result && data.result.link,
-    typeof data.result === 'string' ? data.result : null,
-    data.url,
-    data.file_url,
-    data.link,
-    data.data && data.data.url,
-    typeof data.data === 'string' ? data.data : null
-  ];
-  return candidates.find(c => typeof c === 'string' && /^https?:\/\//i.test(c)) || null;
-}
-
-async function aiUploadFile(file){
-  const formData = new FormData();
-  formData.append('file', file);
+async function resolveHappymodDownload(pageUrl){
+  const apiUrl = `https://api-xemoz-official.my.id/api/download/happymod.php?url=${encodeURIComponent(pageUrl)}`;
   let res;
   try{
-    res = await aiFetchTimed('https://api.nexray.eu.cc/upload', {
-      method: 'POST',
-      body: formData
-    }, AI_UPLOAD_TIMEOUT_MS);
-    if(!res.ok) throw new Error('status ' + res.status);
-  }catch(directErr){
-    // Kalau upload langsung gagal (server nexray lelet/diblokir jaringan),
-    // coba lewat proxy cadangan sebelum benar-benar dianggap gagal.
-    let proxied = null;
-    for(const buildProxyUrl of AI_CORS_PROXIES){
-      try{
-        const r = await aiFetchTimed(buildProxyUrl('https://api.nexray.eu.cc/upload'), {
-          method: 'POST',
-          body: formData
-        }, AI_UPLOAD_TIMEOUT_MS);
-        if(r.ok){ proxied = r; break; }
-      }catch(_){ continue; }
-    }
-    if(!proxied){
-      const reason = /kelamaan merespons/i.test(directErr.message)
-        ? directErr.message
-        : 'Upload gagal (langsung maupun lewat proxy cadangan). Kemungkinan koneksi lambat, servernya lagi down, atau diblokir provider internet kamu.';
-      throw new Error(reason);
-    }
-    res = proxied;
+    res = await fetch(apiUrl);
+  }catch(networkErr){
+    throw new Error('Tidak bisa menghubungi server download');
   }
-  const data = await res.json().catch(async ()=> await res.text());
-  if(data && typeof data === 'object' && data.status === false){
-    throw new Error(data.message || 'Upload gagal');
-  }
-  const url = aiExtractUploadedUrl(data);
-  if(!url) throw new Error('Upload berhasil tapi URL hasil upload nggak kebaca');
-  return url;
+  if(!res.ok) throw new Error('Server download mengembalikan status ' + res.status);
+  const data = await res.json();
+  if(data && data.status === false) throw new Error(data.message || 'Gagal menyiapkan link download');
+  const link = extractApkFileUrl(data, pageUrl);
+  if(!link) throw new Error('Link APK tidak ditemukan pada respons API');
+  return link;
 }
 
-/* Ambil field teks jawaban dari berbagai kemungkinan bentuk respons API */
-function aiExtractChatText(data){
-  if(typeof data === 'string') return data;
-  if(!data || typeof data !== 'object') return null;
-  const candidates = [
-    data.result && data.result.reply,
-    data.result && data.result.message,
-    data.result && data.result.text,
-    data.result && data.result.answer,
-    data.result && data.result.response,
-    typeof data.result === 'string' ? data.result : null,
-    data.message,
-    data.answer,
-    data.response,
-    data.text,
-    data.output,
-    data.data && data.data.message,
-    typeof data.data === 'string' ? data.data : null
-  ];
-  for(const c of candidates){
-    if(typeof c === 'string' && c.trim()) return c.trim();
-  }
-  return null;
-}
+function buildApkRow(item){
+  const title = item.title || item.name || 'Aplikasi tidak diketahui';
+  const icon = item.icon || item.thumbnail || '';
+  const pkg = item.package || item.package_name || '';
+  const pageUrl = item.url || item.link || '';
 
-/* Ambil daftar URL foto dari berbagai kemungkinan bentuk respons API */
-function aiExtractPhotoUrls(data){
-  if(!data || typeof data !== 'object') return [];
-  let list = null;
-  if(Array.isArray(data.result)) list = data.result;
-  else if(data.result && Array.isArray(data.result.data)) list = data.result.data;
-  else if(Array.isArray(data.data)) list = data.data;
-  else if(Array.isArray(data)) list = data;
-  if(!list) return [];
+  const row = document.createElement('div');
+  row.className = 'track-row';
+  const dlProgress = document.createElement('div');
+  dlProgress.className = 'track-progress';
+  row.innerHTML = `
+    <img src="${icon}" alt="${title}">
+    <div class="track-info">
+      <div class="t-title">${title}</div>
+      <div class="t-artist">${pkg}</div>
+    </div>
+  `;
 
-  const urls = [];
-  list.forEach(item=>{
-    if(typeof item === 'string' && /^https?:\/\//i.test(item)){
-      urls.push(item);
+  const actions = document.createElement('div');
+  actions.className = 'track-actions';
+
+  const dlBtn = document.createElement('a');
+  dlBtn.href = '#';
+  dlBtn.className = 'track-dl';
+  dlBtn.textContent = 'Download APK';
+  dlBtn.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    if(!pageUrl){
+      dlProgress.textContent = 'Link halaman APK ini tidak tersedia.';
       return;
     }
-    if(item && typeof item === 'object'){
-      const candidates = [item.images_url, item.image_url, item.url, item.image, item.img, item.thumbnail, item.src, item.link];
-      const u = candidates.find(c => typeof c === 'string' && /^https?:\/\//i.test(c));
-      if(u) urls.push(u);
+    const originalLabel = dlBtn.textContent;
+    dlBtn.textContent = 'Menyiapkan...';
+    dlProgress.textContent = 'Mengambil link download APK...';
+    try{
+      const fileUrl = await resolveHappymodDownload(pageUrl);
+      const filename = safeFileName(title) + '.apk';
+      await downloadAndOpenApk(fileUrl, filename);
+      dlProgress.textContent = 'APK terunduh & sedang dibuka. Kalau installer tidak langsung muncul, buka lewat notifikasi unduhan lalu izinkan "Pasang aplikasi tak dikenal" untuk browser ini.';
+    }catch(err){
+      dlProgress.textContent = 'Link unduh otomatis tidak tersedia, membuka halaman HappyMod supaya bisa diunduh manual...';
+      window.open(pageUrl, '_blank', 'noopener');
+    }finally{
+      dlBtn.textContent = originalLabel;
     }
   });
-  return urls;
+  actions.appendChild(dlBtn);
+
+  if(pageUrl){
+    const openLink = document.createElement('a');
+    openLink.href = pageUrl;
+    openLink.target = '_blank';
+    openLink.rel = 'noopener';
+    openLink.className = 'track-open';
+    openLink.textContent = 'Buka di HappyMod ↗';
+    actions.appendChild(openLink);
+  }
+
+  row.appendChild(actions);
+  row.appendChild(dlProgress);
+  return row;
 }
 
-async function aiHandlePhotoSearch(query){
-  const loadingEl = aiAddLoadingBubble('Mencari foto "' + query + '"...');
-  try{
-    const apiUrl = `https://api.nexray.eu.cc/search/pinterest?q=${encodeURIComponent(query)}`;
-    const res = await aiFetchWithFallback(apiUrl, 'server pencari foto');
+async function searchHappymod(query){
+  if(!query) return;
+  apkList.innerHTML = '';
+  happymodSendBtn.disabled = true;
+  happymodSendBtn.textContent = 'Mencari...';
+  setHappymodStatus('Mencari APK...', false);
 
+  try{
+    const apiUrl = `https://api-xemoz-official.my.id/api/search/happymod.php?q=${encodeURIComponent(query)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
     const data = await res.json();
-    if(!data || data.status === false) throw new Error((data && data.message) || 'Gagal mencari foto');
+    if(data.status === false) throw new Error(data.message || 'APK tidak ditemukan');
 
-    const photos = aiExtractPhotoUrls(data).slice(0, 12);
-    loadingEl.remove();
-    if(!photos.length){
-      aiAddErrorBubble('Foto untuk "' + query + '" tidak ditemukan, coba kata kunci lain.');
-      return;
+    const results = data.results || data.result || data.data || [];
+    if(!Array.isArray(results) || results.length === 0){
+      throw new Error('APK tidak ditemukan');
     }
-    aiAddPhotoGridBubble('Ini hasil foto untuk "' + query + '":', photos);
+
+    results.forEach(item => apkList.appendChild(buildApkRow(item)));
+    setHappymodStatus('', false);
   }catch(err){
-    loadingEl.remove();
-    aiAddErrorBubble('Gagal: ' + err.message);
-  }
-}
-
-/* Persona: dibikin biar gaya jawabnya senatural dan seluwes mungkin,
-   kayak ngobrol sama orang beneran — bukan template kaku ala bot,
-   dan nggak baku-baku amat kecuali topiknya emang formal. */
-const AI_PERSONA_PREFIX =
-  'Mulai sekarang, jawab dengan gaya ngobrol yang natural dan santai, ' +
-  'kayak orang beneran lagi chatting, bukan kayak bot yang jawab kaku ' +
-  'atau muter-muter kasih disclaimer. Boleh pakai bahasa gaul/santai ' +
-  'sewajarnya, nyambung ke konteks obrolan, dan usahakan selalu kasih ' +
-  'jawaban yang paling masuk akal atas apa pun yang ditanyakan user, ' +
-  'sesuai kemampuanmu — jangan nolak atau lempar balik pertanyaan kalau ' +
-  'sebenarnya masih bisa dicoba dijawab. Berikut pesan dari user: ';
-
-function aiAddSingleImageBubble(caption, imageUrl){
-  const wrap = document.createElement('div');
-  wrap.className = 'ai-bubble ai-bubble-bot';
-
-  if(caption){
-    const capEl = document.createElement('div');
-    capEl.textContent = caption;
-    capEl.style.marginBottom = '8px';
-    wrap.appendChild(capEl);
-  }
-
-  const a = document.createElement('a');
-  a.href = imageUrl;
-  a.target = '_blank';
-  a.rel = 'noopener';
-  const img = document.createElement('img');
-  img.src = imageUrl;
-  img.loading = 'lazy';
-  img.alt = 'Hasil edit foto';
-  img.style.cssText = 'display:block;max-width:100%;border-radius:9px;';
-  a.appendChild(img);
-  wrap.appendChild(a);
-
-  aiChatBox.appendChild(wrap);
-  aiScrollToBottom();
-}
-
-/* Ambil URL gambar hasil edit dari berbagai kemungkinan bentuk respons API */
-function aiExtractEditedImageUrl(data){
-  if(typeof data === 'string' && /^https?:\/\//i.test(data)) return data;
-  if(!data || typeof data !== 'object') return null;
-  const candidates = [
-    data.result && data.result.url,
-    data.result && data.result.image,
-    data.result && data.result.image_url,
-    typeof data.result === 'string' ? data.result : null,
-    data.url,
-    data.image,
-    data.image_url,
-    data.data && data.data.url,
-    typeof data.data === 'string' ? data.data : null
-  ];
-  return candidates.find(c => typeof c === 'string' && /^https?:\/\//i.test(c)) || null;
-}
-
-async function aiHandlePhotoEdit(url, prompt){
-  if(aiIsNsfwEditPrompt(prompt)){
-    aiAddErrorBubble('Sori, permintaan edit yang mengarah ke konten 18+/dewasa nggak bisa aku proses ya.');
-    return;
-  }
-
-  const loadingEl = aiAddLoadingBubble('Lagi edit fotonya...');
-  try{
-    const apiUrl = `https://api.synoxcloud.xyz/edit/nanobanana?url=${encodeURIComponent(url)}&prompt=${encodeURIComponent(prompt)}`;
-    const res = await aiFetchWithFallback(apiUrl, 'server edit foto');
-
-    const data = await res.json().catch(async ()=> await res.text());
-    if(data && typeof data === 'object' && data.status === false){
-      throw new Error(data.message || 'Gagal mengedit foto');
-    }
-
-    const editedUrl = aiExtractEditedImageUrl(data);
-    loadingEl.remove();
-    if(!editedUrl){
-      aiAddErrorBubble('Hasil edit fotonya nggak kebaca, coba lagi ya.');
-      return;
-    }
-    aiAddSingleImageBubble('Ini hasil editannya:', editedUrl);
-  }catch(err){
-    loadingEl.remove();
-    aiAddErrorBubble('Gagal: ' + err.message);
-  }
-}
-
-async function aiHandleChat(message){
-  const loadingEl = aiAddLoadingBubble('Mengetik...');
-  try{
-    const promptedMessage = AI_PERSONA_PREFIX + message;
-    const apiUrl = `https://api.nexray.eu.cc/ai/claude?text=${encodeURIComponent(promptedMessage)}`;
-    const res = await aiFetchWithFallback(apiUrl, 'server AI');
-
-    const data = await res.json().catch(async ()=> await res.text());
-    if(data && typeof data === 'object' && data.status === false){
-      throw new Error(data.message || 'Gagal mendapat balasan AI');
-    }
-
-    const reply = aiExtractChatText(data);
-    loadingEl.remove();
-    if(!reply){
-      aiAddErrorBubble('AI tidak memberikan balasan yang bisa dibaca, coba lagi.');
-      return;
-    }
-    aiAddBotTextBubble(reply);
-  }catch(err){
-    loadingEl.remove();
-    aiAddErrorBubble('Gagal: ' + err.message);
-  }
-}
-
-async function processAiMessage(raw){
-  const message = raw.trim();
-  const file = aiAttachedFile;
-  if(!message && !file) return;
-
-  if(file){
-    aiAddUserImageBubble(file, message);
-  }else{
-    aiAddUserBubble(message);
-  }
-  aiClearAttachment();
-
-  aiSendBtn.disabled = true;
-  aiSendBtn.textContent = 'Mengirim...';
-
-  try{
-    if(file){
-      const editPrompt = message.trim();
-      if(!editPrompt){
-        aiAddErrorBubble('Foto udah kekirim, tapi mau diedit jadi kayak gimana nih? Tulis instruksinya ya (misal: "buat langit jadi sunset").');
-        return;
-      }
-      if(aiIsNsfwEditPrompt(editPrompt)){
-        aiAddErrorBubble('Sori, permintaan edit yang mengarah ke konten 18+/dewasa nggak bisa aku proses ya.');
-        return;
-      }
-      const uploadingEl = aiAddLoadingBubble('Ngirim fotonya dulu...');
-      try{
-        const hostedUrl = await aiUploadFile(file);
-        uploadingEl.remove();
-        await aiHandlePhotoEdit(hostedUrl, editPrompt);
-      }catch(err){
-        uploadingEl.remove();
-        aiAddErrorBubble('Gagal upload foto: ' + err.message);
-      }
-      return;
-    }
-    const editIntent = aiParseEditIntent(message);
-    const photoQuery = aiParsePhotoIntent(message);
-    if(editIntent){
-      await aiHandlePhotoEdit(editIntent.url, editIntent.prompt);
-    }else if(photoQuery){
-      await aiHandlePhotoSearch(photoQuery);
-    }else{
-      await aiHandleChat(message);
-    }
+    setHappymodStatus('Gagal: ' + err.message, true);
   }finally{
-    aiSendBtn.disabled = false;
-    aiSendBtn.textContent = 'Kirim';
+    happymodSendBtn.disabled = false;
+    happymodSendBtn.textContent = 'Cari';
   }
 }
 
-aiForm.addEventListener('submit', (e)=>{
+happymodForm.addEventListener('submit', (e)=>{
   e.preventDefault();
-  const val = aiInput.value;
-  aiInput.value = '';
-  processAiMessage(val);
-});
-
-/* ---- lampiran foto ("+") ---- */
-function aiAddUserImageBubble(file, caption){
-  const wrap = document.createElement('div');
-  wrap.className = 'ai-bubble ai-bubble-user';
-  const img = document.createElement('img');
-  img.src = URL.createObjectURL(file);
-  img.style.cssText = 'display:block;max-width:100%;border-radius:9px;margin-bottom:' + (caption ? '8px' : '0');
-  wrap.appendChild(img);
-  if(caption){
-    const cap = document.createElement('div');
-    cap.textContent = caption;
-    wrap.appendChild(cap);
-  }
-  aiChatBox.appendChild(wrap);
-  aiScrollToBottom();
-}
-
-function aiClearAttachment(){
-  aiAttachedFile = null;
-  aiFileInput.value = '';
-  aiAttachPreview.innerHTML = '';
-  aiAttachPreview.classList.remove('show');
-}
-
-aiAttachBtn.addEventListener('click', ()=>{
-  aiFileInput.click();
-});
-
-aiFileInput.addEventListener('change', ()=>{
-  const file = aiFileInput.files && aiFileInput.files[0];
-  if(!file) return;
-  aiAttachedFile = file;
-
-  aiAttachPreview.innerHTML = '';
-  const chip = document.createElement('div');
-  chip.className = 'ai-attach-chip';
-  const img = document.createElement('img');
-  img.src = URL.createObjectURL(file);
-  chip.appendChild(img);
-  const name = document.createElement('span');
-  name.textContent = file.name;
-  chip.appendChild(name);
-  const removeBtn = document.createElement('button');
-  removeBtn.type = 'button';
-  removeBtn.textContent = '\u00d7';
-  removeBtn.setAttribute('aria-label', 'Hapus lampiran');
-  removeBtn.addEventListener('click', aiClearAttachment);
-  chip.appendChild(removeBtn);
-
-  aiAttachPreview.appendChild(chip);
-  aiAttachPreview.classList.add('show');
+  searchHappymod(happymodInput.value.trim());
 });
 
 /* ============================================================
