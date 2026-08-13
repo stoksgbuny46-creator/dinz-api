@@ -3633,15 +3633,32 @@ document.getElementById('happymodIconSlot').innerHTML = ICONS.happymod;
 
 /* API HappyMod (api-xemoz-official.my.id) tidak mengirim header CORS,
    jadi fetch langsung dari browser diblokir. Coba fetch langsung dulu,
-   kalau gagal (TypeError network/CORS) baru lewat proxy CORS publik. */
+   kalau gagal (TypeError network/CORS) baru dicoba lewat beberapa
+   proxy CORS publik satu-satu (proxy gratis suka down bergantian,
+   jadi dicoba lebih dari satu biar lebih tahan). */
 async function corsFetch(url){
   try{
     const direct = await fetch(url);
-    return direct;
-  }catch(directErr){
-    const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-    return fetch(proxied);
+    if(direct.ok) return direct;
+  }catch(directErr){}
+
+  const proxies = [
+    u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+    u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
+    u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+  ];
+
+  let lastErr = new Error('Semua proxy CORS gagal dihubungi');
+  for(const buildProxyUrl of proxies){
+    try{
+      const res = await fetch(buildProxyUrl(url));
+      if(res.ok) return res;
+      lastErr = new Error('Proxy mengembalikan status ' + res.status);
+    }catch(proxyErr){
+      lastErr = proxyErr;
+    }
   }
+  throw lastErr;
 }
 
 const happymodForm = document.getElementById('happymodForm');
