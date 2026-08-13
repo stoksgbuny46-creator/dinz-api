@@ -2054,7 +2054,7 @@
       <input type="url" id="webcloneInput" placeholder="https://situs-tujuan.com" required>
       <button type="submit" id="webcloneSendBtn">Clone</button>
     </form>
-    <div class="hint">Tempel URL website yang mau di-clone, source code-nya diambil lalu dibungkus jadi file .zip.</div>
+    <div class="hint">Tempel URL website yang mau di-clone. Source code-nya diambil, dibungkus jadi .zip, lalu otomatis terunduh ke HP kamu.</div>
     <div class="status" id="webcloneStatus"></div>
     <div class="enc-result" id="webcloneResult">
       <div class="other-quality" style="margin-top:0;">hasil</div>
@@ -3379,7 +3379,8 @@ web2apkForm.addEventListener('submit', (e)=>{
    CLONE WEBSITE
    Alur: user tempel URL website -> dikirim ke azbry webclone ->
    ambil result.url (link zip di tmpfiles.org) & result.filename ->
-   tampilkan link + tombol Download ZIP (forceDownload).
+   langsung auto-download ke HP (forceDownload), tombol Download ZIP
+   tetap ada sebagai cadangan kalau auto-download-nya gagal/diblokir.
 ============================================================ */
 document.getElementById('webcloneIconSlot').innerHTML = ICONS.webclone;
 
@@ -3426,7 +3427,10 @@ async function processWebclone(url){
     webcloneResultText.value = zipUrl;
     webcloneDownloadBtn.onclick = ()=> forceDownload(zipUrl, filename, webcloneDownloadBtn, webcloneProgress);
     webcloneResult.classList.add('show');
-    setWebcloneStatus('Berhasil, klik Download ZIP untuk mengunduh.', false);
+
+    setWebcloneStatus('Berhasil, mengunduh otomatis ke HP...', false);
+    await forceDownload(zipUrl, filename, webcloneDownloadBtn, webcloneProgress);
+    setWebcloneStatus('Selesai, cek folder unduhan HP kamu.', false);
   }catch(err){
     setWebcloneStatus('Gagal: ' + err.message, true);
   }finally{
