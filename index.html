@@ -8,32 +8,37 @@
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
   :root{
-    --bg: #EEF1FA;
+    --bg: #F6F3FF;
     --panel: #FFFFFF;
-    --sunken: #F4F6FC;
-    --iconbg: #E9EEFC;
-    --line: #14151A;
-    --ink: #14151A;
-    --dim: #5B6472;
-    --dim2: #8890A0;
-    --dim3: #AFB6C4;
-    --cyan: #2F6FED;
-    --cyan-bg: #DCE8FE;
-    --pink: #FF4D6D;
-    --indigo: #2F6FED;
-    --warn: #B45309;
-    --yellow: #FFD639;
-    --green: #22C55E;
-    --grid-line: rgba(20,21,26,0.055);
+    --sunken: #F4F0FF;
+    --iconbg: linear-gradient(135deg, #EDE7FF, #E1EEFF);
+    --line: #1C1330;
+    --ink: #1C1330;
+    --dim: #675F84;
+    --dim2: #948AB3;
+    --dim3: #C6BEDD;
+    --cyan: #6C5CE7;
+    --cyan-bg: #E9E4FF;
+    --pink: #FF4D8D;
+    --indigo: #6C5CE7;
+    --warn: #C2660B;
+    --yellow: #FFC93C;
+    --green: #17C88E;
+    --grid-line: rgba(28,19,48,0.05);
+    --grad-brand: linear-gradient(120deg, #6C5CE7 0%, #A05CE7 55%, #FF4D8D 100%);
+    --glow: 0 14px 30px -14px rgba(108,92,231,0.45);
   }
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/26px 26px,
-      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/26px 26px,
+      radial-gradient(720px 420px at 8% -6%, rgba(108,92,231,0.16), transparent 60%),
+      radial-gradient(640px 420px at 100% 0%, rgba(255,77,141,0.14), transparent 55%),
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
       var(--bg);
+    background-attachment:fixed;
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
     min-height:100vh;
@@ -72,11 +77,11 @@
     justify-content:center;
     cursor:pointer;
     flex-shrink:0;
-    box-shadow:2px 2px 0 var(--line);
+    box-shadow:2px 2px 0 var(--line), 0 16px 26px -8px rgba(28,19,48,0.22);
   }
   .hamburger svg{width:20px;height:20px;stroke:var(--ink);}
   .hamburger:hover{border-color:var(--cyan);}
-  .hamburger:active{transform:translate(1px,1px); box-shadow:1px 1px 0 var(--line);}
+  .hamburger:active{transform:translate(1px,1px); box-shadow:1px 1px 0 var(--line), 0 13px 23px -7px rgba(28,19,48,0.22);}
 
   /* ---------- MENU OVERLAY ---------- */
   .menu-overlay{
@@ -117,7 +122,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    box-shadow:2px 2px 0 var(--line);
+    box-shadow:2px 2px 0 var(--line), 0 16px 26px -8px rgba(28,19,48,0.22);
   }
   .menu-close svg{width:22px;height:22px;stroke:var(--ink);}
 
@@ -141,7 +146,7 @@
     cursor:pointer;
     padding:16px 18px;
     text-align:left;
-    box-shadow:3px 3px 0 var(--line);
+    box-shadow:3px 3px 0 var(--line), 0 19px 29px -9px rgba(28,19,48,0.22);
     transition:transform .12s ease, box-shadow .12s ease;
   }
   .menu-item svg{
@@ -156,7 +161,7 @@
     cursor:default;
     pointer-events:none;
     opacity:0.55;
-    box-shadow:3px 3px 0 var(--line);
+    box-shadow:3px 3px 0 var(--line), 0 19px 29px -9px rgba(28,19,48,0.22);
   }
   .menu-item.menu-item-current svg{stroke:var(--dim2);}
   .menu-item-current .tag{
@@ -188,7 +193,7 @@
     border:2px solid var(--line);
     border-radius:22px;
     padding:10px;
-    box-shadow:4px 4px 0 var(--line);
+    box-shadow:4px 4px 0 var(--line), 0 22px 32px -10px rgba(28,19,48,0.22);
     margin-bottom:18px;
   }
   .pill{
@@ -221,7 +226,7 @@
     border:2px solid var(--line);
     border-radius:20px;
     padding:22px;
-    box-shadow:5px 5px 0 var(--line);
+    box-shadow:5px 5px 0 var(--line), 0 25px 35px -11px rgba(28,19,48,0.22);
     margin-bottom:26px;
   }
   .status-card-head{
@@ -382,7 +387,7 @@
     border-radius:14px;
     padding:14px 6px;
     cursor:pointer;
-    box-shadow:3px 3px 0 var(--line);
+    box-shadow:3px 3px 0 var(--line), 0 19px 29px -9px rgba(28,19,48,0.22);
     transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
   }
   .quick-item:hover{border-color:var(--cyan); transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--cyan);}
@@ -425,7 +430,7 @@
     border-radius:14px;
     padding:14px 16px;
     cursor:pointer;
-    box-shadow:3px 3px 0 var(--line);
+    box-shadow:3px 3px 0 var(--line), 0 19px 29px -9px rgba(28,19,48,0.22);
     transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
     display:flex;
     align-items:center;
@@ -459,7 +464,8 @@
     flex-shrink:0;
     width:30px;height:30px;
     border-radius:8px;
-    background:var(--cyan-bg);
+    background:var(--grad-brand);
+    color:#fff !important;
     border:1.5px solid var(--line);
     color:var(--cyan);
     display:flex;
@@ -479,7 +485,7 @@
     border-radius:18px;
     padding:22px;
     margin-bottom:18px;
-    box-shadow:4px 4px 0 var(--line);
+    box-shadow:4px 4px 0 var(--line), 0 22px 32px -10px rgba(28,19,48,0.22);
     scroll-margin-top:80px;
   }
   .tool-head{
@@ -526,20 +532,20 @@
   input[type="url"]::placeholder, form input[type="text"]::placeholder{color:var(--dim3);}
 
   button{
-    background:var(--ink);
+    background:var(--grad-brand);
     color:#fff;
     border:1.5px solid var(--line);
-    border-radius:9px;
+    border-radius:11px;
     padding:0 24px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
     font-size:13.5px;
     text-transform:uppercase;
     cursor:pointer;
-    transition:transform .12s ease, background .12s ease;
+    transition:transform .15s ease, filter .15s ease, box-shadow .15s ease;
     white-space:nowrap;
   }
-  button:hover{background:var(--cyan); border-color:var(--cyan);}
+  button:hover{filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--glow);}
   button:active{transform:scale(0.97);}
   button:disabled{opacity:0.5;cursor:wait;}
 
@@ -785,7 +791,7 @@
   .download-main{
     width:100%;
     margin-top:14px;
-    background:var(--cyan);
+    background:var(--grad-brand);
     color:#fff;
     border:1.5px solid var(--line);
     border-radius:10px;
@@ -795,11 +801,11 @@
     font-size:14px;
     text-transform:uppercase;
     cursor:pointer;
-    box-shadow:3px 3px 0 var(--line);
+    box-shadow:3px 3px 0 var(--line), 0 19px 29px -9px rgba(28,19,48,0.22);
     transition:transform .12s ease;
   }
-  .download-main:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--line);}
-  .download-main:active{transform:translate(0,0); box-shadow:1px 1px 0 var(--line);}
+  .download-main:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--line), 0 22px 32px -10px rgba(28,19,48,0.22);}
+  .download-main:active{transform:translate(0,0); box-shadow:1px 1px 0 var(--line), 0 13px 23px -7px rgba(28,19,48,0.22);}
   .download-main:disabled{opacity:0.55;cursor:wait;}
 
   .dl-progress{
@@ -888,17 +894,17 @@
     border-radius:18px;
     padding:22px;
     margin-top:20px;
-    box-shadow:4px 4px 0 var(--line);
+    box-shadow:4px 4px 0 var(--line), 0 22px 32px -10px rgba(28,19,48,0.22);
   }
   .panel.show{display:block;}
 
   .welcome-cta{
     display:inline-block;
     margin-top:6px;
-    background:var(--cyan);
+    background:var(--grad-brand);
     color:#fff;
   }
-  .welcome-cta:hover{background:var(--pink);}
+  .welcome-cta:hover{filter:brightness(1.1);}
 
   /* ---------- SPOTIFY RESULTS ---------- */
   .track-list{
@@ -963,7 +969,7 @@
     font-weight:700;
     text-transform:uppercase;
     color:#fff;
-    background:var(--cyan);
+    background:var(--grad-brand);
     text-decoration:none;
     padding:9px 16px;
     border-radius:7px;
@@ -1046,14 +1052,14 @@
   .nav-logo-mark{
     width:34px;height:34px;
     border-radius:9px;
-    background:var(--cyan);
+    background:var(--grad-brand);
     border:1.5px solid var(--line);
     display:flex;align-items:center;justify-content:center;
     color:#fff;
     font-weight:700;
     font-family:'JetBrains Mono', monospace;
     font-size:15px;
-    box-shadow:2px 2px 0 var(--line);
+    box-shadow:2px 2px 0 var(--line), 0 16px 26px -8px rgba(28,19,48,0.22);
     flex-shrink:0;
   }
   .nav-logo-text{line-height:1.15;}
@@ -1111,7 +1117,7 @@
     background:var(--panel);
     border:1.5px solid var(--line);
     border-radius:12px;
-    box-shadow:4px 4px 0 var(--line);
+    box-shadow:4px 4px 0 var(--line), 0 22px 32px -10px rgba(28,19,48,0.22);
     padding:8px;
     min-width:190px;
     display:none;
@@ -1141,7 +1147,7 @@
     display:inline-flex;
     align-items:center;
     gap:7px;
-    background:var(--cyan);
+    background:var(--grad-brand);
     color:#fff;
     border:1.5px solid var(--line);
     border-radius:10px;
@@ -1150,7 +1156,7 @@
     font-weight:700;
     font-size:12.5px;
     cursor:pointer;
-    box-shadow:2px 2px 0 var(--line);
+    box-shadow:2px 2px 0 var(--line), 0 16px 26px -8px rgba(28,19,48,0.22);
     white-space:nowrap;
   }
   .nav-cta svg{width:14px;height:14px;}
@@ -1184,7 +1190,7 @@
     letter-spacing:0.04em;
     text-transform:uppercase;
     color:var(--dim);
-    box-shadow:2px 2px 0 var(--line);
+    box-shadow:2px 2px 0 var(--line), 0 16px 26px -8px rgba(28,19,48,0.22);
     margin-bottom:22px;
   }
   .hero-title{
@@ -1212,7 +1218,7 @@
     border:2px solid var(--line);
     border-radius:16px;
     padding:8px;
-    box-shadow:5px 5px 0 var(--line);
+    box-shadow:5px 5px 0 var(--line), 0 25px 35px -11px rgba(28,19,48,0.22);
     margin-bottom:12px;
   }
   .hero-search-row input{
@@ -1231,7 +1237,7 @@
     display:inline-flex;
     align-items:center;
     gap:7px;
-    background:var(--cyan);
+    background:var(--grad-brand);
     flex-shrink:0;
   }
   .hero-search-row button svg{width:15px;height:15px;}
@@ -1266,7 +1272,7 @@
     border:1.5px solid var(--line);
     background:var(--iconbg);
     display:flex;align-items:center;justify-content:center;
-    box-shadow:3px 3px 0 var(--line);
+    box-shadow:3px 3px 0 var(--line), 0 19px 29px -9px rgba(28,19,48,0.22);
     transition:transform .15s ease, box-shadow .15s ease;
   }
   .platform-icon-circle svg{width:24px;height:24px;}
@@ -1285,7 +1291,7 @@
     border:2px solid var(--line);
     border-radius:20px;
     padding:24px 22px;
-    box-shadow:5px 5px 0 var(--line);
+    box-shadow:5px 5px 0 var(--line), 0 25px 35px -11px rgba(28,19,48,0.22);
     margin:34px 0;
   }
   .section-card-head{
@@ -1540,7 +1546,7 @@
     padding:20px;
     background:var(--panel);
     cursor:pointer;
-    box-shadow:4px 4px 0 var(--line);
+    box-shadow:4px 4px 0 var(--line), 0 22px 32px -10px rgba(28,19,48,0.22);
     text-align:left;
     font-family:'Space Grotesk', sans-serif;
     color:var(--ink);
@@ -1589,7 +1595,7 @@
     background:var(--panel);
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
-    box-shadow:2px 2px 0 var(--line);
+    box-shadow:2px 2px 0 var(--line), 0 16px 26px -8px rgba(28,19,48,0.22);
   }
   .page-head .back-btn svg{width:19px;height:19px;}
   .page-head .back-btn:hover{border-color:var(--cyan);}
@@ -1612,7 +1618,7 @@
     width:32px;height:32px;
     flex-shrink:0;
     border-radius:50%;
-    background:var(--cyan);
+    background:var(--grad-brand);
     color:#fff;
     display:flex;align-items:center;justify-content:center;
     font-weight:700;
@@ -1975,6 +1981,23 @@
     </div>
   </div>
 
+  <!-- ===== PANEL: VIDEO PINTEREST ===== -->
+  <div class="panel" id="pinvid-tool">
+    <div class="tool-head">
+      <div class="icon" id="pinvidIconSlot"></div>
+      <div class="title">Video Pinterest</div>
+    </div>
+    <form id="pinvidForm">
+      <input type="text" id="pinvidInput" placeholder="Kata kunci video Pinterest..." required>
+      <button type="submit" id="pinvidSendBtn">Cari</button>
+    </form>
+    <div class="hint">Ketik kata kunci, daftar video Pinterest muncul di bawah. Klik "Download Video" untuk mengunduh satu-satu, atau "Download Semua Video" untuk mengunduh sekaligus.</div>
+    <div class="status" id="pinvidStatus"></div>
+    <button type="button" class="download-main" id="pinvidDownloadAllBtn" style="display:none;">Download Semua Video</button>
+    <div class="dl-progress" id="pinvidAllProgress"></div>
+    <div class="track-list" id="pinvidList"></div>
+  </div>
+
     <footer class="footer-v2">
     <div class="footer-grid">
       <div class="footer-brand-block">
@@ -2005,6 +2028,7 @@
           <li><button data-tool="bypass">Bypass Link</button></li>
           <li><button data-tool="ytvid">Pemutar Video</button></li>
           <li><button data-tool="musicplay">Pemutar Lagu</button></li>
+          <li><button data-tool="pinvid">Video Pinterest</button></li>
         </ul>
       </div>
 
@@ -2042,6 +2066,7 @@ const ICONS = {
   bypass: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 0 0 4 4l3-3a4 4 0 0 0-5.6-5.6l-1 1"/><path d="M15 12a4 4 0 0 0-4-4l-3 3a4 4 0 0 0 5.6 5.6l1-1"/></svg>`,
   ytvid: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ff4d4d" stroke="none"/></svg>`,
   musicplay: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  pinvid: `<svg viewBox="0 0 24 24" fill="none" stroke="#e60023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 17c1-2.5 1.5-4.5 2-7"/><path d="M9 10.5a3 3 0 1 1 4.8 2.4c-1 .7-1.3 1.1-1.3 2.1"/></svg>`,
 };
 
 /* ============================================================
@@ -2052,6 +2077,7 @@ const EXTRA_TOOLS = [
   { id:'bypass', name:'Bypass Link', desc:'Ubah link sfile jadi link langsung', panel:'bypass-tool' },
   { id:'ytvid', name:'Pemutar Video', desc:'Cari & putar video YouTube', panel:'ytvid-tool' },
   { id:'musicplay', name:'Pemutar Lagu', desc:'Cari & putar lagu langsung, tanpa unduh', panel:'musicplay-tool' },
+  { id:'pinvid', name:'Video Pinterest', desc:'Cari & download video dari Pinterest', panel:'pinvid-tool' },
 ];
 
 /* Downloader ekstra = pakai panel statis sendiri (bukan dari SERVICES) */
@@ -3113,6 +3139,171 @@ async function processMusicplay(query){
 musicplayForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   processMusicplay(musicplayInput.value.trim());
+});
+
+/* ============================================================
+   VIDEO PINTEREST
+   Alur: user ketik kata kunci -> dikirim ke axlyapi
+   (search/pinterest/video) -> ambil result.videos[] -> tampilkan
+   daftar hasil (thumbnail, judul, durasi) dengan tombol "Download
+   Video" (langsung dari video_url, sudah mp4) dan link "Buka Pin"
+   ke halaman Pinterest aslinya.
+============================================================ */
+document.getElementById('pinvidIconSlot').innerHTML = ICONS.pinvid;
+
+const pinvidForm = document.getElementById('pinvidForm');
+const pinvidInput = document.getElementById('pinvidInput');
+const pinvidSendBtn = document.getElementById('pinvidSendBtn');
+const pinvidStatus = document.getElementById('pinvidStatus');
+const pinvidList = document.getElementById('pinvidList');
+const pinvidDownloadAllBtn = document.getElementById('pinvidDownloadAllBtn');
+const pinvidAllProgress = document.getElementById('pinvidAllProgress');
+let pinvidVideos = [];
+
+function setPinvidStatus(msg, isError){
+  pinvidStatus.textContent = msg;
+  pinvidStatus.classList.toggle('show', !!msg);
+  pinvidStatus.classList.toggle('error', !!isError);
+}
+
+function buildPinRow(video){
+  const clean = v => (!v || v === '-') ? '' : v;
+  const rawTitle = clean(video.title);
+  const title = (rawTitle && rawTitle !== '(no title)') ? rawTitle : 'Video Pinterest';
+  const thumbnail = clean(video.thumbnail);
+  const duration = clean(video.duration);
+  const videoUrl = clean(video.video_url);
+  const pinLink = clean(video.link);
+
+  const row = document.createElement('div');
+  row.className = 'track-row';
+  const dlProgress = document.createElement('div');
+  dlProgress.className = 'track-progress';
+  row.innerHTML = `
+    <img src="${thumbnail}" alt="${title}">
+    <div class="track-info">
+      <div class="t-title">${title}</div>
+      <div class="t-artist">${duration ? 'Durasi ' + duration : 'Pinterest'}</div>
+    </div>
+  `;
+
+  const actions = document.createElement('div');
+  actions.className = 'track-actions';
+
+  const dlBtn = document.createElement('a');
+  dlBtn.href = '#';
+  dlBtn.className = 'track-dl';
+  dlBtn.textContent = 'Download Video';
+  dlBtn.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    if(!videoUrl){
+      dlProgress.textContent = 'Link video untuk hasil ini tidak tersedia.';
+      return;
+    }
+    await forceDownload(videoUrl, safeFileName(title) + '.mp4', dlBtn, dlProgress);
+  });
+  actions.appendChild(dlBtn);
+
+  if(pinLink){
+    const openLink = document.createElement('a');
+    openLink.href = pinLink;
+    openLink.target = '_blank';
+    openLink.rel = 'noopener';
+    openLink.className = 'track-open';
+    openLink.textContent = 'Buka Pin ↗';
+    actions.appendChild(openLink);
+  }
+
+  row.appendChild(actions);
+  row.appendChild(dlProgress);
+  return row;
+}
+
+async function searchPinvid(query){
+  if(!query) return;
+  pinvidList.innerHTML = '';
+  pinvidVideos = [];
+  pinvidDownloadAllBtn.style.display = 'none';
+  pinvidAllProgress.textContent = '';
+  pinvidSendBtn.disabled = true;
+  pinvidSendBtn.textContent = 'Mencari...';
+  setPinvidStatus('Mencari video Pinterest...', false);
+
+  try{
+    const apiUrl = `https://axlyapi.qzz.io/search/pinterest/video?q=${encodeURIComponent(query)}&limit=30`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
+    }
+    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+
+    const data = await res.json();
+    if(!data || data.status === false) throw new Error((data && data.message) || 'Video tidak ditemukan');
+
+    const videos = (data.result && data.result.videos) || [];
+    if(!Array.isArray(videos) || videos.length === 0){
+      throw new Error('Video tidak ditemukan untuk kata kunci itu');
+    }
+
+    videos.forEach(video => pinvidList.appendChild(buildPinRow(video)));
+    pinvidVideos = videos.filter(v => v && v.video_url);
+    if(pinvidVideos.length > 0){
+      pinvidDownloadAllBtn.style.display = 'block';
+      pinvidDownloadAllBtn.textContent = `Download Semua Video (${pinvidVideos.length})`;
+    }
+    setPinvidStatus('', false);
+  }catch(err){
+    setPinvidStatus('Gagal: ' + err.message, true);
+  }finally{
+    pinvidSendBtn.disabled = false;
+    pinvidSendBtn.textContent = 'Cari';
+  }
+}
+
+pinvidForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  searchPinvid(pinvidInput.value.trim());
+});
+
+/* Download semua video hasil pencarian satu-satu ke penyimpanan HP.
+   Sengaja berurutan (bukan bersamaan) + jeda kecil antar file, supaya
+   browser (terutama di HP) tidak memblokir unduhan beruntun. */
+pinvidDownloadAllBtn.addEventListener('click', async ()=>{
+  if(!pinvidVideos.length) return;
+  const total = pinvidVideos.length;
+  pinvidDownloadAllBtn.disabled = true;
+
+  for(let i = 0; i < total; i++){
+    const v = pinvidVideos[i];
+    const rawTitle = (v.title && v.title !== '(no title)') ? v.title : 'video-pinterest';
+    const filename = String(i + 1).padStart(2, '0') + '-' + safeFileName(rawTitle) + '.mp4';
+    pinvidDownloadAllBtn.textContent = `Mengunduh ${i + 1}/${total}...`;
+    pinvidAllProgress.textContent = `Video ${i + 1} dari ${total}: ${rawTitle}`;
+
+    try{
+      const res = await fetch(v.video_url);
+      if(!res.ok) throw new Error('status ' + res.status);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
+    }catch(err){
+      window.open(v.video_url, '_blank', 'noopener');
+    }
+
+    await new Promise(r => setTimeout(r, 700));
+  }
+
+  pinvidAllProgress.textContent = `Selesai, ${total} video sudah diunduh. Cek folder Download di HP kamu.`;
+  pinvidDownloadAllBtn.disabled = false;
+  pinvidDownloadAllBtn.textContent = `Download Semua Video (${total})`;
 });
 
 /* ============================================================
