@@ -888,7 +888,7 @@
     margin-top:0;
     box-shadow:none;
   }
-  #spotify-tool, #bypass-tool, #ytvid-tool, #musicplay-tool{
+  #spotify-tool, #ytvid-tool, #musicplay-tool{
     background:var(--panel);
     border:2px solid var(--line);
     border-radius:18px;
@@ -1497,7 +1497,6 @@
   }
   .accordion-body-inner .tool,
   .accordion-body-inner #spotify-tool,
-  .accordion-body-inner #bypass-tool,
   .accordion-body-inner #ytvid-tool,
   .accordion-body-inner #musicplay-tool{
     background:transparent;
@@ -1725,6 +1724,33 @@
     .footer-grid{grid-template-columns:1fr;}
     .hero-search-row{flex-direction:column;}
   }
+
+  /* ================= DINZ ALL-IN-ONE TOOLS ================= */
+  .dz-tools-suite{position:relative;margin-top:12px;}
+  .dz-tools-suite .accordion-head .icon{font-size:18px;}
+  .dz-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .dz-field,.dz-output{
+    background:var(--sunken);border:1.5px solid var(--line);border-radius:11px;
+    padding:12px;width:100%;color:var(--ink);font-family:'JetBrains Mono',monospace;
+  }
+  .dz-field{outline:none;font-size:12px;}
+  textarea.dz-field{min-height:150px;resize:vertical;}
+  .dz-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .dz-actions button{padding:11px 14px;}
+  .dz-secondary{background:var(--panel)!important;color:var(--ink)!important;}
+  .dz-drop{
+    border:2px dashed var(--line);border-radius:13px;padding:24px;text-align:center;
+    background:var(--sunken);cursor:pointer;margin-bottom:10px;
+  }
+  .dz-preview{max-width:100%;max-height:360px;display:block;margin:12px auto;border-radius:10px;border:1.5px solid var(--line);}
+  .dz-result-note{margin-top:10px;color:var(--dim);font:11px 'JetBrains Mono',monospace;white-space:pre-wrap;}
+  .dz-color-row{display:flex;gap:10px;align-items:center;}
+  .dz-color-row input[type=color]{width:58px;height:44px;padding:2px;border:1.5px solid var(--line);border-radius:9px;}
+  .dz-hidden{display:none!important;}
+  @media(max-width:560px){
+    .dz-form-grid{grid-template-columns:1fr;}
+  }
+
 </style>
 </head>
 <body>
@@ -1863,11 +1889,13 @@
       </button>
       <div>
         <h1>Tools</h1>
-        <p>Bypass Link, Pemutar Video &amp; Lagu</p>
+        <p>Pemutar Video &amp; Lagu, plus tools tambahan</p>
       </div>
     </div>
-    <div class="section-card">
-      <div class="accordion-list" id="accordionListTools"></div>
+    <div class="section-card dz-tools-suite">
+      <div class="accordion-list" id="accordionListTools" style="margin-bottom:12px;"></div>
+
+      <div id="dzToolGrid" class="accordion-list"></div>
     </div>
   </div>
 
@@ -1908,25 +1936,6 @@
     <div class="hint">Ketik judul lagu, hasil pencarian muncul otomatis. Klik "Download Lagu" untuk mengunduh.</div>
     <div class="status" id="spotifyStatus"></div>
     <div class="track-list" id="trackList"></div>
-  </div>
-
-  <!-- ===== PANEL: BYPASS LINK ===== -->
-  <div class="panel" id="bypass-tool">
-    <div class="tool-head">
-      <div class="icon" id="bypassIconSlot"></div>
-      <div class="title">Bypass Link</div>
-    </div>
-    <form id="bypassForm">
-      <input type="url" id="bypassInput" placeholder="https://sfl.gl/xxxxx" required>
-      <button type="submit" id="bypassSendBtn">Bypass</button>
-    </form>
-    <div class="hint">Tempel link shortlink (mis. sfile), hasilnya link unduhan langsung (mis. Mediafire).</div>
-    <div class="status" id="bypassStatus"></div>
-    <div class="enc-result" id="bypassResult">
-      <textarea id="bypassResultText" class="enc-textarea" readonly></textarea>
-      <button type="button" class="download-main" id="bypassCopyBtn">Salin Link</button>
-      <button type="button" class="download-main" id="bypassOpenBtn">Buka Link</button>
-    </div>
   </div>
 
   <!-- ===== PANEL: PEMUTAR VIDEO ===== -->
@@ -1981,22 +1990,6 @@
     </div>
   </div>
 
-  <!-- ===== PANEL: VIDEO PINTEREST ===== -->
-  <div class="panel" id="pinvid-tool">
-    <div class="tool-head">
-      <div class="icon" id="pinvidIconSlot"></div>
-      <div class="title">Video Pinterest</div>
-    </div>
-    <form id="pinvidForm">
-      <input type="text" id="pinvidInput" placeholder="Kata kunci video Pinterest..." required>
-      <button type="submit" id="pinvidSendBtn">Cari</button>
-    </form>
-    <div class="hint">Ketik kata kunci, daftar video Pinterest muncul di bawah. Klik "Download Video" untuk mengunduh satu-satu, atau "Download Semua Video" untuk mengunduh sekaligus.</div>
-    <div class="status" id="pinvidStatus"></div>
-    <button type="button" class="download-main" id="pinvidDownloadAllBtn" style="display:none;">Download Semua Video</button>
-    <div class="dl-progress" id="pinvidAllProgress"></div>
-    <div class="track-list" id="pinvidList"></div>
-  </div>
 
     <footer class="footer-v2">
     <div class="footer-grid">
@@ -2025,10 +2018,8 @@
       <div class="footer-col">
         <h4>Tools</h4>
         <ul>
-          <li><button data-tool="bypass">Bypass Link</button></li>
           <li><button data-tool="ytvid">Pemutar Video</button></li>
           <li><button data-tool="musicplay">Pemutar Lagu</button></li>
-          <li><button data-tool="pinvid">Video Pinterest</button></li>
         </ul>
       </div>
 
@@ -2063,21 +2054,17 @@ const ICONS = {
   facebook: `<svg viewBox="0 0 24 24" fill="none" stroke="#4b9bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
   spotify: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8"/><path d="M8 12.5c2.5-.8 5.3-.5 7.3.8"/><path d="M8.5 15.5c2-.6 4-.4 5.7.6"/></svg>`,
   capcut: `<svg viewBox="0 0 24 24" fill="none" stroke="#00f6ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z" fill="#00f6ef" stroke="none"/></svg>`,
-  bypass: `<svg viewBox="0 0 24 24" fill="none" stroke="#f5c451" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 0 0 4 4l3-3a4 4 0 0 0-5.6-5.6l-1 1"/><path d="M15 12a4 4 0 0 0-4-4l-3 3a4 4 0 0 0 5.6 5.6l1-1"/></svg>`,
   ytvid: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ff4d4d" stroke="none"/></svg>`,
   musicplay: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
-  pinvid: `<svg viewBox="0 0 24 24" fill="none" stroke="#e60023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 17c1-2.5 1.5-4.5 2-7"/><path d="M9 10.5a3 3 0 1 1 4.8 2.4c-1 .7-1.3 1.1-1.3 2.1"/></svg>`,
 };
 
 /* ============================================================
    EXTRA TOOLS (bukan downloader, punya panel sendiri)
 ============================================================ */
-/* Tools = bukan downloader (enc/dec, converter, bypass, pemutar) */
+/* Tools = bukan downloader (enc/dec, converter, pemutar) */
 const EXTRA_TOOLS = [
-  { id:'bypass', name:'Bypass Link', desc:'Ubah link sfile jadi link langsung', panel:'bypass-tool' },
   { id:'ytvid', name:'Pemutar Video', desc:'Cari & putar video YouTube', panel:'ytvid-tool' },
   { id:'musicplay', name:'Pemutar Lagu', desc:'Cari & putar lagu langsung, tanpa unduh', panel:'musicplay-tool' },
-  { id:'pinvid', name:'Video Pinterest', desc:'Cari & download video dari Pinterest', panel:'pinvid-tool' },
 ];
 
 /* Downloader ekstra = pakai panel statis sendiri (bukan dari SERVICES) */
@@ -2669,7 +2656,7 @@ DOWNLOAD_EXTRAS.forEach(tool=>{
   }, accordionListDownloader, 'downloader');
 });
 
-/* Tools = fitur non-downloader (enc/dec, converter, bypass, pemutar) */
+/* Tools = fitur non-downloader (enc/dec, converter, pemutar) */
 EXTRA_TOOLS.forEach(tool=>{
   buildAccordionItem(tool, ()=>{
     const panelEl = document.getElementById(tool.panel);
@@ -2892,84 +2879,6 @@ spotifyInput.addEventListener('input', ()=>{
 });
 
 /* ============================================================
-   BYPASS LINK
-   Alur: user tempel shortlink (mis. sfile/sfl.gl) -> dikirim ke
-   API bypass izenlol -> ambil result.destination_url -> tampilkan
-   sebagai link yang bisa disalin / dibuka (mis. Mediafire).
-============================================================ */
-document.getElementById('bypassIconSlot').innerHTML = ICONS.bypass;
-
-const bypassForm = document.getElementById('bypassForm');
-const bypassInput = document.getElementById('bypassInput');
-const bypassSendBtn = document.getElementById('bypassSendBtn');
-const bypassStatus = document.getElementById('bypassStatus');
-const bypassResult = document.getElementById('bypassResult');
-const bypassResultText = document.getElementById('bypassResultText');
-const bypassCopyBtn = document.getElementById('bypassCopyBtn');
-const bypassOpenBtn = document.getElementById('bypassOpenBtn');
-
-function setBypassStatus(msg, isError){
-  bypassStatus.textContent = msg;
-  bypassStatus.classList.toggle('show', !!msg);
-  bypassStatus.classList.toggle('error', !!isError);
-}
-
-async function processBypass(url){
-  if(!url) return;
-  bypassResult.classList.remove('show');
-  bypassSendBtn.disabled = true;
-  bypassSendBtn.textContent = 'Memproses...';
-  setBypassStatus('Mem-bypass link...', false);
-
-  try{
-    const apiUrl = `https://api-xemoz-official.my.id/api/tools/bypasslink_izenlol.php?url=${encodeURIComponent(url)}`;
-    let res;
-    try{
-      res = await fetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
-    }
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-
-    const data = await res.json();
-    if(!data || data.status === false) throw new Error((data && data.message) || 'Gagal mem-bypass link');
-
-    const dest = data.result && data.result.destination_url;
-    if(!dest || !/^https?:\/\//i.test(dest)){
-      throw new Error(dest || 'Link tidak berhasil di-bypass, coba lagi atau cek link sumbernya');
-    }
-
-    bypassResultText.value = dest;
-    bypassOpenBtn.onclick = ()=> window.open(dest, '_blank', 'noopener');
-    bypassResult.classList.add('show');
-    setBypassStatus('Berhasil, link hasil siap dipakai.', false);
-  }catch(err){
-    setBypassStatus('Gagal: ' + err.message, true);
-  }finally{
-    bypassSendBtn.disabled = false;
-    bypassSendBtn.textContent = 'Bypass';
-  }
-}
-
-bypassCopyBtn.addEventListener('click', async ()=>{
-  if(!bypassResultText.value) return;
-  try{
-    await navigator.clipboard.writeText(bypassResultText.value);
-    bypassCopyBtn.textContent = 'Tersalin!';
-  }catch(e){
-    bypassResultText.select();
-    document.execCommand('copy');
-    bypassCopyBtn.textContent = 'Tersalin!';
-  }
-  setTimeout(()=>{ bypassCopyBtn.textContent = 'Salin Link'; }, 1500);
-});
-
-bypassForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  processBypass(bypassInput.value.trim());
-});
-
-/* ============================================================
    PEMUTAR VIDEO
    Alur: user ketik judul/kata kunci -> dikirim ke nexray ytplayvid
    -> ambil result.download_url (mp4 langsung) -> tampilkan di
@@ -3142,169 +3051,329 @@ musicplayForm.addEventListener('submit', (e)=>{
 });
 
 /* ============================================================
-   VIDEO PINTEREST
-   Alur: user ketik kata kunci -> dikirim ke axlyapi
-   (search/pinterest/video) -> ambil result.videos[] -> tampilkan
-   daftar hasil (thumbnail, judul, durasi) dengan tombol "Download
-   Video" (langsung dari video_url, sudah mp4) dan link "Buka Pin"
-   ke halaman Pinterest aslinya.
+   DINZ ALL-IN-ONE TOOLS
+   Tool yang murni browser-side tidak membutuhkan API:
+   image resize/compress/convert, video metadata, JSON, Base64,
+   URL encode/decode, UUID, password, timestamp, color, QR,
+   HTML escape, word counter, text case, hash, dll.
 ============================================================ */
-document.getElementById('pinvidIconSlot').innerHTML = ICONS.pinvid;
+(function(){
+  const tools = [
+    // IMAGE
+    {id:'image-compress',cat:'image',icon:'🗜️',name:'Image Compressor',desc:'Kompres JPG/PNG/WEBP di browser'},
+    {id:'image-resize',cat:'image',icon:'📐',name:'Image Resizer',desc:'Ubah ukuran gambar dengan cepat'},
+    {id:'image-convert',cat:'image',icon:'🔄',name:'Image Converter',desc:'JPG, PNG, WEBP, JPEG'},
+    {id:'image-pdf',cat:'image',icon:'📄',name:'Image → PDF',desc:'Gabungkan gambar menjadi PDF'},
+    {id:'image-color',cat:'image',icon:'🎨',name:'Color Picker',desc:'Ambil warna dari gambar'},
+    {id:'qr-generate',cat:'image',icon:'▦',name:'QR Generator',desc:'Buat QR dari teks atau URL'},
+    {id:'qr-scan',cat:'image',icon:'📷',name:'QR Scanner',desc:'Scan QR memakai kamera jika browser mendukung'},
 
-const pinvidForm = document.getElementById('pinvidForm');
-const pinvidInput = document.getElementById('pinvidInput');
-const pinvidSendBtn = document.getElementById('pinvidSendBtn');
-const pinvidStatus = document.getElementById('pinvidStatus');
-const pinvidList = document.getElementById('pinvidList');
-const pinvidDownloadAllBtn = document.getElementById('pinvidDownloadAllBtn');
-const pinvidAllProgress = document.getElementById('pinvidAllProgress');
-let pinvidVideos = [];
+    // VIDEO
+    {id:'video-meta',cat:'video',icon:'🎬',name:'Video Info',desc:'Cek durasi, ukuran, resolusi, dan tipe'},
+    {id:'video-frame',cat:'video',icon:'🖼️',name:'Video Thumbnail',desc:'Ambil frame video sebagai gambar'},
+    {id:'video-audio',cat:'video',icon:'🎵',name:'Video → Audio',desc:'Ekstrak audio dengan MediaRecorder/browser'},
+    {id:'video-compress',cat:'video',icon:'🗜️',name:'Video Compressor',desc:'Siapkan kompresi video via browser'},
 
-function setPinvidStatus(msg, isError){
-  pinvidStatus.textContent = msg;
-  pinvidStatus.classList.toggle('show', !!msg);
-  pinvidStatus.classList.toggle('error', !!isError);
-}
+    // FILE
+    {id:'pdf-merge',cat:'file',icon:'📚',name:'Merge PDF',desc:'Gabungkan PDF dengan PDF-lib'},
+    {id:'pdf-split',cat:'file',icon:'✂️',name:'Split PDF',desc:'Ambil halaman tertentu dari PDF'},
+    {id:'pdf-image',cat:'file',icon:'🖼️',name:'PDF → Image',desc:'Render PDF menjadi gambar'},
+    {id:'file-to-pdf',cat:'file',icon:'📄',name:'Text → PDF',desc:'Buat PDF dari teks'},
+    {id:'file-base64',cat:'file',icon:'🧬',name:'File → Base64',desc:'Encode file ke Base64'},
+    {id:'base64-file',cat:'file',icon:'📦',name:'Base64 → File',desc:'Decode Base64 menjadi file'},
+    {id:'word-counter',cat:'file',icon:'🔢',name:'Word Counter',desc:'Hitung kata, karakter, dan baris'},
 
-function buildPinRow(video){
-  const clean = v => (!v || v === '-') ? '' : v;
-  const rawTitle = clean(video.title);
-  const title = (rawTitle && rawTitle !== '(no title)') ? rawTitle : 'Video Pinterest';
-  const thumbnail = clean(video.thumbnail);
-  const duration = clean(video.duration);
-  const videoUrl = clean(video.video_url);
-  const pinLink = clean(video.link);
+    // AI
+    {id:'ai-summarizer',cat:'ai',icon:'🧠',name:'AI Summarizer',desc:'Ringkas teks menggunakan API AI yang tersedia'},
+    {id:'ai-rewrite',cat:'ai',icon:'✍️',name:'AI Rewrite',desc:'Bantu menulis ulang teks dengan API AI'},
+    {id:'ai-translator',cat:'ai',icon:'🌐',name:'AI Translator',desc:'Terjemahkan teks menggunakan API AI'},
+    {id:'ai-caption',cat:'ai',icon:'💬',name:'AI Caption',desc:'Buat ide caption menggunakan API AI'},
+    {id:'prompt-generator',cat:'ai',icon:'✨',name:'Prompt Generator',desc:'Buat prompt AI dari tujuan singkat'},
 
-  const row = document.createElement('div');
-  row.className = 'track-row';
-  const dlProgress = document.createElement('div');
-  dlProgress.className = 'track-progress';
-  row.innerHTML = `
-    <img src="${thumbnail}" alt="${title}">
-    <div class="track-info">
-      <div class="t-title">${title}</div>
-      <div class="t-artist">${duration ? 'Durasi ' + duration : 'Pinterest'}</div>
-    </div>
-  `;
+    // DEVELOPER
+    {id:'json-format',cat:'developer',icon:'{ }',name:'JSON Formatter',desc:'Format dan validasi JSON'},
+    {id:'base64',cat:'developer',icon:'🔐',name:'Base64 Encoder',desc:'Encode/decode teks Base64'},
+    {id:'url-codec',cat:'developer',icon:'🔗',name:'URL Encoder',desc:'Encode/decode URL'},
+    {id:'html-escape',cat:'developer',icon:'<>',name:'HTML Escape',desc:'Escape/unescape karakter HTML'},
+    {id:'hash',cat:'developer',icon:'#',name:'SHA Hash',desc:'Buat SHA-256 hash dari teks'},
+    {id:'regex',cat:'developer',icon:'.*',name:'Regex Tester',desc:'Tes pola regex secara langsung'},
+    {id:'uuid',cat:'developer',icon:'🆔',name:'UUID Generator',desc:'Generate UUID v4'},
+    {id:'timestamp',cat:'developer',icon:'⏱️',name:'Timestamp',desc:'Unix timestamp ↔ tanggal'},
 
-  const actions = document.createElement('div');
-  actions.className = 'track-actions';
+    // UTILITY
+    {id:'password',cat:'utility',icon:'🔑',name:'Password Generator',desc:'Generate password acak'},
+    {id:'text-case',cat:'utility',icon:'Aa',name:'Text Case',desc:'UPPER, lower, Title, sentence'},
+    {id:'text-clean',cat:'utility',icon:'🧹',name:'Text Cleaner',desc:'Bersihkan spasi dan baris kosong'},
+    {id:'number-base',cat:'utility',icon:'🔢',name:'Number Base',desc:'BIN, OCT, DEC, HEX'},
+    {id:'color-convert',cat:'utility',icon:'🌈',name:'Color Converter',desc:'HEX ↔ RGB'},
+    {id:'data-url',cat:'utility',icon:'📎',name:'Data URL',desc:'Buat Data URL dari file'},
 
-  const dlBtn = document.createElement('a');
-  dlBtn.href = '#';
-  dlBtn.className = 'track-dl';
-  dlBtn.textContent = 'Download Video';
-  dlBtn.addEventListener('click', async (e)=>{
-    e.preventDefault();
-    if(!videoUrl){
-      dlProgress.textContent = 'Link video untuk hasil ini tidak tersedia.';
-      return;
-    }
-    await forceDownload(videoUrl, safeFileName(title) + '.mp4', dlBtn, dlProgress);
-  });
-  actions.appendChild(dlBtn);
+    // SOCIAL
+    {id:'hashtag',cat:'social',icon:'#️⃣',name:'Hashtag Generator',desc:'Buat hashtag dari topik'},
+    {id:'caption',cat:'social',icon:'📝',name:'Caption Generator',desc:'Template caption sosial media'},
+    {id:'yt-thumb',cat:'social',icon:'▶️',name:'YouTube Thumbnail',desc:'Buka thumbnail video YouTube'},
+    {id:'social-link',cat:'social',icon:'🔗',name:'Social Link Builder',desc:'Buat link profil sosial media'},
+  ];
 
-  if(pinLink){
-    const openLink = document.createElement('a');
-    openLink.href = pinLink;
-    openLink.target = '_blank';
-    openLink.rel = 'noopener';
-    openLink.className = 'track-open';
-    openLink.textContent = 'Buka Pin ↗';
-    actions.appendChild(openLink);
+  const grid = document.getElementById('dzToolGrid');
+  if(!grid) return;
+
+  function render(){
+    grid.innerHTML = '';
+    tools.forEach(t=>{
+      const wrap=document.createElement('div');
+      wrap.className='accordion-item';
+      wrap.dataset.id=t.id;
+      wrap.innerHTML=`
+        <button class="accordion-head" type="button">
+          <div class="icon">${t.icon}</div>
+          <div class="meta">
+            <div class="pname">${t.name}</div>
+            <div class="pdesc">${t.desc}</div>
+          </div>
+          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-body-inner"></div>
+        </div>
+      `;
+      const head=wrap.querySelector('.accordion-head');
+      const bodyInner=wrap.querySelector('.accordion-body-inner');
+      let loaded=false;
+      head.addEventListener('click',()=>{
+        if(wrap.classList.contains('open')){ wrap.classList.remove('open'); return; }
+        if(!loaded){
+          const fn=builders[t.id]||builders['generic'];
+          fn(bodyInner,t);
+          loaded=true;
+        }
+        wrap.classList.add('open');
+      });
+      grid.appendChild(wrap);
+    });
   }
 
-  row.appendChild(actions);
-  row.appendChild(dlProgress);
-  return row;
-}
-
-async function searchPinvid(query){
-  if(!query) return;
-  pinvidList.innerHTML = '';
-  pinvidVideos = [];
-  pinvidDownloadAllBtn.style.display = 'none';
-  pinvidAllProgress.textContent = '';
-  pinvidSendBtn.disabled = true;
-  pinvidSendBtn.textContent = 'Mencari...';
-  setPinvidStatus('Mencari video Pinterest...', false);
-
-  try{
-    const apiUrl = `https://axlyapi.qzz.io/search/pinterest/video?q=${encodeURIComponent(query)}&limit=30`;
-    let res;
-    try{
-      res = await fetch(apiUrl);
-    }catch(networkErr){
-      throw new Error('Tidak bisa menghubungi server API (kemungkinan diblokir CORS, offline, atau server sumber down)');
-    }
-    if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
-
-    const data = await res.json();
-    if(!data || data.status === false) throw new Error((data && data.message) || 'Video tidak ditemukan');
-
-    const videos = (data.result && data.result.videos) || [];
-    if(!Array.isArray(videos) || videos.length === 0){
-      throw new Error('Video tidak ditemukan untuk kata kunci itu');
-    }
-
-    videos.forEach(video => pinvidList.appendChild(buildPinRow(video)));
-    pinvidVideos = videos.filter(v => v && v.video_url);
-    if(pinvidVideos.length > 0){
-      pinvidDownloadAllBtn.style.display = 'block';
-      pinvidDownloadAllBtn.textContent = `Download Semua Video (${pinvidVideos.length})`;
-    }
-    setPinvidStatus('', false);
-  }catch(err){
-    setPinvidStatus('Gagal: ' + err.message, true);
-  }finally{
-    pinvidSendBtn.disabled = false;
-    pinvidSendBtn.textContent = 'Cari';
+  function box(el, html){el.innerHTML=html;return el;}
+  function btn(text, cls=''){const b=document.createElement('button');b.type='button';b.textContent=text;b.className=cls;return b;}
+  function downloadBlob(blob,name){
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   }
-}
+  function safeName(s){return String(s||'file').replace(/[^\w\-]+/g,'_').slice(0,80);}
 
-pinvidForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  searchPinvid(pinvidInput.value.trim());
-});
+  const builders = {
+    generic(el){box(el,'<div class="dz-result-note">Tool siap digunakan. Untuk tool yang membutuhkan layanan eksternal, sambungkan endpoint API milikmu.</div>');},
 
-/* Download semua video hasil pencarian satu-satu ke penyimpanan HP.
-   Sengaja berurutan (bukan bersamaan) + jeda kecil antar file, supaya
-   browser (terutama di HP) tidak memblokir unduhan beruntun. */
-pinvidDownloadAllBtn.addEventListener('click', async ()=>{
-  if(!pinvidVideos.length) return;
-  const total = pinvidVideos.length;
-  pinvidDownloadAllBtn.disabled = true;
+    'image-compress'(el){
+      box(el,`<div class="dz-drop">Pilih gambar <input id="dzFile" type="file" accept="image/*"></div>
+      <div class="dz-form-grid"><input id="dzQuality" class="dz-field" type="number" min="0.1" max="1" step="0.1" value="0.7" placeholder="Quality">
+      <select id="dzType" class="dz-field"><option value="image/jpeg">JPEG</option><option value="image/webp">WEBP</option><option value="image/png">PNG</option></select></div>
+      <div class="dz-actions"><button id="dzGo">Kompres & Download</button></div><div id="dzMsg" class="dz-result-note"></div>`);
+      const f=el.querySelector('#dzFile'), go=el.querySelector('#dzGo'), msg=el.querySelector('#dzMsg');
+      go.onclick=async()=>{if(!f.files[0])return msg.textContent='Pilih gambar dulu.';const file=f.files[0], im=new Image();
+        im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);
+        c.toBlob(b=>{downloadBlob(b,safeName(file.name.split('.')[0])+'-compressed.'+(el.querySelector('#dzType').value==='image/png'?'png':'jpg'));msg.textContent='Selesai.';},el.querySelector('#dzType').value,Number(el.querySelector('#dzQuality').value));};
+        im.src=URL.createObjectURL(file);
+      };
+    },
 
-  for(let i = 0; i < total; i++){
-    const v = pinvidVideos[i];
-    const rawTitle = (v.title && v.title !== '(no title)') ? v.title : 'video-pinterest';
-    const filename = String(i + 1).padStart(2, '0') + '-' + safeFileName(rawTitle) + '.mp4';
-    pinvidDownloadAllBtn.textContent = `Mengunduh ${i + 1}/${total}...`;
-    pinvidAllProgress.textContent = `Video ${i + 1} dari ${total}: ${rawTitle}`;
+    'image-resize'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file" accept="image/*"><div class="dz-form-grid" style="margin-top:10px"><input id="dzW" class="dz-field" type="number" placeholder="Lebar px"><input id="dzH" class="dz-field" type="number" placeholder="Tinggi px"></div><div class="dz-actions"><button id="dzGo">Resize & Download</button></div><div id="dzMsg" class="dz-result-note"></div>`);
+      const f=el.querySelector('#dzFile'),go=el.querySelector('#dzGo'),msg=el.querySelector('#dzMsg');
+      go.onclick=()=>{if(!f.files[0])return msg.textContent='Pilih gambar.';const im=new Image();im.onload=()=>{const w=Number(el.querySelector('#dzW').value)||im.naturalWidth,h=Number(el.querySelector('#dzH').value)||im.naturalHeight,c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);c.toBlob(b=>downloadBlob(b,'resized-image.jpg'),'image/jpeg',.9)};im.src=URL.createObjectURL(f.files[0]);};
+    },
 
-    try{
-      const res = await fetch(v.video_url);
-      if(!res.ok) throw new Error('status ' + res.status);
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(blobUrl);
-    }catch(err){
-      window.open(v.video_url, '_blank', 'noopener');
+    'image-convert'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file" accept="image/*"><select id="dzType" class="dz-field" style="margin-top:10px"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WEBP</option></select><div class="dz-actions"><button id="dzGo">Convert & Download</button></div>`);
+      const f=el.querySelector('#dzFile');el.querySelector('#dzGo').onclick=()=>{if(!f.files[0])return;const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext('2d').drawImage(im,0,0);const type=el.querySelector('#dzType').value;c.toBlob(b=>downloadBlob(b,'converted.'+(type==='image/png'?'png':type==='image/webp'?'webp':'jpg')),type,.92)};im.src=URL.createObjectURL(f.files[0]);};
+    },
+
+    'image-pdf'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file" accept="image/*" multiple><div class="dz-actions"><button id="dzGo">Buat PDF</button></div><div id="dzMsg" class="dz-result-note">Menggunakan jsPDF dari CDN saat dibutuhkan.</div>`);
+      el.querySelector('#dzGo').onclick=async()=>{if(!el.querySelector('#dzFile').files.length)return;await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');const {jsPDF}=window.jspdf;const files=[...el.querySelector('#dzFile').files];let pdf=null;
+        for(let i=0;i<files.length;i++){const data=await fileDataURL(files[i]);const im=await loadImage(data);const w=210,h=Math.min(297,w*im.height/im.width);if(!pdf)pdf=new jsPDF({unit:'mm',format:'a4'});else pdf.addPage();pdf.addImage(data,'JPEG',(210-w)/2,10,w,h);}
+        pdf.save('images.pdf');
+      };
+    },
+
+    'image-color'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file" accept="image/*"><canvas id="dzCanvas" class="dz-preview"></canvas><div class="dz-color-row"><input id="dzColor" type="color" value="#000000"><input id="dzHex" class="dz-field" readonly value="#000000"></div><div class="dz-result-note">Klik gambar untuk mengambil warna.</div>`);
+      const f=el.querySelector('#dzFile'),c=el.querySelector('#dzCanvas'),ctx=c.getContext('2d');
+      f.onchange=()=>{const im=new Image();im.onload=()=>{c.width=im.naturalWidth;c.height=im.naturalHeight;c.style.maxHeight='360px';ctx.drawImage(im,0,0)};im.src=URL.createObjectURL(f.files[0]);};
+      c.onclick=e=>{if(!c.width)return;const r=c.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)*c.width/r.width),y=Math.floor((e.clientY-r.top)*c.height/r.height),d=ctx.getImageData(x,y,1,1).data,h='#'+[d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,'0')).join('');el.querySelector('#dzColor').value=h;el.querySelector('#dzHex').value=h;};
+    },
+
+    'qr-generate'(el){
+      box(el,`<textarea id="dzText" class="dz-field" placeholder="Masukkan teks atau URL"></textarea><div class="dz-actions"><button id="dzGo">Buat QR</button><button id="dzDl" class="dz-secondary">Download QR</button></div><img id="dzQR" class="dz-preview dz-hidden" alt="QR">`);
+      const img=el.querySelector('#dzQR');el.querySelector('#dzGo').onclick=()=>{const text=el.querySelector('#dzText').value.trim();if(!text)return;img.src='https://api.qrserver.com/v1/create-qr-code/?size=500x500&data='+encodeURIComponent(text);img.classList.remove('dz-hidden');};
+      el.querySelector('#dzDl').onclick=()=>{if(img.src)window.open(img.src,'_blank','noopener');};
+    },
+
+    'qr-scan'(el){
+      box(el,`<video id="dzCam" class="dz-preview" autoplay playsinline></video><div class="dz-actions"><button id="dzStart">Mulai Kamera</button></div><div id="dzMsg" class="dz-result-note">Scanner membutuhkan browser yang mendukung BarcodeDetector.</div>`);
+      const v=el.querySelector('#dzCam'),msg=el.querySelector('#dzMsg');el.querySelector('#dzStart').onclick=async()=>{if(!('BarcodeDetector' in window))return msg.textContent='BarcodeDetector tidak didukung browser ini.';try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});v.srcObject=stream;const detector=new BarcodeDetector({formats:['qr_code']});const loop=async()=>{try{const codes=await detector.detect(v);if(codes[0]){msg.textContent='Hasil: '+codes[0].rawValue;stream.getTracks().forEach(t=>t.stop());return;}}catch{}requestAnimationFrame(loop)};loop();}catch(e){msg.textContent='Kamera gagal: '+e.message}};
+    },
+
+    'video-meta'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file" accept="video/*"><video id="dzVideo" class="dz-preview" controls></video><div id="dzMsg" class="dz-result-note"></div>`);
+      const f=el.querySelector('#dzFile'),v=el.querySelector('#dzVideo'),m=el.querySelector('#dzMsg');f.onchange=()=>{v.src=URL.createObjectURL(f.files[0]);v.onloadedmetadata=()=>m.textContent='Durasi: '+v.duration.toFixed(2)+' detik\\nResolusi: '+v.videoWidth+'×'+v.videoHeight+'\\nTipe: '+f.files[0].type+'\\nUkuran: '+(f.files[0].size/1048576).toFixed(2)+' MB';};
+    },
+
+    'video-frame'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file" accept="video/*"><input id="dzTime" class="dz-field" type="number" min="0" step=".1" value="0" placeholder="Detik" style="margin-top:10px"><video id="dzVideo" class="dz-preview" controls></video><div class="dz-actions"><button id="dzGo">Ambil Thumbnail</button></div>`);
+      const f=el.querySelector('#dzFile'),v=el.querySelector('#dzVideo');f.onchange=()=>v.src=URL.createObjectURL(f.files[0]);el.querySelector('#dzGo').onclick=()=>{v.currentTime=Number(el.querySelector('#dzTime').value)||0;v.onseeked=()=>{const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);c.toBlob(b=>downloadBlob(b,'video-thumbnail.jpg'),'image/jpeg',.92)}};
+    },
+
+    'video-audio'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file" accept="video/*"><div class="dz-result-note">Ekstraksi audio penuh dari file video tidak konsisten di browser. Tool ini menyiapkan player/MediaRecorder bila browser mendukung.</div><video id="dzVideo" class="dz-preview" controls></video>`);
+      const f=el.querySelector('#dzFile');f.onchange=()=>el.querySelector('#dzVideo').src=URL.createObjectURL(f.files[0]);
+    },
+
+    'video-compress'(el){
+      box(el,`<input class="dz-field" type="file" accept="video/*"><div class="dz-result-note">Kompresi video berat membutuhkan FFmpeg/server. UI ini sengaja tidak mengklaim kompresi palsu di browser.</div>`);
+    },
+
+    'pdf-merge'(el){pdfToolUI(el,'merge');},
+    'pdf-split'(el){pdfToolUI(el,'split');},
+    'pdf-image'(el){pdfToolUI(el,'image');},
+
+    'file-to-pdf'(el){
+      box(el,`<textarea id="dzText" class="dz-field" placeholder="Tulis isi PDF..."></textarea><div class="dz-actions"><button id="dzGo">Buat PDF</button></div>`);
+      el.querySelector('#dzGo').onclick=async()=>{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');const {jsPDF}=window.jspdf,pdf=new jsPDF();const lines=pdf.splitTextToSize(el.querySelector('#dzText').value,180);pdf.text(lines,15,20);pdf.save('document.pdf');};
+    },
+
+    'file-base64'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file"><textarea id="dzOut" class="dz-field" style="margin-top:10px" readonly></textarea><div class="dz-actions"><button id="dzGo">Encode</button><button id="dzCopy" class="dz-secondary">Copy</button></div>`);
+      el.querySelector('#dzGo').onclick=async()=>{const f=el.querySelector('#dzFile').files[0];if(!f)return;el.querySelector('#dzOut').value=await fileDataURL(f)};el.querySelector('#dzCopy').onclick=()=>navigator.clipboard?.writeText(el.querySelector('#dzOut').value);
+    },
+
+    'base64-file'(el){
+      box(el,`<textarea id="dzText" class="dz-field" placeholder="Paste Base64 (boleh dengan data URL)"></textarea><input id="dzName" class="dz-field" value="decoded.bin" style="margin-top:10px"><div class="dz-actions"><button id="dzGo">Decode & Download</button></div>`);
+      el.querySelector('#dzGo').onclick=()=>{try{let x=el.querySelector('#dzText').value.trim(),mime='application/octet-stream';if(x.startsWith('data:')){mime=x.match(/^data:([^;,]+)/)?.[1]||mime;x=x.split(',')[1]}const b=Uint8Array.from(atob(x),c=>c.charCodeAt(0));downloadBlob(new Blob([b],{type:mime}),el.querySelector('#dzName').value||'decoded.bin')}catch(e){alert('Base64 tidak valid')}};
+    },
+
+    'word-counter'(el){textCounter(el);},
+
+    'ai-summarizer'(el){aiSimple(el,'Ringkas teks berikut secara jelas dan singkat.');},
+    'ai-rewrite'(el){aiSimple(el,'Tulis ulang teks berikut agar lebih rapi dan natural.');},
+    'ai-translator'(el){aiSimple(el,'Terjemahkan teks berikut ke Bahasa Indonesia.');},
+    'ai-caption'(el){aiSimple(el,'Buat 5 ide caption singkat dan menarik berdasarkan teks berikut.');},
+
+    'prompt-generator'(el){
+      box(el,`<input id="dzGoal" class="dz-field" placeholder="Contoh: prompt gambar cyberpunk"><select id="dzStyle" class="dz-field" style="margin-top:10px"><option>Detail profesional</option><option>Simple</option><option>Cinematic</option><option>Anime</option></select><div class="dz-actions"><button id="dzGo">Generate Prompt</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
+      el.querySelector('#dzGo').onclick=()=>{const g=el.querySelector('#dzGoal').value,st=el.querySelector('#dzStyle').value;el.querySelector('#dzOut').value=`Create a ${st.toLowerCase()} result about: ${g}. Include clear subject, composition, lighting, environment, details, mood, quality, and avoid unwanted artifacts.`};
+    },
+
+    'json-format'(el){
+      box(el,`<textarea id="dzIn" class="dz-field" placeholder='{"name":"Dinz"}'></textarea><div class="dz-actions"><button id="dzFormat">Format</button><button id="dzMin" class="dz-secondary">Minify</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px" readonly></textarea>`);
+      const run=min=>{try{const x=JSON.parse(el.querySelector('#dzIn').value);el.querySelector('#dzOut').value=JSON.stringify(x,null,min?0:2)}catch(e){el.querySelector('#dzOut').value='JSON tidak valid: '+e.message}};el.querySelector('#dzFormat').onclick=()=>run(false);el.querySelector('#dzMin').onclick=()=>run(true);
+    },
+
+    'base64'(el){textCodec(el,'base64');},
+    'url-codec'(el){textCodec(el,'url');},
+    'html-escape'(el){textCodec(el,'html');},
+
+    'hash'(el){
+      box(el,`<textarea id="dzIn" class="dz-field" placeholder="Teks..."></textarea><div class="dz-actions"><button id="dzGo">SHA-256</button></div><input id="dzOut" class="dz-field" readonly style="margin-top:10px">`);
+      el.querySelector('#dzGo').onclick=async()=>{const b=new TextEncoder().encode(el.querySelector('#dzIn').value),h=await crypto.subtle.digest('SHA-256',b);el.querySelector('#dzOut').value=[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('')};
+    },
+
+    'regex'(el){
+      box(el,`<input id="dzPattern" class="dz-field" placeholder="Pattern regex"><input id="dzFlags" class="dz-field" placeholder="Flags, contoh gi" style="margin-top:10px"><textarea id="dzText" class="dz-field" placeholder="Teks..." style="margin-top:10px"></textarea><div class="dz-actions"><button id="dzGo">Test</button></div><div id="dzOut" class="dz-result-note"></div>`);
+      el.querySelector('#dzGo').onclick=()=>{try{const r=new RegExp(el.querySelector('#dzPattern').value,el.querySelector('#dzFlags').value),t=el.querySelector('#dzText').value,m=[...t.matchAll(r)];el.querySelector('#dzOut').textContent='Match: '+m.length+'\\n'+m.map(x=>x[0]).join('\\n')}catch(e){el.querySelector('#dzOut').textContent=e.message}};
+    },
+
+    'uuid'(el){box(el,`<input id="dzOut" class="dz-field" readonly><div class="dz-actions"><button id="dzGo">Generate UUID</button><button id="dzCopy" class="dz-secondary">Copy</button></div>`);el.querySelector('#dzGo').onclick=()=>el.querySelector('#dzOut').value=crypto.randomUUID();el.querySelector('#dzCopy').onclick=()=>navigator.clipboard?.writeText(el.querySelector('#dzOut').value);el.querySelector('#dzGo').click();},
+
+    'timestamp'(el){
+      box(el,`<div class="dz-actions"><button id="dzNow">Timestamp Sekarang</button></div><input id="dzTs" class="dz-field" placeholder="Unix timestamp" style="margin-top:10px"><div class="dz-actions"><button id="dzDate" class="dz-secondary">Timestamp → Tanggal</button></div><div id="dzOut" class="dz-result-note"></div>`);
+      el.querySelector('#dzNow').onclick=()=>{const n=Date.now();el.querySelector('#dzTs').value=Math.floor(n/1000);el.querySelector('#dzOut').textContent=new Date(n).toString()};el.querySelector('#dzDate').onclick=()=>{const n=Number(el.querySelector('#dzTs').value);el.querySelector('#dzOut').textContent=Number.isFinite(n)?new Date(n*1000).toString():'Invalid timestamp'};
+    },
+
+    'password'(el){
+      box(el,`<div class="dz-form-grid"><input id="dzLen" class="dz-field" type="number" value="16" min="4" max="128"><select id="dzMode" class="dz-field"><option value="all">A-Z a-z 0-9 simbol</option><option value="letters">Huruf + angka</option><option value="digits">Angka saja</option></select></div><div class="dz-actions"><button id="dzGo">Generate</button></div><input id="dzOut" class="dz-field" readonly style="margin-top:10px">`);
+      el.querySelector('#dzGo').onclick=()=>{const len=Math.max(4,Math.min(128,Number(el.querySelector('#dzLen').value)||16)),mode=el.querySelector('#dzMode').value;let chars=mode==='digits'?'0123456789':mode==='letters'?'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789':'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*_-+=';let a=new Uint32Array(len);crypto.getRandomValues(a);el.querySelector('#dzOut').value=[...a].map(x=>chars[x%chars.length]).join('')};el.querySelector('#dzGo').click();
+    },
+
+    'text-case'(el){textCase(el);},
+    'text-clean'(el){
+      box(el,`<textarea id="dzIn" class="dz-field" placeholder="Teks..."></textarea><div class="dz-actions"><button id="dzGo">Bersihkan</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
+      el.querySelector('#dzGo').onclick=()=>el.querySelector('#dzOut').value=el.querySelector('#dzIn').value.replace(/[ \t]+/g,' ').split('\\n').map(x=>x.trim()).filter(Boolean).join('\\n').trim();
+    },
+
+    'number-base'(el){
+      box(el,`<input id="dzIn" class="dz-field" type="number" value="255"><div class="dz-actions"><button id="dzGo">Convert</button></div><div id="dzOut" class="dz-output" style="margin-top:10px"></div>`);
+      el.querySelector('#dzGo').onclick=()=>{const n=Number(el.querySelector('#dzIn').value);el.querySelector('#dzOut').textContent=`DEC: ${n}\\nBIN: ${n.toString(2)}\\nOCT: ${n.toString(8)}\\nHEX: ${n.toString(16).toUpperCase()}`};
+    },
+
+    'color-convert'(el){
+      box(el,`<input id="dzHex" class="dz-field" value="#6C5CE7"><div class="dz-actions"><button id="dzGo">Convert</button></div><div id="dzOut" class="dz-output" style="margin-top:10px"></div>`);
+      el.querySelector('#dzGo').onclick=()=>{let h=el.querySelector('#dzHex').value.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');const n=parseInt(h,16);el.querySelector('#dzOut').textContent=`HEX: #${h.toUpperCase()}\\nRGB: rgb(${n>>16&255}, ${(n>>8)&255}, ${n&255})`};el.querySelector('#dzGo').click();
+    },
+
+    'data-url'(el){
+      box(el,`<input id="dzFile" class="dz-field" type="file"><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea><div class="dz-actions"><button id="dzGo">Create Data URL</button></div>`);
+      el.querySelector('#dzGo').onclick=async()=>{const f=el.querySelector('#dzFile').files[0];if(f)el.querySelector('#dzOut').value=await fileDataURL(f)};
+    },
+
+    'hashtag'(el){
+      box(el,`<input id="dzTopic" class="dz-field" placeholder="Contoh: teknologi"><div class="dz-actions"><button id="dzGo">Generate</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
+      el.querySelector('#dzGo').onclick=()=>{const t=el.querySelector('#dzTopic').value.trim().toLowerCase().replace(/[^\w\s]/g,''),w=t.split(/\s+/).filter(Boolean);el.querySelector('#dzOut').value=[...new Set([t,...w.map(x=>x),t.replace(/\s+/g,''),'fyp','viral','indonesia','rekomendasi'])].map(x=>'#'+x).join(' ')};
+    },
+
+    'caption'(el){
+      box(el,`<textarea id="dzTopic" class="dz-field" placeholder="Topik foto/video..."></textarea><div class="dz-actions"><button id="dzGo">Buat Caption</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
+      el.querySelector('#dzGo').onclick=()=>{const t=el.querySelector('#dzTopic').value.trim();el.querySelector('#dzOut').value=`1. Sedikit cerita tentang ${t}. ✨\\n\\n2. Hari ini, proses kecil tetap berarti. ${t} 💫\\n\\n3. Simpan momen, nikmati proses. #${t.replace(/\\s+/g,'')}`};
+    },
+
+    'yt-thumb'(el){
+      box(el,`<input id="dzUrl" class="dz-field" placeholder="https://youtube.com/watch?v=..."><div class="dz-actions"><button id="dzGo">Tampilkan Thumbnail</button></div><img id="dzImg" class="dz-preview dz-hidden">`);
+      el.querySelector('#dzGo').onclick=()=>{const u=el.querySelector('#dzUrl').value, m=u.match(/[?&]v=([^&]+)/)||u.match(/youtu\.be\/([^?]+)/);if(!m)return;const img=el.querySelector('#dzImg');img.src='https://i.ytimg.com/vi/'+m[1]+'/maxresdefault.jpg';img.classList.remove('dz-hidden');};
+    },
+
+    'social-link'(el){
+      box(el,`<select id="dzPlatform" class="dz-field"><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>Twitter/X</option></select><input id="dzUser" class="dz-field" placeholder="username / channel" style="margin-top:10px"><div class="dz-actions"><button id="dzGo">Buat Link</button></div><input id="dzOut" class="dz-field" readonly style="margin-top:10px">`);
+      el.querySelector('#dzGo').onclick=()=>{const p=el.querySelector('#dzPlatform').value,u=el.querySelector('#dzUser').value.replace(/^@/,'').trim();const base={'Instagram':'https://instagram.com/','TikTok':'https://tiktok.com/@','YouTube':'https://youtube.com/@','Twitter/X':'https://x.com/'}[p];el.querySelector('#dzOut').value=u?base+u:''};
     }
+  };
 
-    await new Promise(r => setTimeout(r, 700));
+  async function loadScript(src){if([...document.scripts].some(s=>s.src===src))return;await new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Gagal memuat library'));document.head.appendChild(s)});}
+  function fileDataURL(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+  function loadImage(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src})}
+  function pdfToolUI(el,mode){
+    const labels={merge:'Pilih beberapa PDF untuk digabung.',split:'Pilih PDF dan nomor halaman, contoh: 1,3,5.',image:'Pilih PDF untuk di-render menjadi gambar.'};
+    box(el,`<input id="dzFile" class="dz-field" type="file" accept="application/pdf" ${mode==='merge'?'multiple':''}>${mode==='split'?'<input id="dzPages" class="dz-field" placeholder="Halaman: 1,3,5" style="margin-top:10px">':''}<div class="dz-actions"><button id="dzGo">Proses</button></div><div id="dzMsg" class="dz-result-note">${labels[mode]} Library PDF akan dimuat dari CDN.</div>`);
+    el.querySelector('#dzGo').onclick=async()=>{try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');const files=[...el.querySelector('#dzFile').files];if(!files.length)return;const {PDFDocument}=PDFLib;
+      if(mode==='merge'){const out=await PDFDocument.create();for(const f of files){const doc=await PDFDocument.load(await f.arrayBuffer());const pages=await out.copyPages(doc,doc.getPageIndices());pages.forEach(p=>out.addPage(p));}downloadBlob(new Blob([await out.save()],{type:'application/pdf'}),'merged.pdf');}
+      else if(mode==='split'){const doc=await PDFDocument.load(await files[0].arrayBuffer()),out=await PDFDocument.create(),idx=(el.querySelector('#dzPages').value||'1').split(',').map(x=>Number(x.trim())-1).filter(x=>x>=0&&x<doc.getPageCount());const pages=await out.copyPages(doc,idx);pages.forEach(p=>out.addPage(p));downloadBlob(new Blob([await out.save()],{type:'application/pdf'}),'split.pdf');}
+      else {el.querySelector('#dzMsg').textContent='PDF → Image membutuhkan renderer PDF.js; gunakan tool ini sebagai entry point atau sambungkan PDF.js sesuai kebutuhan hosting.'}
+    }catch(e){el.querySelector('#dzMsg').textContent='Gagal: '+e.message}};
+  }
+  function textCounter(el){
+    box(el,`<textarea id="dzIn" class="dz-field" placeholder="Tulis atau paste teks..."></textarea><div id="dzOut" class="dz-output" style="margin-top:10px"></div>`);
+    const f=el.querySelector('#dzIn'),o=el.querySelector('#dzOut');f.oninput=()=>{const t=f.value;o.textContent=`Kata: ${(t.trim().match(/\\S+/g)||[]).length}\\nKarakter: ${t.length}\\nTanpa spasi: ${t.replace(/\\s/g,'').length}\\nBaris: ${t?t.split('\\n').length:0}`};
+  }
+  function textCodec(el,type){
+    box(el,`<textarea id="dzIn" class="dz-field" placeholder="Input..."></textarea><div class="dz-actions"><button id="dzEnc">Encode</button><button id="dzDec" class="dz-secondary">Decode</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
+    const out=el.querySelector('#dzOut'),inp=el.querySelector('#dzIn');
+    const run=enc=>{try{if(type==='base64')out.value=enc?btoa(unescape(encodeURIComponent(inp.value))):decodeURIComponent(escape(atob(inp.value)));else if(type==='url')out.value=enc?encodeURIComponent(inp.value):decodeURIComponent(inp.value);else{const d=document.createElement('textarea');d.innerHTML=enc?inp.value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'):inp.value;out.value=d.value}}catch(e){out.value='Error: '+e.message}};
+    el.querySelector('#dzEnc').onclick=()=>run(true);el.querySelector('#dzDec').onclick=()=>run(false);
+  }
+  function textCase(el){
+    box(el,`<textarea id="dzIn" class="dz-field" placeholder="Teks..."></textarea><div class="dz-actions"><button data-c="upper">UPPER</button><button data-c="lower">lower</button><button data-c="title">Title</button><button data-c="sentence">Sentence</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
+    const i=el.querySelector('#dzIn'),o=el.querySelector('#dzOut');el.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const t=i.value,c=b.dataset.c;o.value=c==='upper'?t.toUpperCase():c==='lower'?t.toLowerCase():c==='title'?t.toLowerCase().replace(/\\b\\w/g,m=>m.toUpperCase()):t.toLowerCase().replace(/(^|[.!?]\\s+)\\w/g,m=>m.toUpperCase())});
+  }
+  function aiSimple(el,instruction){
+    box(el,`<textarea id="dzIn" class="dz-field" placeholder="Masukkan teks..."></textarea><div class="dz-actions"><button id="dzGo">Proses AI</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px" readonly></textarea><div id="dzMsg" class="dz-result-note">Endpoint AI mengikuti API AI yang sudah dipakai project ini. Jika CORS/API berubah, sambungkan endpoint server-side.</div>`);
+    el.querySelector('#dzGo').onclick=async()=>{const text=el.querySelector('#dzIn').value.trim();if(!text)return;const out=el.querySelector('#dzOut');out.value='Memproses...';try{
+      const u='https://api.nexray.eu.cc/ai/claude?text='+encodeURIComponent(instruction+'\\n\\n'+text);
+      const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();out.value=typeof d==='string'?d:(d.result||d.response||d.message||JSON.stringify(d,null,2));
+    }catch(e){out.value='API AI gagal: '+e.message;}};
   }
 
-  pinvidAllProgress.textContent = `Selesai, ${total} video sudah diunduh. Cek folder Download di HP kamu.`;
-  pinvidDownloadAllBtn.disabled = false;
-  pinvidDownloadAllBtn.textContent = `Download Semua Video (${total})`;
-});
+  render();
+})();
+
 
 /* ============================================================
    Selesai.
