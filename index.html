@@ -3474,6 +3474,31 @@ musicplayForm.addEventListener('submit', (e)=>{
   };
 
   async function loadScript(src){if([...document.scripts].some(s=>s.src===src))return;await new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Gagal memuat library'));document.head.appendChild(s)});}
+
+  // Coba fetch langsung; kalau gagal (biasanya diblokir CORS di sisi server API), otomatis coba beberapa proxy CORS publik satu-satu.
+  const DZ_CORS_PROXIES=[
+    u=>'https://corsproxy.io/?url='+encodeURIComponent(u),
+    u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u),
+    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)
+  ];
+  async function dzFetch(url){
+    const errors=[];
+    try{
+      const r=await fetch(url);
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return await r.text();
+    }catch(e){errors.push('Direct: '+e.message);}
+    for(const build of DZ_CORS_PROXIES){
+      try{
+        const r=await fetch(build(url));
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        const t=await r.text();
+        if(t&&t.trim())return t;
+        throw new Error('Respons kosong');
+      }catch(e){errors.push('Proxy: '+e.message);}
+    }
+    throw new Error(errors.join(' | '));
+  }
   function fileDataURL(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
   function loadImage(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src})}
   function pdfToolUI(el,mode){
@@ -3529,9 +3554,8 @@ musicplayForm.addEventListener('submit', (e)=>{
       const pending=addMsg('ai pending','Mengetik...');
       try{
         const u='https://api.alwayscodex.my.id/api/ai/chatgpt?teks='+encodeURIComponent(text)+'&session='+encodeURIComponent(chatSession);
-        const r=await fetch(u);
-        if(!r.ok)throw new Error('HTTP '+r.status);
-        let d;const raw=await r.text();try{d=JSON.parse(raw)}catch(_){d=raw}
+        const raw=await dzFetch(u);
+        let d;try{d=JSON.parse(raw)}catch(_){d=raw}
         const reply=typeof d==='string'?d:(d.result||d.response||d.message||(d.data&&(d.data.message||d.data.result))||d.answer||d.reply||d.output||JSON.stringify(d,null,2));
         pending.textContent=reply;
         pending.className='dz-chat-msg ai';
@@ -3557,8 +3581,8 @@ musicplayForm.addEventListener('submit', (e)=>{
     el.querySelector('#dzGo').onclick=async()=>{const text=el.querySelector('#dzIn').value.trim();if(!text)return;const out=el.querySelector('#dzOut');out.value='Memproses...';try{
       const teks=instruction+'\\n\\n'+text;
       const u='https://api.alwayscodex.my.id/api/ai/chatgpt?teks='+encodeURIComponent(teks)+'&session='+encodeURIComponent(dzAiSession);
-      const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);
-      let d;const raw=await r.text();try{d=JSON.parse(raw)}catch(_){d=raw}
+      const raw=await dzFetch(u);
+      let d;try{d=JSON.parse(raw)}catch(_){d=raw}
       out.value=typeof d==='string'?d:(d.result||d.response||d.message||(d.data&&(d.data.message||d.data.result))||d.answer||d.reply||d.output||JSON.stringify(d,null,2));
     }catch(e){out.value='API AI gagal: '+e.message+'\\n\\nCatatan: jika muncul "Failed to fetch", biasanya karena CORS diblokir browser atau API sedang tidak mengizinkan akses langsung dari client (bukan dari server).';}};
   }
