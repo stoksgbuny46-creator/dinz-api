@@ -1751,6 +1751,20 @@
     .dz-form-grid{grid-template-columns:1fr;}
   }
 
+  /* ---- AI Chat tool ---- */
+  .dz-chat-wrap{display:flex;flex-direction:column;height:480px;max-height:70vh;border:1.5px solid var(--line);border-radius:13px;background:var(--sunken);overflow:hidden;}
+  .dz-chat-log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+  .dz-chat-msg{max-width:82%;padding:10px 13px;border-radius:13px;font-size:13px;line-height:1.5;white-space:pre-wrap;word-break:break-word;border:1.5px solid var(--line);}
+  .dz-chat-msg.user{align-self:flex-end;background:var(--cyan-bg);border-color:var(--cyan);color:var(--ink);}
+  .dz-chat-msg.ai{align-self:flex-start;background:var(--panel);color:var(--ink);}
+  .dz-chat-msg.ai.pending{color:var(--dim2);font-style:italic;}
+  .dz-chat-msg.error{align-self:flex-start;background:#FFE8E8;border-color:var(--pink);color:#8A1F3D;}
+  .dz-chat-inputrow{display:flex;gap:8px;padding:10px;border-top:1.5px solid var(--line);background:var(--panel);}
+  .dz-chat-inputrow textarea{flex:1;resize:none;min-height:44px;max-height:120px;background:var(--sunken);border:1.5px solid var(--line);border-radius:11px;padding:11px 12px;font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ink);outline:none;}
+  .dz-chat-inputrow button{padding:0 16px;border-radius:11px;flex-shrink:0;}
+  .dz-chat-top{display:flex;justify-content:flex-end;padding:0 0 8px;}
+  .dz-chat-empty{color:var(--dim2);font-size:12px;text-align:center;margin:auto;font-family:'JetBrains Mono',monospace;}
+
 </style>
 </head>
 <body>
@@ -2012,6 +2026,15 @@
           <li><button data-tool="facebook">Facebook</button></li>
           <li><button data-tool="capcut">CapCut</button></li>
           <li><button data-tool="spotify">Spotify</button></li>
+          <li><button data-tool="pinterest">Pinterest</button></li>
+          <li><button data-tool="twitter">Twitter/X</button></li>
+          <li><button data-tool="threads">Threads</button></li>
+          <li><button data-tool="reddit">Reddit</button></li>
+          <li><button data-tool="soundcloud">SoundCloud</button></li>
+          <li><button data-tool="snapchat">Snapchat</button></li>
+          <li><button data-tool="tumblr">Tumblr</button></li>
+          <li><button data-tool="likee">Likee</button></li>
+          <li><button data-tool="snackvideo">SnackVideo</button></li>
         </ul>
       </div>
 
@@ -2056,6 +2079,15 @@ const ICONS = {
   capcut: `<svg viewBox="0 0 24 24" fill="none" stroke="#00f6ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M9 9l6 3-6 3V9z" fill="#00f6ef" stroke="none"/></svg>`,
   ytvid: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="#ff4d4d" stroke="none"/></svg>`,
   musicplay: `<svg viewBox="0 0 24 24" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  pinterest: `<svg viewBox="0 0 24 24" fill="none" stroke="#e60023" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 21l4-13"/><path d="M9 12a3 3 0 1 1 3 3"/></svg>`,
+  twitter: `<svg viewBox="0 0 24 24" fill="none" stroke="#1d1d1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16M20 4L4 20"/></svg>`,
+  threads: `<svg viewBox="0 0 24 24" fill="none" stroke="#1d1d1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5-1.5 2-3 2.5-3 1-3 2.5 1.3 2.5 3 2.5 3-1 3-2.5"/></svg>`,
+  reddit: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff4500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7"/><circle cx="9" cy="14" r="1" fill="#ff4500" stroke="none"/><circle cx="15" cy="14" r="1" fill="#ff4500" stroke="none"/><path d="M9 17c1 1 5 1 6 0"/><path d="M12 7V3l3 1"/><circle cx="15" cy="3.5" r="1.2" fill="#ff4500" stroke="none"/></svg>`,
+  soundcloud: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v3M6 13v5M9 11v7M12 9v9M15 8a4 4 0 0 1 4 4v3H12"/></svg>`,
+  snapchat: `<svg viewBox="0 0 24 24" fill="none" stroke="#fffc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 0 4.5 2 4.5 5v2c0 .5.5 1.2 1.5 1.5 1 .3 1.3 1 1 1.7-.3.7-1.2 1-2 1.3.2.6.6 1 1.3 1.2.3.1.3.6-.2.7-.8.2-1.3.4-1.6 1-.3.6-1 .8-1.8.7-1-.1-1.8.4-2.7.4s-1.7-.5-2.7-.4c-.8.1-1.5-.1-1.8-.7-.3-.6-.8-.8-1.6-1-.5-.1-.5-.6-.2-.7.7-.2 1.1-.6 1.3-1.2-.8-.3-1.7-.6-2-1.3-.3-.7 0-1.4 1-1.7 1-.3 1.5-1 1.5-1.5V8c0-3 1.5-5 4.5-5z"/></svg>`,
+  tumblr: `<svg viewBox="0 0 24 24" fill="none" stroke="#1d1d1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3v4h3v3h-3v6a2 2 0 0 0 2 2h1v3h-2a5 5 0 0 1-5-5v-6H8V7c2 0 3-1 3-4z"/></svg>`,
+  likee: `<svg viewBox="0 0 24 24" fill="none" stroke="#fe2c55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg>`,
+  snackvideo: `<svg viewBox="0 0 24 24" fill="none" stroke="#ff9500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="14" rx="3"/><path d="M17 9l4-2v10l-4-2"/></svg>`,
 };
 
 /* ============================================================
@@ -2075,6 +2107,54 @@ const DOWNLOAD_EXTRAS = [
 /* ============================================================
    SERVICE CONFIG
 ============================================================ */
+/* Parser defensif untuk endpoint downloader baru (Pinterest/Twitter/Threads/
+   Reddit/SoundCloud). Endpoint ini BELUM sempat dites live (editor tidak
+   punya akses internet ke API pihak ketiga), jadi parser sengaja dibuat
+   menebak banyak kemungkinan nama field respons supaya tidak nge-crash —
+   kalau API-nya memang tidak cocok, tetap muncul pesan error yang jelas
+   (bukan error JS mentah). Kalau ada yang error saat dicoba live, kabari
+   supaya endpoint/parsernya disesuaikan. */
+function parseGenericDownload(data, opts={}){
+  if(!data) throw new Error('Tidak ada respons dari server');
+  if(data.status === false) throw new Error(data.message || `Gagal mengambil data ${opts.name||''} / link tidak valid`);
+  const r = data.result || data.data || data;
+  const candidates = [];
+  const add = (val, label, type)=>{
+    if(!val) return;
+    if(Array.isArray(val)){
+      val.forEach((v,i)=>{
+        const u = typeof v==='string' ? v : (v && (v.url||v.value||v.download||v.link));
+        if(u) candidates.push({label:`${label} ${i+1}`, url:u, type});
+      });
+    } else {
+      const u = typeof val==='string' ? val : (val.url||val.download);
+      if(u) candidates.push({label, url:u, type});
+    }
+  };
+  add(r.hd, 'HD', 'video');
+  add(r.sd, 'SD', 'video');
+  add(r.video, 'Video', 'video');
+  add(r.videos, 'Video', 'video');
+  add(r.links, 'Media', opts.defaultType||'video');
+  add(r.download, 'Media', opts.defaultType||'video');
+  add(r.download_url, 'Media', opts.defaultType||'video');
+  add(r.play, 'Video', 'video');
+  add(r.url, 'Media', opts.defaultType||'video');
+  add(r.image, 'Foto', 'image');
+  add(r.images, 'Foto', 'image');
+  add(r.audio, 'Audio', 'audio');
+  add(r.mp3, 'Audio', 'audio');
+  const media = candidates.filter(c=>c.url).map(c=>({type:c.type||opts.defaultType||'video', label:c.label, url:c.url}));
+  if(media.length===0) throw new Error(`Format respons ${opts.name||'tool ini'} tidak dikenali / media tidak ditemukan`);
+  return {
+    title: r.title || r.caption || r.desc || opts.name || '(tanpa judul)',
+    subtitle: r.author || r.username || r.channel || '',
+    thumbnail: r.thumbnail || r.cover || r.thumb || '',
+    duration: r.duration,
+    media
+  };
+}
+
 const SERVICES = [
   {
     id:'tiktok', name:'TikTok', desc:'Video tanpa watermark',
@@ -2092,8 +2172,8 @@ const SERVICES = [
     }
   },
   {
-    id:'instagram', name:'Instagram', desc:'Reels, video & foto',
-    placeholder:'https://www.instagram.com/reel/...',
+    id:'instagram', name:'Instagram', desc:'Reels, Post, Story & Foto',
+    placeholder:'https://www.instagram.com/reel/... / /p/... / /stories/...',
     endpoint:url=>`https://api.azbry.com/api/download/instagram?url=${encodeURIComponent(url)}`,
     parse:data=>{
       if(!data.status) throw new Error(data.message || 'Gagal mengambil data Instagram');
@@ -2134,8 +2214,8 @@ const SERVICES = [
     }
   },
   {
-    id:'facebook', name:'Facebook', desc:'Unduh video FB',
-    placeholder:'https://www.facebook.com/share/r/...',
+    id:'facebook', name:'Facebook', desc:'Video & Reels FB',
+    placeholder:'https://www.facebook.com/share/r/... atau link Reels',
     endpoint:url=>`https://api.azbry.com/api/download/facebook?url=${encodeURIComponent(url)}`,
     parse:data=>{
       if(data.status === false) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
@@ -2173,6 +2253,60 @@ const SERVICES = [
       const media = candidates.filter(c=>c.url).map(c=>({type:'video', label:c.label, url:c.url}));
       return {title:r.title||r.desc||'Video CapCut', subtitle:r.author||r.username||'', thumbnail:r.thumbnail||r.cover||'', duration:r.duration, media};
     }
+  },
+  {
+    id:'pinterest', name:'Pinterest', desc:'Video & gambar Pinterest',
+    placeholder:'https://pin.it/... atau pinterest.com/pin/...',
+    endpoint:url=>`https://api.azbry.com/api/download/pinterest?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'Pinterest', defaultType:'image'})
+  },
+  {
+    id:'twitter', name:'Twitter/X', desc:'Video & gambar dari X (Twitter)',
+    placeholder:'https://x.com/.../status/...',
+    endpoint:url=>`https://api.azbry.com/api/download/twitter?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'Twitter/X'})
+  },
+  {
+    id:'threads', name:'Threads', desc:'Video & gambar dari Threads',
+    placeholder:'https://www.threads.net/@.../post/...',
+    endpoint:url=>`https://api.azbry.com/api/download/threads?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'Threads'})
+  },
+  {
+    id:'reddit', name:'Reddit', desc:'Video & gambar dari Reddit',
+    placeholder:'https://www.reddit.com/r/.../comments/...',
+    endpoint:url=>`https://api.azbry.com/api/download/reddit?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'Reddit'})
+  },
+  {
+    id:'soundcloud', name:'SoundCloud', desc:'Unduh audio dari SoundCloud',
+    placeholder:'https://soundcloud.com/.../...',
+    endpoint:url=>`https://api.azbry.com/api/download/soundcloud?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'SoundCloud', defaultType:'audio'})
+  },
+  {
+    id:'snapchat', name:'Snapchat', desc:'Unduh Spotlight & Story Snapchat',
+    placeholder:'https://www.snapchat.com/spotlight/...',
+    endpoint:url=>`https://api.azbry.com/api/download/snapchat?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'Snapchat'})
+  },
+  {
+    id:'tumblr', name:'Tumblr', desc:'Video & gambar dari Tumblr',
+    placeholder:'https://www.tumblr.com/.../...',
+    endpoint:url=>`https://api.azbry.com/api/download/tumblr?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'Tumblr'})
+  },
+  {
+    id:'likee', name:'Likee', desc:'Video tanpa watermark dari Likee',
+    placeholder:'https://l.likee.video/...',
+    endpoint:url=>`https://api.azbry.com/api/download/likee?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'Likee'})
+  },
+  {
+    id:'snackvideo', name:'SnackVideo', desc:'Video tanpa watermark dari SnackVideo',
+    placeholder:'https://www.snackvideo.com/video/...',
+    endpoint:url=>`https://api.azbry.com/api/download/snackvideo?url=${encodeURIComponent(url)}`,
+    parse:data=>parseGenericDownload(data,{name:'SnackVideo'})
   },
 ];
 
@@ -3088,6 +3222,7 @@ musicplayForm.addEventListener('submit', (e)=>{
     {id:'ai-rewrite',cat:'ai',icon:'✍️',name:'AI Rewrite',desc:'Bantu menulis ulang teks dengan API AI'},
     {id:'ai-translator',cat:'ai',icon:'🌐',name:'AI Translator',desc:'Terjemahkan teks menggunakan API AI'},
     {id:'ai-caption',cat:'ai',icon:'💬',name:'AI Caption',desc:'Buat ide caption menggunakan API AI'},
+    {id:'ai-chat',cat:'ai',icon:'🗨️',name:'Ngobrol Sama AI',desc:'Chat langsung dengan AI, mendukung banyak pesan berurutan'},
     {id:'prompt-generator',cat:'ai',icon:'✨',name:'Prompt Generator',desc:'Buat prompt AI dari tujuan singkat'},
 
     // DEVELOPER
@@ -3258,6 +3393,7 @@ musicplayForm.addEventListener('submit', (e)=>{
     'ai-rewrite'(el){aiSimple(el,'Tulis ulang teks berikut agar lebih rapi dan natural.');},
     'ai-translator'(el){aiSimple(el,'Terjemahkan teks berikut ke Bahasa Indonesia.');},
     'ai-caption'(el){aiSimple(el,'Buat 5 ide caption singkat dan menarik berdasarkan teks berikut.');},
+    'ai-chat'(el){aiChat(el);},
 
     'prompt-generator'(el){
       box(el,`<input id="dzGoal" class="dz-field" placeholder="Contoh: prompt gambar cyberpunk"><select id="dzStyle" class="dz-field" style="margin-top:10px"><option>Detail profesional</option><option>Simple</option><option>Cinematic</option><option>Anime</option></select><div class="dz-actions"><button id="dzGo">Generate Prompt</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
@@ -3363,12 +3499,68 @@ musicplayForm.addEventListener('submit', (e)=>{
     box(el,`<textarea id="dzIn" class="dz-field" placeholder="Teks..."></textarea><div class="dz-actions"><button data-c="upper">UPPER</button><button data-c="lower">lower</button><button data-c="title">Title</button><button data-c="sentence">Sentence</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
     const i=el.querySelector('#dzIn'),o=el.querySelector('#dzOut');el.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const t=i.value,c=b.dataset.c;o.value=c==='upper'?t.toUpperCase():c==='lower'?t.toLowerCase():c==='title'?t.toLowerCase().replace(/\\b\\w/g,m=>m.toUpperCase()):t.toLowerCase().replace(/(^|[.!?]\\s+)\\w/g,m=>m.toUpperCase())});
   }
+  const dzAiSession='dinz-'+Math.random().toString(36).slice(2,10);
+
+  function aiChat(el){
+    box(el,`<div class="dz-chat-wrap"><div class="dz-chat-top"><button id="dzClear" class="dz-secondary" style="padding:7px 12px;font-size:11px;">Hapus obrolan</button></div><div id="dzLog" class="dz-chat-log"><div class="dz-chat-empty">Mulai ngobrol dengan AI di bawah ini 👇</div></div><div class="dz-chat-inputrow"><textarea id="dzIn" placeholder="Tulis pesan..." rows="1"></textarea><button id="dzSend">Kirim</button></div></div>`);
+    const log=el.querySelector('#dzLog'), input=el.querySelector('#dzIn'), sendBtn=el.querySelector('#dzSend'), clearBtn=el.querySelector('#dzClear');
+    let sending=false;
+    const chatSession='dinz-chat-'+Math.random().toString(36).slice(2,10);
+
+    function scrollBottom(){log.scrollTop=log.scrollHeight;}
+    function clearEmptyState(){const e=log.querySelector('.dz-chat-empty');if(e)e.remove();}
+    function addMsg(role,text){
+      clearEmptyState();
+      const div=document.createElement('div');
+      div.className='dz-chat-msg '+role;
+      div.textContent=text;
+      log.appendChild(div);
+      scrollBottom();
+      return div;
+    }
+
+    async function send(){
+      const text=input.value.trim();
+      if(!text||sending)return;
+      sending=true;
+      addMsg('user',text);
+      input.value='';
+      input.style.height='auto';
+      const pending=addMsg('ai pending','Mengetik...');
+      try{
+        const u='https://api.alwayscodex.my.id/api/ai/chatgpt?teks='+encodeURIComponent(text)+'&session='+encodeURIComponent(chatSession);
+        const r=await fetch(u);
+        if(!r.ok)throw new Error('HTTP '+r.status);
+        let d;const raw=await r.text();try{d=JSON.parse(raw)}catch(_){d=raw}
+        const reply=typeof d==='string'?d:(d.result||d.response||d.message||(d.data&&(d.data.message||d.data.result))||d.answer||d.reply||d.output||JSON.stringify(d,null,2));
+        pending.textContent=reply;
+        pending.className='dz-chat-msg ai';
+      }catch(e){
+        pending.textContent='Gagal mendapat balasan: '+e.message+'. Jika ini "Failed to fetch", biasanya API memblokir akses langsung dari browser (CORS) atau sedang down — coba lagi nanti atau sambungkan lewat backend.';
+        pending.className='dz-chat-msg error';
+      }finally{
+        sending=false;
+        scrollBottom();
+      }
+    }
+
+    sendBtn.onclick=send;
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}
+    });
+    input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(120,input.scrollHeight)+'px';});
+    clearBtn.onclick=()=>{log.innerHTML='<div class="dz-chat-empty">Mulai ngobrol dengan AI di bawah ini 👇</div>';};
+  }
+
   function aiSimple(el,instruction){
     box(el,`<textarea id="dzIn" class="dz-field" placeholder="Masukkan teks..."></textarea><div class="dz-actions"><button id="dzGo">Proses AI</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px" readonly></textarea><div id="dzMsg" class="dz-result-note">Endpoint AI mengikuti API AI yang sudah dipakai project ini. Jika CORS/API berubah, sambungkan endpoint server-side.</div>`);
     el.querySelector('#dzGo').onclick=async()=>{const text=el.querySelector('#dzIn').value.trim();if(!text)return;const out=el.querySelector('#dzOut');out.value='Memproses...';try{
-      const u='https://api.nexray.eu.cc/ai/claude?text='+encodeURIComponent(instruction+'\\n\\n'+text);
-      const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();out.value=typeof d==='string'?d:(d.result||d.response||d.message||JSON.stringify(d,null,2));
-    }catch(e){out.value='API AI gagal: '+e.message;}};
+      const teks=instruction+'\\n\\n'+text;
+      const u='https://api.alwayscodex.my.id/api/ai/chatgpt?teks='+encodeURIComponent(teks)+'&session='+encodeURIComponent(dzAiSession);
+      const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);
+      let d;const raw=await r.text();try{d=JSON.parse(raw)}catch(_){d=raw}
+      out.value=typeof d==='string'?d:(d.result||d.response||d.message||(d.data&&(d.data.message||d.data.result))||d.answer||d.reply||d.output||JSON.stringify(d,null,2));
+    }catch(e){out.value='API AI gagal: '+e.message+'\\n\\nCatatan: jika muncul "Failed to fetch", biasanya karena CORS diblokir browser atau API sedang tidak mengizinkan akses langsung dari client (bukan dari server).';}};
   }
 
   render();
