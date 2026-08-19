@@ -465,8 +465,8 @@
     flex-shrink:0;
     width:30px;height:30px;
     border-radius:8px;
-    background:var(--grad-brand);
-    color:#fff !important;
+    background:var(--cyan);
+    color:#0b0b0d !important;
     border:1.5px solid var(--line);
     color:var(--cyan);
     display:flex;
@@ -533,8 +533,8 @@
   input[type="url"]::placeholder, form input[type="text"]::placeholder{color:var(--dim3);}
 
   button{
-    background:var(--grad-brand);
-    color:#fff;
+    background:var(--cyan);
+    color:#0b0b0d;
     border:1.5px solid var(--line);
     border-radius:11px;
     padding:0 24px;
@@ -969,8 +969,8 @@
     font-size:11px;
     font-weight:700;
     text-transform:uppercase;
-    color:#fff;
-    background:var(--grad-brand);
+    color:#0b0b0d;
+    background:var(--cyan);
     text-decoration:none;
     padding:9px 16px;
     border-radius:7px;
@@ -1053,10 +1053,10 @@
   .nav-logo-mark{
     width:34px;height:34px;
     border-radius:9px;
-    background:var(--grad-brand);
+    background:var(--cyan);
     border:1.5px solid var(--line);
     display:flex;align-items:center;justify-content:center;
-    color:#fff;
+    color:#0b0b0d;
     font-weight:700;
     font-family:'JetBrains Mono', monospace;
     font-size:15px;
@@ -1148,8 +1148,8 @@
     display:inline-flex;
     align-items:center;
     gap:7px;
-    background:var(--grad-brand);
-    color:#fff;
+    background:#fff;
+    color:#0b0b0d;
     border:1.5px solid var(--line);
     border-radius:10px;
     padding:10px 16px;
@@ -1161,7 +1161,7 @@
     white-space:nowrap;
   }
   .nav-cta svg{width:14px;height:14px;}
-  .nav-cta:hover{background:var(--pink);}
+  .nav-cta:hover{background:var(--cyan); color:#0b0b0d;}
 
   .navbar .hamburger{display:flex;}
 
@@ -1194,6 +1194,7 @@
     box-shadow:0 1px 0 rgba(255,255,255,0.03) inset, 0 16px 26px -8px rgba(0,0,0,0.6);
     margin-bottom:22px;
   }
+  .hero-badge-pill svg{width:13px;height:13px;stroke:var(--cyan);flex-shrink:0;}
   .hero-title{
     font-size:clamp(32px, 7vw, 52px);
     line-height:1.02;
@@ -1238,7 +1239,8 @@
     display:inline-flex;
     align-items:center;
     gap:7px;
-    background:var(--grad-brand);
+    background:var(--cyan);
+    color:#0b0b0d;
     flex-shrink:0;
   }
   .hero-search-row button svg{width:15px;height:15px;}
@@ -1618,8 +1620,8 @@
     width:32px;height:32px;
     flex-shrink:0;
     border-radius:50%;
-    background:var(--grad-brand);
-    color:#fff;
+    background:var(--cyan);
+    color:#0b0b0d;
     display:flex;align-items:center;justify-content:center;
     font-weight:700;
     font-family:'JetBrains Mono', monospace;
@@ -1835,7 +1837,7 @@
 
     <!-- ===== HERO ===== -->
     <div class="hero-v2">
-      <div class="hero-badge-pill">🔥 Cepat &middot; Gratis &middot; Tanpa Login</div>
+      <div class="hero-badge-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Cepat &middot; Gratis &middot; Tanpa Login</div>
       <h1 class="hero-title"><span class="accent">DINZ</span> DOWNLOADER</h1>
       <p class="hero-v2-sub">Unduh video, musik, dan konten favoritmu dari berbagai platform dengan mudah dan cepat &mdash; tinggal tempel link, sisanya berjalan otomatis.</p>
     </div>
@@ -3195,60 +3197,60 @@ musicplayForm.addEventListener('submit', (e)=>{
 (function(){
   const tools = [
     // IMAGE
-    {id:'image-compress',cat:'image',icon:'🗜️',name:'Image Compressor',desc:'Kompres JPG/PNG/WEBP di browser'},
-    {id:'image-resize',cat:'image',icon:'📐',name:'Image Resizer',desc:'Ubah ukuran gambar dengan cepat'},
-    {id:'image-convert',cat:'image',icon:'🔄',name:'Image Converter',desc:'JPG, PNG, WEBP, JPEG'},
-    {id:'image-pdf',cat:'image',icon:'📄',name:'Image → PDF',desc:'Gabungkan gambar menjadi PDF'},
-    {id:'image-color',cat:'image',icon:'🎨',name:'Color Picker',desc:'Ambil warna dari gambar'},
-    {id:'qr-generate',cat:'image',icon:'▦',name:'QR Generator',desc:'Buat QR dari teks atau URL'},
-    {id:'qr-scan',cat:'image',icon:'📷',name:'QR Scanner',desc:'Scan QR memakai kamera jika browser mendukung'},
+    {id:'image-compress',cat:'image',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="M14 10l7-7"/><path d="M3 21l7-7"/></svg>',name:'Image Compressor',desc:'Kompres JPG/PNG/WEBP di browser'},
+    {id:'image-resize',cat:'image',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-8 8"/><path d="M3 21l8-8"/></svg>',name:'Image Resizer',desc:'Ubah ukuran gambar dengan cepat'},
+    {id:'image-convert',cat:'image',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>',name:'Image Converter',desc:'JPG, PNG, WEBP, JPEG'},
+    {id:'image-pdf',cat:'image',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',name:'Image → PDF',desc:'Gabungkan gambar menjadi PDF'},
+    {id:'image-color',cat:'image',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s7 8 7 13a7 7 0 0 1-14 0c0-5 7-13 7-13z"/></svg>',name:'Color Picker',desc:'Ambil warna dari gambar'},
+    {id:'qr-generate',cat:'image',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',name:'QR Generator',desc:'Buat QR dari teks atau URL'},
+    {id:'qr-scan',cat:'image',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',name:'QR Scanner',desc:'Scan QR memakai kamera jika browser mendukung'},
 
     // VIDEO
-    {id:'video-meta',cat:'video',icon:'🎬',name:'Video Info',desc:'Cek durasi, ukuran, resolusi, dan tipe'},
-    {id:'video-frame',cat:'video',icon:'🖼️',name:'Video Thumbnail',desc:'Ambil frame video sebagai gambar'},
-    {id:'video-audio',cat:'video',icon:'🎵',name:'Video → Audio',desc:'Ekstrak audio dengan MediaRecorder/browser'},
-    {id:'video-compress',cat:'video',icon:'🗜️',name:'Video Compressor',desc:'Siapkan kompresi video via browser'},
+    {id:'video-meta',cat:'video',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>',name:'Video Info',desc:'Cek durasi, ukuran, resolusi, dan tipe'},
+    {id:'video-frame',cat:'video',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',name:'Video Thumbnail',desc:'Ambil frame video sebagai gambar'},
+    {id:'video-audio',cat:'video',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',name:'Video → Audio',desc:'Ekstrak audio dengan MediaRecorder/browser'},
+    {id:'video-compress',cat:'video',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="M14 10l7-7"/><path d="M3 21l7-7"/></svg>',name:'Video Compressor',desc:'Siapkan kompresi video via browser'},
 
     // FILE
-    {id:'pdf-merge',cat:'file',icon:'📚',name:'Merge PDF',desc:'Gabungkan PDF dengan PDF-lib'},
-    {id:'pdf-split',cat:'file',icon:'✂️',name:'Split PDF',desc:'Ambil halaman tertentu dari PDF'},
-    {id:'pdf-image',cat:'file',icon:'🖼️',name:'PDF → Image',desc:'Render PDF menjadi gambar'},
-    {id:'file-to-pdf',cat:'file',icon:'📄',name:'Text → PDF',desc:'Buat PDF dari teks'},
-    {id:'file-base64',cat:'file',icon:'🧬',name:'File → Base64',desc:'Encode file ke Base64'},
-    {id:'base64-file',cat:'file',icon:'📦',name:'Base64 → File',desc:'Decode Base64 menjadi file'},
-    {id:'word-counter',cat:'file',icon:'🔢',name:'Word Counter',desc:'Hitung kata, karakter, dan baris'},
+    {id:'pdf-merge',cat:'file',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',name:'Merge PDF',desc:'Gabungkan PDF dengan PDF-lib'},
+    {id:'pdf-split',cat:'file',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>',name:'Split PDF',desc:'Ambil halaman tertentu dari PDF'},
+    {id:'pdf-image',cat:'file',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',name:'PDF → Image',desc:'Render PDF menjadi gambar'},
+    {id:'file-to-pdf',cat:'file',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>',name:'Text → PDF',desc:'Buat PDF dari teks'},
+    {id:'file-base64',cat:'file',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',name:'File → Base64',desc:'Encode file ke Base64'},
+    {id:'base64-file',cat:'file',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><line x1="12" y1="13" x2="12" y2="21"/></svg>',name:'Base64 → File',desc:'Decode Base64 menjadi file'},
+    {id:'word-counter',cat:'file',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',name:'Word Counter',desc:'Hitung kata, karakter, dan baris'},
 
     // AI
-    {id:'ai-summarizer',cat:'ai',icon:'🧠',name:'AI Summarizer',desc:'Ringkas teks menggunakan API AI yang tersedia'},
-    {id:'ai-rewrite',cat:'ai',icon:'✍️',name:'AI Rewrite',desc:'Bantu menulis ulang teks dengan API AI'},
-    {id:'ai-translator',cat:'ai',icon:'🌐',name:'AI Translator',desc:'Terjemahkan teks menggunakan API AI'},
-    {id:'ai-caption',cat:'ai',icon:'💬',name:'AI Caption',desc:'Buat ide caption menggunakan API AI'},
-    {id:'ai-chat',cat:'ai',icon:'🗨️',name:'Ngobrol Sama AI',desc:'Chat langsung dengan AI, mendukung banyak pesan berurutan'},
-    {id:'prompt-generator',cat:'ai',icon:'✨',name:'Prompt Generator',desc:'Buat prompt AI dari tujuan singkat'},
+    {id:'ai-summarizer',cat:'ai',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>',name:'AI Summarizer',desc:'Ringkas teks menggunakan API AI yang tersedia'},
+    {id:'ai-rewrite',cat:'ai',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',name:'AI Rewrite',desc:'Bantu menulis ulang teks dengan API AI'},
+    {id:'ai-translator',cat:'ai',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',name:'AI Translator',desc:'Terjemahkan teks menggunakan API AI'},
+    {id:'ai-caption',cat:'ai',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',name:'AI Caption',desc:'Buat ide caption menggunakan API AI'},
+    {id:'ai-chat',cat:'ai',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',name:'Ngobrol Sama AI',desc:'Chat langsung dengan AI, mendukung banyak pesan berurutan'},
+    {id:'prompt-generator',cat:'ai',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>',name:'Prompt Generator',desc:'Buat prompt AI dari tujuan singkat'},
 
     // DEVELOPER
     {id:'json-format',cat:'developer',icon:'{ }',name:'JSON Formatter',desc:'Format dan validasi JSON'},
-    {id:'base64',cat:'developer',icon:'🔐',name:'Base64 Encoder',desc:'Encode/decode teks Base64'},
-    {id:'url-codec',cat:'developer',icon:'🔗',name:'URL Encoder',desc:'Encode/decode URL'},
+    {id:'base64',cat:'developer',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',name:'Base64 Encoder',desc:'Encode/decode teks Base64'},
+    {id:'url-codec',cat:'developer',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',name:'URL Encoder',desc:'Encode/decode URL'},
     {id:'html-escape',cat:'developer',icon:'<>',name:'HTML Escape',desc:'Escape/unescape karakter HTML'},
     {id:'hash',cat:'developer',icon:'#',name:'SHA Hash',desc:'Buat SHA-256 hash dari teks'},
     {id:'regex',cat:'developer',icon:'.*',name:'Regex Tester',desc:'Tes pola regex secara langsung'},
-    {id:'uuid',cat:'developer',icon:'🆔',name:'UUID Generator',desc:'Generate UUID v4'},
-    {id:'timestamp',cat:'developer',icon:'⏱️',name:'Timestamp',desc:'Unix timestamp ↔ tanggal'},
+    {id:'uuid',cat:'developer',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41L13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',name:'UUID Generator',desc:'Generate UUID v4'},
+    {id:'timestamp',cat:'developer',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',name:'Timestamp',desc:'Unix timestamp ↔ tanggal'},
 
     // UTILITY
-    {id:'password',cat:'utility',icon:'🔑',name:'Password Generator',desc:'Generate password acak'},
+    {id:'password',cat:'utility',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg>',name:'Password Generator',desc:'Generate password acak'},
     {id:'text-case',cat:'utility',icon:'Aa',name:'Text Case',desc:'UPPER, lower, Title, sentence'},
-    {id:'text-clean',cat:'utility',icon:'🧹',name:'Text Cleaner',desc:'Bersihkan spasi dan baris kosong'},
-    {id:'number-base',cat:'utility',icon:'🔢',name:'Number Base',desc:'BIN, OCT, DEC, HEX'},
-    {id:'color-convert',cat:'utility',icon:'🌈',name:'Color Converter',desc:'HEX ↔ RGB'},
-    {id:'data-url',cat:'utility',icon:'📎',name:'Data URL',desc:'Buat Data URL dari file'},
+    {id:'text-clean',cat:'utility',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16c-.5-.6-.5-1.4 0-2l10-10c.6-.5 1.4-.5 2 0l5 5c.5.6.5 1.4 0 2L13 18"/><line x1="10" y1="12" x2="16" y2="18"/></svg>',name:'Text Cleaner',desc:'Bersihkan spasi dan baris kosong'},
+    {id:'number-base',cat:'utility',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',name:'Number Base',desc:'BIN, OCT, DEC, HEX'},
+    {id:'color-convert',cat:'utility',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="9.5" r="1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="9.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/></svg>',name:'Color Converter',desc:'HEX ↔ RGB'},
+    {id:'data-url',cat:'utility',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',name:'Data URL',desc:'Buat Data URL dari file'},
 
     // SOCIAL
-    {id:'hashtag',cat:'social',icon:'#️⃣',name:'Hashtag Generator',desc:'Buat hashtag dari topik'},
-    {id:'caption',cat:'social',icon:'📝',name:'Caption Generator',desc:'Template caption sosial media'},
-    {id:'yt-thumb',cat:'social',icon:'▶️',name:'YouTube Thumbnail',desc:'Buka thumbnail video YouTube'},
-    {id:'social-link',cat:'social',icon:'🔗',name:'Social Link Builder',desc:'Buat link profil sosial media'},
+    {id:'hashtag',cat:'social',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',name:'Hashtag Generator',desc:'Buat hashtag dari topik'},
+    {id:'caption',cat:'social',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',name:'Caption Generator',desc:'Template caption sosial media'},
+    {id:'yt-thumb',cat:'social',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',name:'YouTube Thumbnail',desc:'Buka thumbnail video YouTube'},
+    {id:'social-link',cat:'social',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',name:'Social Link Builder',desc:'Buat link profil sosial media'},
   ];
 
   const grid = document.getElementById('dzToolGrid');
@@ -3460,7 +3462,7 @@ musicplayForm.addEventListener('submit', (e)=>{
 
     'caption'(el){
       box(el,`<textarea id="dzTopic" class="dz-field" placeholder="Topik foto/video..."></textarea><div class="dz-actions"><button id="dzGo">Buat Caption</button></div><textarea id="dzOut" class="dz-field" style="margin-top:10px"></textarea>`);
-      el.querySelector('#dzGo').onclick=()=>{const t=el.querySelector('#dzTopic').value.trim();el.querySelector('#dzOut').value=`1. Sedikit cerita tentang ${t}. ✨\\n\\n2. Hari ini, proses kecil tetap berarti. ${t} 💫\\n\\n3. Simpan momen, nikmati proses. #${t.replace(/\\s+/g,'')}`};
+      el.querySelector('#dzGo').onclick=()=>{const t=el.querySelector('#dzTopic').value.trim();el.querySelector('#dzOut').value=`1. Sedikit cerita tentang ${t}.\\n\\n2. Hari ini, proses kecil tetap berarti. ${t}\\n\\n3. Simpan momen, nikmati proses. #${t.replace(/\\s+/g,'')}`};
     },
 
     'yt-thumb'(el){
@@ -3528,7 +3530,7 @@ musicplayForm.addEventListener('submit', (e)=>{
   const dzAiSession='dinz-'+Math.random().toString(36).slice(2,10);
 
   function aiChat(el){
-    box(el,`<div class="dz-chat-wrap"><div class="dz-chat-top"><button id="dzClear" class="dz-secondary" style="padding:7px 12px;font-size:11px;">Hapus obrolan</button></div><div id="dzLog" class="dz-chat-log"><div class="dz-chat-empty">Mulai ngobrol dengan AI di bawah ini 👇</div></div><div class="dz-chat-inputrow"><textarea id="dzIn" placeholder="Tulis pesan..." rows="1"></textarea><button id="dzSend">Kirim</button></div></div>`);
+    box(el,`<div class="dz-chat-wrap"><div class="dz-chat-top"><button id="dzClear" class="dz-secondary" style="padding:7px 12px;font-size:11px;">Hapus obrolan</button></div><div id="dzLog" class="dz-chat-log"><div class="dz-chat-empty">Mulai ngobrol dengan AI di bawah ini</div></div><div class="dz-chat-inputrow"><textarea id="dzIn" placeholder="Tulis pesan..." rows="1"></textarea><button id="dzSend">Kirim</button></div></div>`);
     const log=el.querySelector('#dzLog'), input=el.querySelector('#dzIn'), sendBtn=el.querySelector('#dzSend'), clearBtn=el.querySelector('#dzClear');
     let sending=false;
     const chatSession='dinz-chat-'+Math.random().toString(36).slice(2,10);
@@ -3574,7 +3576,7 @@ musicplayForm.addEventListener('submit', (e)=>{
       if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}
     });
     input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(120,input.scrollHeight)+'px';});
-    clearBtn.onclick=()=>{log.innerHTML='<div class="dz-chat-empty">Mulai ngobrol dengan AI di bawah ini 👇</div>';};
+    clearBtn.onclick=()=>{log.innerHTML='<div class="dz-chat-empty">Mulai ngobrol dengan AI di bawah ini</div>';};
   }
 
   function aiSimple(el,instruction){
