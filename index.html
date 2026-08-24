@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dinz Code Like Yayass</title>
+<title>Dinz Store</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
@@ -24,6 +24,7 @@
     --warn: #a0a0a4;
     --yellow: #8c8c90;
     --green: #b0b0b4;
+    --gold: #b7b7ba;
     --grid-line: rgba(255,255,255,0.045);
     --grad-brand: linear-gradient(120deg, #f0f0f2 0%, #ffffff 55%, #dcdce0 100%);
     --glow: 0 14px 34px -12px rgba(255,255,255,0.18);
@@ -496,13 +497,14 @@
     margin-bottom:18px;
   }
   .tool-head .icon{
-    width:36px;height:36px;
-    border-radius:9px;
-    background:var(--iconbg);
-    border:1.5px solid var(--line);
+    width:44px;height:44px;
+    border-radius:11px;
+    background:linear-gradient(135deg, rgba(232,232,234,0.16), rgba(150,150,150,0.06));
+    border:1.5px solid rgba(232,232,234,0.22);
     display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 10px rgba(0,0,0,0.2);
   }
-  .tool-head .icon svg{width:18px;height:18px;}
+  .tool-head .icon svg{width:21px;height:21px;}
   .tool-head .title{
     font-weight:700;
     font-size:15.5px;
@@ -1405,12 +1407,32 @@
   }
   .store-card{
     border:1.5px solid var(--line);
-    border-radius:14px;
-    padding:18px;
+    border-radius:18px;
     background:var(--sunken);
+    overflow:hidden;
     display:flex;
     flex-direction:column;
-    gap:10px;
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 1px 0 rgba(255,255,255,0.03) inset, 0 19px 29px -9px rgba(10,8,20,0.4);
+  }
+  .store-card:hover{border-color:var(--cyan); transform:translate(0,-2px); box-shadow:0 0 0 1.5px var(--cyan), 0 14px 26px -10px rgba(137,137,137,0.5);}
+  .store-card .phead-media{height:120px;}
+  .store-card .icon{
+    width:60px;height:60px;
+    border-radius:15px;
+    background:linear-gradient(135deg, rgba(232,232,234,0.2), rgba(150,150,150,0.1));
+    border:1.5px solid rgba(232,232,234,0.28);
+    display:flex;align-items:center;justify-content:center;
+    position:relative; z-index:1;
+    box-shadow:0 3px 12px rgba(0,0,0,0.25);
+  }
+  .store-card .icon svg{width:30px;height:30px; stroke:var(--cyan);}
+  .store-card-body{
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    flex:1;
   }
   .store-card h3{
     font-size:15px;
@@ -1430,17 +1452,19 @@
     font-weight:800;
     font-size:19px;
     color:var(--cyan);
+    margin-top:2px;
   }
   .store-order-btns{
     display:flex;
     gap:8px;
     flex-wrap:wrap;
+    margin-top:4px;
   }
   .store-order-btn{
     flex:1;
     min-width:120px;
     border:1.5px solid var(--line);
-    border-radius:9px;
+    border-radius:10px;
     padding:10px 12px;
     font-family:'Space Grotesk', sans-serif;
     font-weight:700;
@@ -1452,71 +1476,230 @@
     justify-content:center;
     gap:6px;
     text-align:center;
+    color:var(--ink);
+    text-decoration:none;
   }
   .store-order-btn svg{width:15px;height:15px;flex-shrink:0;}
-  .store-order-btn.wa{border-color:#939393; color:#a6a6a6;}
-  .store-order-btn.wa:hover{background:#939393; color:#0b0b0b;}
-  .store-order-btn.tg{border-color:#808080; color:#aaaaaa;}
-  .store-order-btn.tg:hover{background:#808080; color:#0b0b0b;}
+  .store-order-btn.wa{border-color:var(--cyan); color:var(--cyan);}
+  .store-order-btn.wa:hover{background:var(--cyan); color:#0b0b0b;}
+  .store-order-btn.tg{border-color:var(--dim2); color:var(--dim);}
+  .store-order-btn.tg:hover{background:var(--dim2); color:#fff;}
 
 
-  /* platform support — accordion (klik expand di tempat) */
-  .accordion-list{
+  /* platform support — grid kartu produk ala shop (referensi GACOR Store) */
+  .shop-search{
+    width:100%;
+    background:var(--sunken);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:13.5px;
+    padding:13px 16px;
+    outline:none;
+    margin-bottom:14px;
+    transition:border-color .15s ease;
+  }
+  .shop-search::placeholder{color:var(--dim2);}
+  .shop-search:focus{border-color:var(--cyan);}
+
+  .shop-filter-pills{
     display:flex;
-    flex-direction:column;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    margin-bottom:14px;
+    scrollbar-width:none;
+  }
+  .shop-filter-pills::-webkit-scrollbar{display:none;}
+  .shop-pill{
+    flex-shrink:0;
+    background:var(--sunken);
+    border:1.5px solid var(--line);
+    border-radius:999px;
+    color:var(--dim);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:12px;
+    padding:9px 16px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .shop-pill.active{background:var(--cyan); border-color:var(--cyan); color:#0b0b0b;}
+  .shop-pill:not(.active):hover{border-color:var(--cyan); color:var(--ink);}
+
+  .accordion-list{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
     gap:12px;
+    align-items:start;
+  }
+  @media (min-width:620px){
+    .accordion-list{grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));}
   }
   .accordion-item{
     border:1.5px solid var(--line);
-    border-radius:14px;
+    border-radius:18px;
     background:var(--sunken);
     overflow:hidden;
-    transition:border-color .15s ease;
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 1px 0 rgba(255,255,255,0.03) inset, 0 19px 29px -9px rgba(10,8,20,0.4);
   }
-  .accordion-item.open{border-color:var(--cyan);}
+  .accordion-item:hover{border-color:var(--cyan); transform:translate(0,-2px); box-shadow:0 0 0 1.5px var(--cyan), 0 14px 26px -10px rgba(137,137,137,0.5);}
+  .accordion-item.open{
+    border-color:var(--cyan);
+    grid-column:1 / -1;
+    box-shadow:0 0 0 1.5px var(--cyan), 0 14px 26px -10px rgba(137,137,137,0.5);
+  }
+
+  /* --- kartu tertutup: media/foto produk + info + harga, kayak toko --- */
   .accordion-head{
+    position:relative;
     display:flex;
-    align-items:center;
-    gap:12px;
+    flex-direction:column;
+    align-items:stretch;
     width:100%;
     background:none;
     border:none;
-    padding:14px 16px;
+    padding:0;
     cursor:pointer;
     text-align:left;
     font-family:'Space Grotesk', sans-serif;
     color:var(--ink);
   }
-  .accordion-head:hover{background:var(--panel);}
+  .phead-media{
+    position:relative;
+    height:104px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(circle at 50% 45%, rgba(232,232,234,0.16), transparent 68%),
+      var(--panel);
+    border-bottom:1.5px solid var(--line);
+    flex-shrink:0;
+  }
+  .phead-badge{
+    position:absolute;
+    top:9px; left:9px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:0.03em;
+    color:#fff;
+    background:var(--pink);
+    border-radius:999px;
+    padding:3px 9px;
+    z-index:2;
+  }
   .accordion-head .icon{
-    width:36px;height:36px;
-    border-radius:10px;
-    background:var(--panel);
-    border:1.5px solid var(--line);
+    width:58px;height:58px;
+    border-radius:14px;
+    background:linear-gradient(135deg, rgba(232,232,234,0.18), rgba(150,150,150,0.08));
+    border:1.5px solid rgba(232,232,234,0.25);
     display:flex;align-items:center;justify-content:center;
     flex-shrink:0;
+    box-shadow:0 4px 16px rgba(0,0,0,0.3);
+    position:relative;
+    z-index:1;
   }
-  .accordion-head .icon svg{width:18px;height:18px;}
-  .accordion-head .meta{flex:1; min-width:0;}
+  .accordion-head .icon svg{width:28px;height:28px;}
+  .phead-body{
+    padding:12px 12px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    flex:1;
+    min-width:0;
+  }
+  .phead-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--dim2);
+  }
   .accordion-head .pname{
     font-weight:700;
-    font-size:13.5px;
-    font-family:'JetBrains Mono', monospace;
-    text-transform:uppercase;
+    font-size:13px;
+    font-family:'Space Grotesk', sans-serif;
+    line-height:1.3;
   }
   .accordion-head .pdesc{
-    font-size:11.5px;
+    font-size:10.5px;
     color:var(--dim);
     line-height:1.4;
-    margin-top:2px;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
   }
-  .accordion-chevron{
-    width:20px;height:20px;
+  .phead-stars{
+    font-size:10px;
+    color:var(--gold);
+    letter-spacing:1px;
+    margin-top:1px;
+  }
+  .phead-bottom{
+    margin-top:6px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .accordion-head .price-tag{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:13px;
+    font-weight:800;
+    color:var(--cyan);
+  }
+  .accordion-chevron{display:none;}
+  .accordion-head .buy-btn{
     flex-shrink:0;
-    stroke:var(--dim2);
-    transition:transform .2s ease, stroke .2s ease;
+    width:30px;height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--cyan);
+    border:none;
+    border-radius:10px;
+    color:#0b0b0b;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:800;
+    font-size:16px;
+    line-height:1;
+    box-shadow:var(--glow);
+    transition:transform .15s ease, background .15s ease;
   }
-  .accordion-item.open .accordion-chevron{transform:rotate(180deg); stroke:var(--cyan);}
+  .accordion-head .buy-btn svg{display:none;}
+  .accordion-head .buy-btn::before{content:"+";}
+  .accordion-item:hover .buy-btn{transform:scale(1.06);}
+  .accordion-item.open .buy-btn{background:var(--pink);}
+  .accordion-item.open .buy-btn::before{content:"\2715";}
+
+  /* --- kartu terbuka: balik jadi header ringkas horizontal --- */
+  .accordion-item.open .accordion-head{flex-direction:row; align-items:center;}
+  .accordion-item.open .phead-media{
+    height:auto;
+    width:56px;
+    align-self:stretch;
+    background:var(--panel);
+    border-bottom:none;
+    border-right:1.5px solid var(--line);
+    flex-shrink:0;
+  }
+  .accordion-item.open .phead-badge{display:none;}
+  .accordion-item.open .accordion-head .icon{width:34px;height:34px;border-radius:10px;}
+  .accordion-item.open .accordion-head .icon svg{width:17px;height:17px;}
+  .accordion-item.open .phead-body{flex:1; min-width:0; flex-direction:row; align-items:center; padding:12px 14px;}
+  .accordion-item.open .phead-eyebrow,
+  .accordion-item.open .accordion-head .pdesc,
+  .accordion-item.open .phead-stars{display:none;}
+  .accordion-item.open .accordion-head .pname{flex:1;}
+  .accordion-item.open .phead-bottom{margin-top:0;}
+  .accordion-item.open .accordion-head .price-tag{display:none;}
+
   .accordion-body{
     max-height:0;
     overflow:hidden;
@@ -1807,7 +1990,7 @@
   <div class="navbar-inner">
     <div class="nav-logo" data-target="beranda">
       <div class="nav-logo-mark">D</div>
-      <div class="nav-logo-text"><b>DINZ</b><span>Downloader</span></div>
+      <div class="nav-logo-text"><b>DINZ</b><span>Store</span></div>
     </div>
 
     <nav class="nav-links">
@@ -1887,9 +2070,9 @@
     <!-- ===== HERO ===== -->
     <div class="hero-v2">
       <div class="hero-badge-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Cepat &middot; Gratis &middot; Tanpa Login</div>
-      <h1 class="hero-title"><span class="accent">DINZ</span> DOWNLOADER</h1>
+      <h1 class="hero-title"><span class="accent">DINZ</span> STORE</h1>
 
-      <p class="hero-v2-sub">Unduh video, musik, dan konten favoritmu dari berbagai platform dengan mudah dan cepat &mdash; tinggal tempel link, sisanya berjalan otomatis.</p>
+      <p class="hero-v2-sub">Satu tempat buat semua kebutuhanmu &mdash; downloader video &amp; musik dari berbagai platform, kumpulan tools praktis, sampai belanja produk digital, semua ada di sini.</p>
     </div>
 
     <!-- ===== FITUR UNGGULAN ===== -->
@@ -1897,33 +2080,29 @@
       <div class="section-card-head">
         <div>
           <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Fitur Unggulan</h2>
-          <p>Kenapa memilih Dinz Downloader?</p>
+          <p>Kenapa memilih Dinz Store?</p>
         </div>
       </div>
       <div class="feature-grid">
         <div class="feature-card">
-          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#6a6a6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
           <h3>Super Cepat</h3>
-          <p>Proses berjalan otomatis begitu link ditempel, tanpa antrean panjang.</p>
+          <p>Downloader &amp; tools berjalan otomatis begitu link ditempel, tanpa antrean panjang.</p>
         </div>
         <div class="feature-card">
-          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#898989" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg></div>
           <h3>Aman &amp; Gratis</h3>
-          <p>100% gratis dan tanpa perlu login atau daftar akun apapun.</p>
+          <p>Downloader &amp; tools 100% gratis, tanpa perlu login atau daftar akun apapun.</p>
         </div>
         <div class="feature-card">
-          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#6a6a6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
-          <h3>Multi Platform</h3>
-          <p>Mendukung TikTok, Instagram, YouTube, Facebook, CapCut &amp; Spotify.</p>
+          <h3>Semua Dalam Satu</h3>
+          <p>Downloader, Tools, dan Store &mdash; semua kebutuhanmu tersedia dalam satu website.</p>
         </div>
         <div class="feature-card">
-          <span class="badge-star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6z"/></svg>Unggulan</span>
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="#868686" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="#868686" stroke="none"/></svg></div>
-          <h3>Kualitas Terbaik</h3>
-          <p>Unduh dengan kualitas terbaik yang tersedia dari sumber aslinya.</p>
+          <h3>Order Gampang</h3>
+          <p>Butuh produk digital? Tinggal klik order di Store, chat admin langsung kebuka otomatis.</p>
         </div>
       </div>
     </div>
@@ -1944,6 +2123,7 @@
       </div>
     </div>
     <div class="section-card">
+      <input type="text" id="searchDownloader" class="shop-search" placeholder="Cari layanan downloader...">
       <div class="accordion-list" id="accordionListDownloader"></div>
     </div>
   </div>
@@ -1960,6 +2140,10 @@
       </div>
     </div>
     <div class="section-card dz-tools-suite">
+      <input type="text" id="searchTools" class="shop-search" placeholder="Cari tools...">
+      <div class="shop-filter-pills" id="toolsCatPills">
+        <button type="button" class="shop-pill active" data-cat="semua">Semua</button>
+      </div>
       <div class="accordion-list" id="accordionListTools" style="margin-bottom:12px;"></div>
 
       <div id="dzToolGrid" class="accordion-list"></div>
@@ -1984,6 +2168,7 @@
           <p>Klik salah satu tombol order, chat otomatis kebuka dengan pesan order yang udah keisi</p>
         </div>
       </div>
+      <input type="text" id="searchStore" class="shop-search" placeholder="Cari produk...">
       <div class="store-grid" id="storeGrid"></div>
     </div>
   </div>
@@ -2061,8 +2246,8 @@
     <footer class="footer-v2">
     <div class="footer-grid">
       <div class="footer-brand-block">
-        <b><span class="nav-logo-mark" style="width:26px;height:26px;font-size:12px;border-radius:7px;">D</span>Dinz Downloader</b>
-        <p>Tool gratis untuk mengunduh video, musik, dan konten dari berbagai platform favoritmu dengan mudah dan cepat.</p>
+        <b><span class="nav-logo-mark" style="width:26px;height:26px;font-size:12px;border-radius:7px;">D</span>Dinz Store</b>
+        <p>Downloader, tools, dan store dalam satu website &mdash; semua kebutuhanmu ada di sini, gratis dan mudah dipakai.</p>
         <div class="footer-social">
           <a href="#" id="footerSupportLink" data-action="support" aria-label="Bantuan via WhatsApp">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -2111,7 +2296,7 @@
     </div>
 
     <div class="footer-bottom">
-      <span>&copy; 2026 Dinz Downloader. All rights reserved.</span>
+      <span>&copy; 2026 Dinz Store. All rights reserved.</span>
       <span>Made with &hearts; by Dinz Code</span>
     </div>
   </footer>
@@ -2468,20 +2653,27 @@ function storeOrderUrl(kind, product){
 function renderStoreGrid(){
   const grid = document.getElementById('storeGrid');
   if(!grid) return;
+  const ICON_BOX = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><line x1="12" y1="13" x2="12" y2="21"/></svg>`;
   grid.innerHTML = STORE_PRODUCTS.map(p => `
     <div class="store-card">
-      <h3>${p.name}</h3>
-      <p class="store-desc">${p.desc}</p>
-      <div class="store-price">${p.price}</div>
-      <div class="store-order-btns">
-        <a class="store-order-btn wa" href="${storeOrderUrl('wa', p)}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.1.2-.2.2-.4.1-.1 0-.3 0-.4-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.5.6.2 1 .4 1.3.5.6.2 1.1.1 1.5.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.4-.3z"/></svg>
-          WhatsApp
-        </a>
-        <a class="store-order-btn tg" href="${storeOrderUrl('tg', p)}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3 2 10.5l6 2.3M22 3 19 20l-8-6M22 3 8.5 13.2M11 16.5 8 13.2l-.3 5.8"/></svg>
-          Telegram
-        </a>
+      <div class="phead-media">
+        <div class="icon">${ICON_BOX}</div>
+      </div>
+      <div class="store-card-body">
+        <div class="phead-eyebrow">Produk Digital</div>
+        <h3>${p.name}</h3>
+        <p class="store-desc">${p.desc}</p>
+        <div class="store-price">${p.price}</div>
+        <div class="store-order-btns">
+          <a class="store-order-btn wa" href="${storeOrderUrl('wa', p)}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5.1-.1.2-.3.4-.4.1-.1.2-.2.2-.4.1-.1 0-.3 0-.4-.1-.1-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.5.6.2 1 .4 1.3.5.6.2 1.1.1 1.5.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.4-.3z"/></svg>
+            WhatsApp
+          </a>
+          <a class="store-order-btn tg" href="${storeOrderUrl('tg', p)}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3 2 10.5l6 2.3M22 3 19 20l-8-6M22 3 8.5 13.2M11 16.5 8 13.2l-.3 5.8"/></svg>
+            Telegram
+          </a>
+        </div>
       </div>
     </div>
   `).join('');
@@ -2785,14 +2977,20 @@ function buildAccordionItem(item, panelBuilder, container, pageId){
   const wrap = document.createElement('div');
   wrap.className = 'accordion-item';
   wrap.dataset.id = item.id;
+  wrap.dataset.cat = 'utility';
+  const eyebrow = pageId === 'downloader' ? 'Downloader' : 'Tools';
   wrap.innerHTML = `
     <button class="accordion-head" type="button">
-      <div class="icon">${ICONS[item.id]}</div>
-      <div class="meta">
+      <div class="phead-media">
+        <div class="icon">${ICONS[item.id]}</div>
+      </div>
+      <div class="phead-body">
+        <div class="phead-eyebrow">${eyebrow}</div>
         <div class="pname">${item.name}</div>
         <div class="pdesc">${item.desc}</div>
+        <div class="phead-bottom">
+        </div>
       </div>
-      <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="accordion-body">
       <div class="accordion-body-inner"></div>
@@ -3312,14 +3510,23 @@ musicplayForm.addEventListener('submit', (e)=>{
       const wrap=document.createElement('div');
       wrap.className='accordion-item';
       wrap.dataset.id=t.id;
+      wrap.dataset.cat=t.cat;
       wrap.innerHTML=`
         <button class="accordion-head" type="button">
-          <div class="icon">${t.icon}</div>
-          <div class="meta">
+          <div class="phead-media">
+            <span class="phead-badge">Gratis</span>
+            <div class="icon">${t.icon}</div>
+          </div>
+          <div class="phead-body">
+            <div class="phead-eyebrow">${t.cat}</div>
             <div class="pname">${t.name}</div>
             <div class="pdesc">${t.desc}</div>
+            <div class="phead-stars">★★★★★</div>
+            <div class="phead-bottom">
+              <span class="price-tag">Gratis</span>
+              <span class="buy-btn"></span>
+            </div>
           </div>
-          <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="accordion-body">
           <div class="accordion-body-inner"></div>
@@ -3647,6 +3854,68 @@ musicplayForm.addEventListener('submit', (e)=>{
 /* ============================================================
    Selesai.
 ============================================================ */
+</script>
+
+<script>
+/* ============================================================
+   SHOP UI EXTRA: search box + filter pill kategori
+   (murni penambahan tampilan/filter, tidak mengubah logic lama)
+============================================================ */
+(function(){
+  function normalize(s){ return (s||'').toLowerCase(); }
+
+  function wireSearch(inputId, containers){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    input.addEventListener('input', ()=>{
+      const q = normalize(input.value.trim());
+      containers.forEach(container=>{
+        if(!container) return;
+        container.querySelectorAll(':scope > .accordion-item, :scope > .store-card').forEach(card=>{
+          const text = normalize(card.textContent);
+          card.style.display = (!q || text.includes(q)) ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  wireSearch('searchDownloader', [document.getElementById('accordionListDownloader')]);
+  wireSearch('searchTools', [document.getElementById('accordionListTools'), document.getElementById('dzToolGrid')]);
+  wireSearch('searchStore', [document.getElementById('storeGrid')]);
+
+  /* filter kategori khusus halaman Tools, berdasarkan data-cat tiap kartu */
+  const pillWrap = document.getElementById('toolsCatPills');
+  const toolsAccordion = document.getElementById('accordionListTools');
+  const dzGrid = document.getElementById('dzToolGrid');
+  if(pillWrap && dzGrid){
+    const CAT_LABEL = {semua:'Semua', image:'Gambar', video:'Video', file:'File', developer:'Developer', social:'Sosial', utility:'Utility', ai:'AI'};
+    const seen = new Set();
+    dzGrid.querySelectorAll('.accordion-item').forEach(card=>{ if(card.dataset.cat) seen.add(card.dataset.cat); });
+    if(toolsAccordion) toolsAccordion.querySelectorAll('.accordion-item').forEach(card=>{ card.dataset.cat = card.dataset.cat || 'utility'; seen.add('utility'); });
+
+    [...seen].sort().forEach(cat=>{
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'shop-pill';
+      b.dataset.cat = cat;
+      b.textContent = CAT_LABEL[cat] || cat;
+      pillWrap.appendChild(b);
+    });
+
+    pillWrap.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.shop-pill');
+      if(!btn) return;
+      pillWrap.querySelectorAll('.shop-pill').forEach(p=>p.classList.toggle('active', p===btn));
+      const cat = btn.dataset.cat;
+      [toolsAccordion, dzGrid].forEach(container=>{
+        if(!container) return;
+        container.querySelectorAll('.accordion-item').forEach(card=>{
+          card.style.display = (cat==='semua' || card.dataset.cat===cat) ? '' : 'none';
+        });
+      });
+    });
+  }
+})();
 </script>
 </body>
 </html>
