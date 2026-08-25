@@ -2493,6 +2493,52 @@
     100%{transform:scale(1);}
   }
 
+  /* ================= PERFORMANCE FIXES (biar smooth) ================= */
+
+  /* backdrop-filter di header sticky itu berat banget kalau harus terus
+     ngeblur video yang lagi jalan di belakangnya tiap frame. Diganti jadi
+     background solid biar tetap kebaca tapi GPU-nya ga kerja paksa. */
+  .topbar, .navbar{
+    backdrop-filter:none;
+  }
+  .topbar{background:rgba(240,245,255,0.98);}
+  .navbar{background:rgba(8,8,8,0.96);}
+
+  /* matiin animasi box-shadow yang jalan terus-terusan bareng di banyak
+     kartu sekaligus (feature-card, section-card, status-card) — box-shadow
+     itu ga bisa di-GPU-composite jadi kalau ada banyak yang animasi bareng
+     bikin repaint terus tiap frame = patah-patah. Hover effect tetap ada. */
+  .feature-card, .section-card, .status-card{
+    animation:none !important;
+  }
+  .intro-card{
+    animation:introCardIn .5s cubic-bezier(.34,1.56,.64,1) forwards .1s !important;
+  }
+
+  /* elemen yang animasi transform terus-terusan dikasih GPU layer sendiri
+     biar browser ga perlu repaint elemen di sekitarnya */
+  .ficon, .pill, .hero-badge-pill, .brand .dot, .status-dot,
+  .site-bg-video-wrap video, .intro-particle, .intro-ring{
+    will-change:transform, opacity;
+    transform:translateZ(0);
+  }
+
+  /* video bg: filter berat (saturate+brightness) digabung sama animasi
+     zoom bikin browser re-render efeknya tiap frame. Diringanin. */
+  .site-bg-video-wrap video{
+    filter:saturate(1.08) brightness(0.9);
+    animation-duration:34s;
+  }
+
+  /* hormatin device/browser yang minta motion dikurangin */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+    }
+  }
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
 </head>
@@ -5558,16 +5604,22 @@ function initGlobalLiveAnimations(){
   }
 
   // kalau user pindah halaman (nav / menu), elemen yang baru keliatan langsung di-reveal
+  // di-debounce biar mutasi DOM yang sering (misal chat AI ngirim pesan) ga bikin
+  // querySelectorAll full-document jalan berkali-kali tiap frame -> patah-patah
   const pageObserverTarget = document.querySelector('.wrap');
   if(pageObserverTarget && 'MutationObserver' in window){
+    let revealDebounce = null;
     const mo = new MutationObserver(() => {
-      document.querySelectorAll(revealSelectors + ':not(.reveal-live)').forEach((el, i) => {
-        el.classList.add('reveal-live');
-        el.style.transitionDelay = Math.min(i % 8, 8) * 60 + 'ms';
-        requestAnimationFrame(() => el.classList.add('in-view-live'));
-      });
+      clearTimeout(revealDebounce);
+      revealDebounce = setTimeout(() => {
+        document.querySelectorAll(revealSelectors + ':not(.reveal-live)').forEach((el, i) => {
+          el.classList.add('reveal-live');
+          el.style.transitionDelay = Math.min(i % 8, 8) * 60 + 'ms';
+          requestAnimationFrame(() => el.classList.add('in-view-live'));
+        });
+      }, 150);
     });
-    mo.observe(pageObserverTarget, { childList: true, subtree: true });
+    mo.observe(pageObserverTarget, { childList: true, subtree: false });
   }
 
   // ---- ripple effect di semua tombol & pill ----
