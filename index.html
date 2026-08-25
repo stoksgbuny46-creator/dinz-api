@@ -2120,39 +2120,36 @@
   .intro-enter:hover{transform:translate(-2px,-2px); box-shadow:5px 5px 0px rgba(0,0,0,0.85);}
   .intro-enter:active{transform:translate(0,0); box-shadow:1px 1px 0px rgba(0,0,0,0.85);}
 
-  /* ================= MUSIC TOGGLE ================= */
-  #musicToggleBtn{
-    position:fixed;
-    right:16px;
-    top:74px;
-    z-index:35;
-    width:48px;height:48px;
-    border-radius:50%;
-    border:2.5px solid var(--line);
-    background:var(--panel);
-    display:flex;align-items:center;justify-content:center;
+  /* ================= MUSIC TOGGLE SWITCH ================= */
+  .music-toggle{
+    position:relative;
+    width:46px;
+    height:26px;
+    border-radius:999px;
+    border:none;
+    background:#d7dbe2;
     cursor:pointer;
-    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
-    transition:transform .12s ease, box-shadow .12s ease;
+    flex-shrink:0;
+    padding:0;
+    transition:background .2s ease;
   }
-  #musicToggleBtn:hover{transform:translate(-2px,-2px); box-shadow:5px 5px 0px rgba(0,0,0,0.85);}
-  #musicToggleBtn:active{transform:translate(0,0); box-shadow:1px 1px 0px rgba(0,0,0,0.85);}
-  #musicToggleBtn svg{width:20px;height:20px;stroke:var(--ink);}
-  #musicToggleBtn .music-bars{display:flex;align-items:flex-end;gap:2px;height:16px;}
-  #musicToggleBtn .music-bars span{
-    width:3px;
-    background:var(--cyan);
-    border-radius:2px;
-    animation:musicBar 0.9s ease-in-out infinite;
+  .music-toggle .music-toggle-knob{
+    position:absolute;
+    top:3px;
+    left:3px;
+    width:20px;height:20px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,0.35);
+    transition:transform .22s cubic-bezier(.4,0,.2,1);
   }
-  #musicToggleBtn .music-bars span:nth-child(1){height:6px; animation-delay:0s;}
-  #musicToggleBtn .music-bars span:nth-child(2){height:16px; animation-delay:.15s;}
-  #musicToggleBtn .music-bars span:nth-child(3){height:10px; animation-delay:.3s;}
-  #musicToggleBtn.muted .music-bars span{animation-play-state:paused; opacity:.35; height:4px !important;}
+  .music-toggle.on{background:var(--cyan);}
+  .music-toggle.on .music-toggle-knob{transform:translateX(20px);}
 
-  @keyframes musicBar{
-    0%,100%{transform:scaleY(0.4);}
-    50%{transform:scaleY(1);}
+  @media (max-width:400px){
+    .navbar-inner{gap:8px;}
+    .nav-cta{padding:10px 12px;}
+    .nav-cta span, .nav-cta{font-size:11.5px;}
   }
 
 </style>
@@ -2177,12 +2174,9 @@
 </div>
 
 <!-- ================= BACKGROUND MUSIC ================= -->
-<audio id="bgMusic" loop preload="auto" crossorigin="anonymous">
+<audio id="bgMusic" loop preload="auto">
   <source src="https://h.top4top.io/m_38895mr2h1.mp3" type="audio/mpeg">
 </audio>
-<button id="musicToggleBtn" aria-label="Musik latar" title="Musik latar">
-  <div class="music-bars"><span></span><span></span><span></span></div>
-</button>
 
 <!-- ================= NAVBAR ================= -->
 <div class="navbar">
@@ -2202,6 +2196,10 @@
 
     <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="square"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <button class="music-toggle" id="musicToggleBtn" aria-label="Musik latar" title="Musik latar">
+      <span class="music-toggle-knob"></span>
     </button>
 
     <button class="nav-cta" id="navSupportBtn" data-action="support">
@@ -5095,10 +5093,8 @@ function initIntroAndMusic(){
     // jadi ini tempat paling aman buat manggil music.play()
     if(music){
       music.volume = 0.55;
-      music.play().catch(() => {
-        // kalau browser tetap nolak (misal file musik belum ada), biarkan
-        // user nyalain manual lewat tombol musik di pojok
-        if(musicBtn) musicBtn.classList.add('muted');
+      music.play().catch(err => {
+        console.warn('Musik gagal diputar otomatis:', err);
       });
     }
     setTimeout(() => { overlay.style.display = 'none'; }, 550);
@@ -5107,13 +5103,23 @@ function initIntroAndMusic(){
   enterBtn.addEventListener('click', enterSite);
 
   if(musicBtn && music){
+    // knob toggle selalu ngikutin status audio yang sebenarnya (bukan tebakan manual),
+    // jadi kalau file musiknya gagal load / gagal diputar, toggle otomatis balik ke posisi "off"
+    const syncToggle = () => {
+      musicBtn.classList.toggle('on', !music.paused);
+    };
+    music.addEventListener('play', syncToggle);
+    music.addEventListener('pause', syncToggle);
+    music.addEventListener('error', () => {
+      syncToggle();
+      console.error('Sumber musik gagal dimuat, cek URL di tag <audio>.');
+    });
+
     musicBtn.addEventListener('click', () => {
       if(music.paused){
-        music.play().catch(() => {});
-        musicBtn.classList.remove('muted');
+        music.play().catch(err => console.warn('Musik gagal diputar:', err));
       } else {
         music.pause();
-        musicBtn.classList.add('muted');
       }
     });
   }
