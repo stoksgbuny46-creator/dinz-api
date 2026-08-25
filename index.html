@@ -1771,6 +1771,9 @@
     margin-top:0;
     box-shadow:none;
   }
+  .accordion-body-inner #spotify-tool{
+    display:block;
+  }
 
   /* ---------- PAGE SWITCHING (Beranda / Downloader / Tools) ---------- */
   .page{
@@ -3395,7 +3398,7 @@
       <div class="title">Cari Lagu Spotify</div>
     </div>
     <form id="spotifyForm">
-      <input type="text" id="spotifyInput" placeholder="Judul lagu atau nama artis..." required>
+      <input type="text" id="spotifyInput" placeholder="Judul lagu atau nama artis..." required autocomplete="off">
       <button type="submit" id="spotifySendBtn">Cari</button>
     </form>
     <div class="hint">Ketik judul lagu, hasil pencarian muncul otomatis. Klik "Download Lagu" untuk mengunduh.</div>
@@ -4274,89 +4277,246 @@ function triggerDownload(url, filename='download'){
 
 /* ============================================================
    EXTRA TOOL 1: SPOTIFY SEARCH & DOWNLOAD
+   Alur: user ketik judul lagu -> cari lewat nexray (search/spotify)
+   -> tampilkan daftar hasil -> saat tombol "Download Lagu" diklik,
+   link Spotify lagu itu dikirim ke azbry (download/spotify) buat
+   diubah jadi link file audio -> otomatis diunduh (forceDownload).
 ============================================================ */
+function safeFileName(str){
+  return (str || 'download')
+    .replace(/[^\w\-. ]+/g, '')
+    .trim()
+    .slice(0, 60) || 'download';
+}
+
+async function forceDownload(url, filename, btnEl, progressEl){
+  const originalLabel = btnEl ? btnEl.textContent : '';
+  try{
+    if(btnEl){ btnEl.disabled = true; btnEl.textContent = 'Mengunduh...'; }
+    if(progressEl) progressEl.textContent = 'Sedang mengambil file...';
+
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Gagal ambil file (status ' + res.status + ')');
+
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(blobUrl);
+
+    if(progressEl) progressEl.textContent = 'Selesai, cek folder unduhan.';
+  }catch(err){
+    if(progressEl) progressEl.textContent = 'Unduh otomatis diblokir server sumber, membuka di tab baru...';
+    window.open(url, '_blank', 'noopener');
+  }finally{
+    if(btnEl){ btnEl.disabled = false; btnEl.textContent = originalLabel; }
+    setTimeout(() => { if(progressEl) progressEl.textContent = ''; }, 4000);
+  }
+}
+
 function initSpotifyTool(){
   const form = document.getElementById('spotifyForm');
   if(!form) return;
 
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const q = document.getElementById('spotifyInput').value.trim();
-    const status = document.getElementById('spotifyStatus');
-    const list = document.getElementById('trackList');
-    const btn = document.getElementById('spotifySendBtn');
+  const spotifyInput = document.getElementById('spotifyInput');
+  const spotifySendBtn = document.getElementById('spotifySendBtn');
+  const spotifyStatus = document.getElementById('spotifyStatus');
+  const trackList = document.getElementById('trackList');
 
-    if(!q) return;
+  function setSpotifyStatus(msg, isError){
+    spotifyStatus.textContent = msg;
+    spotifyStatus.classList.toggle('show', !!msg);
+    spotifyStatus.classList.toggle('error', !!isError);
+  }
 
-    btn.disabled = true;
-    btn.textContent = 'Mencari...';
-    status.className = 'status show';
-    status.textContent = 'MENCARI LAGU DI SPOTIFY...';
-    list.innerHTML = '';
+  /* Cari string berupa URL di mana pun posisinya di dalam objek/array,
+     berguna karena kita tidak tahu pasti nama field yang dipakai API. */
+  function deepFindUrls(obj, path){
+    path = path || '';
+    let found = [];
+    if(obj === null || obj === undefined) return found;
+    if(typeof obj === 'string'){
+      if(/^https?:\/\//i.test(obj)) found.push({ path: path, value: obj });
+      return found;
+    }
+    if(Array.isArray(obj)){
+      obj.forEach((item, i)=>{ found = found.concat(deepFindUrls(item, path + '[' + i + ']')); });
+      return found;
+    }
+    if(typeof obj === 'object'){
+      Object.keys(obj).forEach(k=>{
+        found = found.concat(deepFindUrls(obj[k], path ? path + '.' + k : k));
+      });
+    }
+    return found;
+  }
 
-    try {
-      const data = await fetchJsonSafe(`https://api.vreden.web.id/api/spotifysearch?query=${encodeURIComponent(q)}`);
-      if(!data || !data.result || data.result.length === 0){
-        throw new Error('Lagu tidak ditemukan. Coba gunakan kata kunci lain.');
+  /* Dari semua URL yang ketemu, pilih yang paling mungkin link audio:
+     bukan link Spotify, bukan gambar/thumbnail, dan diutamakan yang
+     nama field/path-nya mengandung kata seperti "download"/"audio"/"mp3". */
+  function pickDownloadUrl(urls, spotifyUrl){
+    const candidates = urls.filter(u=>{
+      if(u.value === spotifyUrl) return false;
+      if(/open\.spotify\.com|spotify\.com\/track/i.test(u.value)) return false;
+      if(/\.(jpe?g|png|webp|gif)(\?|$)/i.test(u.value)) return false;
+      if(/i\.scdn\.co/i.test(u.value)) return false;
+      return true;
+    });
+    if(candidates.length === 0) return null;
+
+    const priorityRe = /download|audio|mp3|dl_url|stream|preview|play|source|media/i;
+    const prioritized = candidates.find(c=> priorityRe.test(c.path));
+    if(prioritized) return prioritized.value;
+
+    const audioExt = candidates.find(c=> /\.(mp3|m4a|ogg|wav|opus|aac)(\?|$)/i.test(c.value));
+    if(audioExt) return audioExt.value;
+
+    return candidates[0].value;
+  }
+
+  /* Ambil link file audio dari azbry berdasarkan link track Spotify.
+     Nama field hasil API pihak ketiga suka beda-beda/tidak terdokumentasi,
+     jadi dicoba beberapa nama field umum dulu, lalu fallback ke pencarian
+     URL otomatis di seluruh isi respons kalau nama field itu tidak cocok. */
+  async function resolveSpotifyDownload(spotifyUrl){
+    const apiUrl = `https://api.azbry.com/api/download/spotify?url=${encodeURIComponent(spotifyUrl)}`;
+    let res;
+    try{
+      res = await fetch(apiUrl);
+    }catch(networkErr){
+      throw new Error('Tidak bisa menghubungi server download (CORS/offline/server down)');
+    }
+    if(!res.ok) throw new Error('Server download mengembalikan status ' + res.status);
+    const data = await res.json();
+    if(data.status === false) throw new Error(data.message || 'Gagal menyiapkan link download');
+
+    const r = data.result || data.data || data;
+    let downloadUrl = r.download || r.download_url || r.downloadUrl ||
+                       r.url_download || r.audio || r.dl || r.mp3 ||
+                       r.play_url || r.link || r.url;
+
+    if(!downloadUrl){
+      downloadUrl = pickDownloadUrl(deepFindUrls(data), spotifyUrl);
+    }
+
+    if(!downloadUrl){
+      console.warn('Respons API download Spotify tidak dikenali:', data);
+      throw new Error('Link download tidak ditemukan pada respons API');
+    }
+    if(/\/undefined\.[a-z0-9]+($|\?)/i.test(downloadUrl)){
+      throw new Error('API sumber sedang bermasalah (link audio rusak). Coba lagi beberapa saat.');
+    }
+    return downloadUrl;
+  }
+
+  function buildTrackRow(track){
+    const clean = v => (!v || v === '-') ? '' : v;
+
+    const title = clean(track.title || track.name) || 'Lagu tidak diketahui';
+    const artist = clean(track.artist || track.artists);
+    const thumbnail = clean(track.thumbnail || track.image || track.cover);
+    const album = clean(track.album);
+    const duration = clean(track.duration);
+    const releaseDate = clean(track.release_date || track.releaseDate);
+    const spotifyUrl = clean(track.url || track.spotify_url || track.link);
+
+    const row = document.createElement('div');
+    row.className = 'track-row';
+    const dlProgress = document.createElement('div');
+    dlProgress.className = 'track-progress';
+    row.innerHTML = `
+      <img src="${thumbnail}" alt="${title}">
+      <div class="track-info">
+        <div class="t-title">${title}</div>
+        <div class="t-artist">${Array.isArray(artist) ? artist.join(', ') : artist}</div>
+        <div class="t-meta">${album}${album ? ' &middot; ' : ''}${duration}${releaseDate ? ' &middot; ' + releaseDate : ''}</div>
+      </div>
+    `;
+
+    const actions = document.createElement('div');
+    actions.className = 'track-actions';
+
+    const dlBtn = document.createElement('a');
+    dlBtn.href = '#';
+    dlBtn.className = 'track-dl';
+    dlBtn.textContent = 'Download Lagu';
+    dlBtn.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      if(!spotifyUrl){
+        dlProgress.textContent = 'Link Spotify untuk lagu ini tidak tersedia.';
+        return;
+      }
+      const originalLabel = dlBtn.textContent;
+      dlBtn.textContent = 'Menyiapkan...';
+      dlProgress.textContent = 'Menyiapkan link download...';
+      try{
+        const downloadUrl = await resolveSpotifyDownload(spotifyUrl);
+        const filename = safeFileName(title + (artist ? ('-' + artist) : '')) + '.mp3';
+        await forceDownload(downloadUrl, filename, dlBtn, dlProgress);
+      }catch(err){
+        dlProgress.textContent = 'Gagal: ' + err.message;
+        dlBtn.textContent = originalLabel;
+      }
+    });
+    actions.appendChild(dlBtn);
+
+    if(spotifyUrl){
+      const openLink = document.createElement('a');
+      openLink.href = spotifyUrl;
+      openLink.target = '_blank';
+      openLink.rel = 'noopener';
+      openLink.className = 'track-open';
+      openLink.textContent = 'Buka di Spotify ↗';
+      actions.appendChild(openLink);
+    }
+
+    row.appendChild(actions);
+    row.appendChild(dlProgress);
+    return row;
+  }
+
+  async function searchSpotify(query){
+    if(!query) return;
+    trackList.innerHTML = '';
+    spotifySendBtn.disabled = true;
+    spotifySendBtn.textContent = 'Mencari...';
+    setSpotifyStatus('Mencari lagu...', false);
+
+    try{
+      const apiUrl = `https://api.nexray.eu.cc/search/spotify?q=${encodeURIComponent(query)}`;
+      let res;
+      try{
+        res = await fetch(apiUrl);
+      }catch(networkErr){
+        throw new Error('Tidak bisa menghubungi server API (CORS/offline/server down)');
+      }
+      if(!res.ok) throw new Error('Server API mengembalikan status ' + res.status);
+      const data = await res.json();
+      if(data.status === false) throw new Error(data.message || 'Lagu tidak ditemukan');
+
+      const results = data.result || data.data || [];
+      if(!Array.isArray(results) || results.length === 0){
+        throw new Error('Lagu tidak ditemukan');
       }
 
-      status.className = 'status';
-
-      data.result.slice(0, 10).forEach(track => {
-        const trackUrl = track.link || track.url;
-        const row = document.createElement('div');
-        row.className = 'track-row';
-        row.innerHTML = `
-          <img src="${track.cover || track.thumbnail || 'https://via.placeholder.com/60'}" alt="">
-          <div class="track-info">
-            <div class="t-title">${track.title || track.name}</div>
-            <div class="t-artist">${track.artist || track.artists || 'Unknown Artist'}</div>
-            <div class="t-meta">${track.duration || ''} &bull; Spotify</div>
-          </div>
-          <div class="track-actions">
-            <a class="track-dl">Download Lagu</a>
-            ${trackUrl ? `<a href="${trackUrl}" target="_blank" class="track-open">Buka Spotify</a>` : ''}
-          </div>
-          <div class="track-progress" style="display:none;"></div>
-        `;
-
-        row.querySelector('.track-dl').addEventListener('click', async e => {
-          e.preventDefault();
-          if(!trackUrl){
-            alert('Link lagu Spotify tidak tersedia');
-            return;
-          }
-          const prog = row.querySelector('.track-progress');
-          prog.style.display = 'block';
-          prog.textContent = 'Mempunyai audio & mengunduh...';
-
-          try {
-            const dlData = await fetchJsonSafe(`https://api.vreden.web.id/api/spotifydownload?url=${encodeURIComponent(trackUrl)}`);
-            if(!dlData || !dlData.result){
-              throw new Error('Gagal mendapatkan link download dari server');
-            }
-            const res = dlData.result;
-            const mp3Url = res.music || res.url || res.download || (res.mp3 && res.mp3.url);
-
-            if(!mp3Url) throw new Error('Link file MP3 tidak ditemukan');
-
-            prog.textContent = 'Mengunduh file MP3...';
-            triggerDownload(mp3Url, `${track.title || 'spotify_track'}.mp3`);
-            prog.textContent = 'Download dimulai!';
-          } catch(err) {
-            prog.textContent = `Gagal download: ${err.message}`;
-          }
-        });
-
-        list.appendChild(row);
-      });
-    } catch(err) {
-      status.className = 'status show error';
-      status.textContent = `GAGAL: ${err.message}`;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Cari';
+      results.forEach(track => trackList.appendChild(buildTrackRow(track)));
+      setSpotifyStatus('', false);
+    }catch(err){
+      setSpotifyStatus('Gagal: ' + err.message, true);
+    }finally{
+      spotifySendBtn.disabled = false;
+      spotifySendBtn.textContent = 'Cari';
     }
+  }
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    searchSpotify(spotifyInput.value.trim());
   });
 }
 
