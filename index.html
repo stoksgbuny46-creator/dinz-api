@@ -33,17 +33,51 @@
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
+  html{background:transparent;}
   body{
     background:
       radial-gradient(720px 420px at 8% -6%, rgba(75,163,227,0.08), transparent 60%),
       radial-gradient(640px 420px at 100% 0%, rgba(75,163,227,0.06), transparent 55%),
       linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
-      var(--bg);
+      rgba(219,231,255,0.7);
     background-attachment:fixed;
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
     min-height:100vh;
+    position:relative;
+    z-index:0;
+  }
+
+  /* ================= FULL-SITE BACKGROUND VIDEO ================= */
+  .site-bg-video-wrap{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+  }
+  .site-bg-video-wrap video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:saturate(1.15) brightness(0.85);
+    animation:siteBgSlowZoom 24s ease-in-out infinite alternate;
+  }
+  @keyframes siteBgSlowZoom{
+    0%{transform:scale(1);}
+    100%{transform:scale(1.12);}
+  }
+  .site-bg-overlay{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:
+      radial-gradient(720px 420px at 8% -6%, rgba(75,163,227,0.15), transparent 60%),
+      radial-gradient(640px 420px at 100% 0%, rgba(75,163,227,0.1), transparent 55%),
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
+      rgba(219,231,255,0.45);
+    pointer-events:none;
   }
 
   /* ---------- TOP BAR ---------- */
@@ -255,6 +289,11 @@
     background:var(--green);
     box-shadow:0 0 10px var(--green);
     flex-shrink:0;
+    animation:dotPulseLive 1.4s ease-in-out infinite;
+  }
+  @keyframes dotPulseLive{
+    0%,100%{box-shadow:0 0 6px var(--green); transform:scale(1);}
+    50%{box-shadow:0 0 16px var(--green); transform:scale(1.35);}
   }
   .status-mini-btn{
     font-family:'JetBrains Mono', monospace;
@@ -2018,7 +2057,69 @@
     visibility:hidden;
     pointer-events:none;
   }
+
+  /* ---- extra liveliness: floating blobs behind the card ---- */
+  #introOverlay::before,
+  #introOverlay::after{
+    content:'';
+    position:absolute;
+    width:420px;height:420px;
+    border-radius:50%;
+    filter:blur(10px);
+    opacity:0.45;
+    z-index:0;
+    animation:introBlobMove 5s ease-in-out infinite alternate;
+  }
+  #introOverlay::before{
+    top:-140px; left:-140px;
+    background:radial-gradient(circle, var(--cyan), transparent 70%);
+    animation-delay:0s;
+  }
+  #introOverlay::after{
+    bottom:-160px; right:-120px;
+    background:radial-gradient(circle, var(--yellow), transparent 70%);
+    animation-delay:1s;
+  }
+  @keyframes introBlobMove{
+    0%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(50px,-35px) scale(1.3);}
+    100%{transform:translate(-35px,35px) scale(0.9);}
+  }
+
+  /* ---- rotating rainbow glow ring behind card ---- */
+  .intro-ring{
+    position:absolute;
+    z-index:1;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    background:conic-gradient(from 0deg, #4baee8, #ffd23f, #ee5f5f, #57c26a, #4baee8);
+    filter:blur(38px);
+    opacity:0.4;
+    animation:introRingSpin 4s linear infinite;
+  }
+  @keyframes introRingSpin{
+    to{transform:rotate(360deg);}
+  }
+
+  .intro-particle{
+    position:absolute;
+    z-index:1;
+    border-radius:50%;
+    pointer-events:none;
+    opacity:0;
+    animation:introParticleFloat 2.2s ease-in-out infinite;
+  }
+  @keyframes introParticleFloat{
+    0%{opacity:0; transform:translateY(0) scale(0.6) rotate(0deg);}
+    15%{opacity:1;}
+    85%{opacity:0.8;}
+    100%{opacity:0; transform:translateY(-200px) scale(1.3) rotate(180deg);}
+  }
+
   .intro-card{
+    position:relative;
+    z-index:2;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -2030,10 +2131,20 @@
     box-shadow:5px 5px 0px rgba(0,0,0,0.85);
     opacity:0;
     transform:translateY(10px) scale(0.97);
-    animation:introCardIn .5s cubic-bezier(.34,1.56,.64,1) forwards .1s;
+    animation:introCardIn .5s cubic-bezier(.34,1.56,.64,1) forwards .1s,
+              introCardGlow 1.2s ease-in-out infinite 0.6s,
+              introCardBounce 1.8s ease-in-out infinite 0.7s;
   }
   @keyframes introCardIn{
     to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  @keyframes introCardGlow{
+    0%,100%{box-shadow:5px 5px 0px rgba(0,0,0,0.85), 0 0 0px rgba(75,174,232,0);}
+    50%{box-shadow:5px 5px 0px rgba(0,0,0,0.85), 0 0 40px rgba(75,174,232,0.65);}
+  }
+  @keyframes introCardBounce{
+    0%,100%{transform:translateY(0) scale(1);}
+    50%{transform:translateY(-6px) scale(1.015);}
   }
   .intro-logo{
     display:flex;
@@ -2051,6 +2162,15 @@
     font-size:24px;
     color:#14141a;
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+    animation:introLogoWiggle 1.3s ease-in-out infinite .3s;
+    transform-origin:60% 70%;
+  }
+  @keyframes introLogoWiggle{
+    0%,100%{transform:rotate(0deg) scale(1);}
+    10%{transform:rotate(-14deg) scale(1.1);}
+    20%{transform:rotate(12deg) scale(1.1);}
+    30%{transform:rotate(-8deg) scale(1.04);}
+    40%{transform:rotate(0deg) scale(1);}
   }
   .intro-logo-text{
     font-family:'JetBrains Mono', monospace;
@@ -2058,10 +2178,28 @@
     font-size:24px;
     letter-spacing:0.02em;
     text-transform:uppercase;
-    color:var(--ink);
+    background:linear-gradient(90deg, var(--ink), var(--cyan), var(--ink));
+    background-size:200% auto;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:introTextShine 1.8s linear infinite;
   }
-  .intro-logo-text span{color:var(--cyan);}
+  @keyframes introTextShine{
+    to{background-position:-200% center;}
+  }
+  .intro-logo-text span{
+    color:var(--cyan);
+    -webkit-text-fill-color:var(--cyan);
+    display:inline-block;
+    animation:introDotPulse .6s ease-in-out infinite;
+  }
+  @keyframes introDotPulse{
+    0%,100%{transform:scale(1); opacity:1;}
+    50%{transform:scale(1.9); opacity:0.4;}
+  }
   .intro-bar-track{
+    position:relative;
     width:min(220px, 60vw);
     height:8px;
     border-radius:999px;
@@ -2070,10 +2208,23 @@
     overflow:hidden;
   }
   .intro-bar-fill{
+    position:relative;
     height:100%;
     width:0%;
     border-radius:999px;
     background:linear-gradient(120deg, var(--cyan), var(--yellow));
+    overflow:hidden;
+  }
+  .intro-bar-fill::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
+    animation:introBarShimmer .55s linear infinite;
+  }
+  @keyframes introBarShimmer{
+    0%{transform:translateX(-100%);}
+    100%{transform:translateX(100%);}
   }
   .intro-status{
     font-family:'JetBrains Mono', monospace;
@@ -2083,6 +2234,11 @@
     text-transform:uppercase;
     color:var(--dim2);
     min-height:14px;
+    animation:introStatusBlink 1.4s ease-in-out infinite;
+  }
+  @keyframes introStatusBlink{
+    0%,100%{opacity:1;}
+    50%{opacity:0.55;}
   }
   .intro-enter{
     display:inline-flex;
@@ -2109,16 +2265,44 @@
     opacity:1;
     pointer-events:auto;
     transform:translateY(0) scale(1);
-    animation:introEnterPop .4s cubic-bezier(.34,1.56,.64,1);
+    animation:introEnterPop .4s cubic-bezier(.34,1.56,.64,1),
+              introEnterPulse 1.6s ease-in-out infinite .5s;
   }
   @keyframes introEnterPop{
     0%{transform:translateY(8px) scale(0.85);}
     60%{transform:translateY(-2px) scale(1.04);}
     100%{transform:translateY(0) scale(1);}
   }
-  .intro-enter svg{width:15px;height:15px;}
+  @keyframes introEnterPulse{
+    0%,100%{box-shadow:3px 3px 0px rgba(0,0,0,0.85), 0 0 0 0 rgba(255,210,63,0.7);}
+    50%{box-shadow:3px 3px 0px rgba(0,0,0,0.85), 0 0 0 14px rgba(255,210,63,0);}
+  }
+  .intro-enter svg{width:15px;height:15px; animation:introArrowNudge .7s ease-in-out infinite;}
+  @keyframes introArrowNudge{
+    0%,100%{transform:translateX(0);}
+    50%{transform:translateX(4px);}
+  }
   .intro-enter:hover{transform:translate(-2px,-2px); box-shadow:5px 5px 0px rgba(0,0,0,0.85);}
   .intro-enter:active{transform:translate(0,0); box-shadow:1px 1px 0px rgba(0,0,0,0.85);}
+
+  /* ---- confetti burst on enter ---- */
+  .intro-confetti{
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .confetti-piece{
+    position:absolute;
+    top:-20px;
+    border-radius:2px;
+    animation:confettiFall 1.1s ease-in forwards;
+  }
+  @keyframes confettiFall{
+    0%{transform:translateY(0) rotate(0deg); opacity:1;}
+    100%{transform:translateY(100vh) rotate(540deg); opacity:0;}
+  }
 
   /* ================= MUSIC TOGGLE SWITCH ================= */
   .music-toggle{
@@ -2152,13 +2336,195 @@
     .nav-cta span, .nav-cta{font-size:11.5px;}
   }
 
+  /* ================= GLOBAL SITE-WIDE ANIMATIONS ================= */
+
+  /* scroll-reveal: elemen fade+slide-up pas kelihatan di layar */
+  .reveal-live{
+    opacity:0;
+    transform:translateY(50px) scale(0.96);
+    transition:opacity .75s cubic-bezier(.16,1,.3,1), transform .75s cubic-bezier(.34,1.56,.64,1);
+    will-change:opacity, transform;
+  }
+  .reveal-live.in-view-live{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+
+  /* hover lift buat kartu-kartu utama + idle breathing biar keliatan hidup terus */
+  .feature-card, .section-card, .status-card, .store-card, .page-head{
+    transition:transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s ease, border-color .22s ease;
+    animation:cardBreathe 3.6s ease-in-out infinite;
+  }
+  .feature-card:nth-child(odd){animation-delay:.4s;}
+  .feature-card:nth-child(even){animation-delay:.9s;}
+  .section-card:nth-of-type(even){animation-delay:.6s;}
+  @keyframes cardBreathe{
+    0%,100%{box-shadow:3px 3px 0px rgba(0,0,0,0.85);}
+    50%{box-shadow:5px 5px 0px rgba(0,0,0,0.85), 0 0 22px rgba(75,174,232,0.28);}
+  }
+  .feature-card:hover, .section-card:hover, .status-card:hover{
+    transform:translate(-5px,-5px) !important;
+    box-shadow:9px 9px 0px rgba(0,0,0,0.85) !important;
+    border-color:var(--cyan);
+  }
+  .feature-card .ficon{
+    animation:ficonFloat 2s ease-in-out infinite;
+  }
+  .feature-card:nth-child(2) .ficon{animation-delay:.2s;}
+  .feature-card:nth-child(3) .ficon{animation-delay:.4s;}
+  .feature-card:nth-child(4) .ficon{animation-delay:.6s;}
+  .feature-card:nth-child(5) .ficon{animation-delay:.8s;}
+  .feature-card:nth-child(6) .ficon{animation-delay:1s;}
+  @keyframes ficonFloat{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-8px) rotate(-8deg);}
+  }
+
+  /* shimmer buat judul hero, mirip efek di intro */
+  .hero-title{
+    background:linear-gradient(90deg, var(--ink) 20%, var(--cyan) 40%, var(--ink) 60%);
+    background-size:220% auto;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:heroTitleShine 3.2s linear infinite;
+  }
+  .hero-title .accent{
+    color:var(--cyan);
+    -webkit-text-fill-color:var(--cyan);
+  }
+  @keyframes heroTitleShine{
+    to{background-position:-220% center;}
+  }
+
+  .hero-badge-pill{
+    animation:badgeFloat 2.8s ease-in-out infinite;
+  }
+  @keyframes badgeFloat{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-4px);}
+  }
+
+  /* pill row: hover pop lebih hidup + entrance stagger via JS delay */
+  .pill{
+    transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
+    animation:pillIdleBounce 2.4s ease-in-out infinite;
+  }
+  .pill:nth-child(2n){animation-delay:.3s;}
+  .pill:nth-child(3n){animation-delay:.6s;}
+  @keyframes pillIdleBounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-3px);}
+  }
+  .pill:hover{
+    transform:translate(-3px,-3px) scale(1.08) !important;
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
+  }
+
+  /* topbar: garis bawah gradient jalan + brand dot mantul */
+  .topbar{
+    position:sticky;
+    background-size:200% 100%;
+    animation:topbarGradientMove 6s linear infinite;
+  }
+  .topbar::after{
+    content:'';
+    position:absolute;
+    left:0; right:0; bottom:-2px;
+    height:2px;
+    background:linear-gradient(90deg, var(--cyan), var(--yellow), var(--pink), var(--cyan));
+    background-size:300% 100%;
+    animation:topbarGradientMove 3s linear infinite;
+  }
+  @keyframes topbarGradientMove{
+    to{background-position:300% 0;}
+  }
+  .brand .dot{
+    display:inline-block;
+    animation:brandDotBounce 1.1s ease-in-out infinite;
+  }
+  @keyframes brandDotBounce{
+    0%,100%{transform:scale(1) translateY(0);}
+    50%{transform:scale(1.6) translateY(-2px);}
+  }
+
+  /* nav CTA / tombol utama: pulse glow biar menarik perhatian terus */
+  .nav-cta{
+    animation:navCtaPulse 2s ease-in-out infinite;
+  }
+  @keyframes navCtaPulse{
+    0%,100%{box-shadow:3px 3px 0px rgba(0,0,0,0.85), 0 0 0 0 rgba(75,174,232,0.5);}
+    50%{box-shadow:3px 3px 0px rgba(0,0,0,0.85), 0 0 0 6px rgba(75,174,232,0);}
+  }
+
+  /* tombol & elemen klik-able: ripple effect */
+  .ripple-live{
+    position:relative;
+    overflow:hidden;
+  }
+  .ripple-dot{
+    position:absolute;
+    border-radius:50%;
+    background:rgba(255,255,255,0.55);
+    transform:scale(0);
+    animation:rippleAnim .55s ease-out forwards;
+    pointer-events:none;
+  }
+  @keyframes rippleAnim{
+    to{transform:scale(2.6); opacity:0;}
+  }
+
+  /* nav & menu icon: subtle continuous bounce on hamburger to invite tap */
+  .hamburger{
+    animation:hamburgerBreathe 3s ease-in-out infinite;
+  }
+  @keyframes hamburgerBreathe{
+    0%,100%{transform:translate(0,0);}
+    50%{transform:translate(0,-2px);}
+  }
+
+  /* stat numbers: pop-in count feel */
+  .stat-num{
+    animation:statPop .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes statPop{
+    0%{transform:scale(0.5); opacity:0;}
+    70%{transform:scale(1.15); opacity:1;}
+    100%{transform:scale(1);}
+  }
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
 </head>
 <body>
 
+<!-- ================= FULL-SITE BACKGROUND VIDEO ================= -->
+<div class="site-bg-video-wrap">
+  <video autoplay loop muted playsinline preload="auto">
+    <source src="https://cdn.jsdelivr.net/gh/julzkeceabiez/file-storage@main/uploads/kelvin-evernight-1787654378712.mp4" type="video/mp4">
+  </video>
+</div>
+<div class="site-bg-overlay"></div>
+
 <!-- ================= INTRO OVERLAY ================= -->
 <div id="introOverlay">
+  <div class="intro-ring"></div>
+  <span class="intro-particle" style="left:8%; bottom:10%; width:9px; height:9px; background:var(--cyan); animation-delay:0s;"></span>
+  <span class="intro-particle" style="left:16%; bottom:24%; width:6px; height:6px; background:var(--yellow); animation-delay:.2s;"></span>
+  <span class="intro-particle" style="left:24%; bottom:14%; width:8px; height:8px; background:var(--pink); animation-delay:.4s;"></span>
+  <span class="intro-particle" style="left:32%; bottom:30%; width:5px; height:5px; background:var(--green); animation-delay:.6s;"></span>
+  <span class="intro-particle" style="left:40%; bottom:8%; width:7px; height:7px; background:var(--cyan); animation-delay:.8s;"></span>
+  <span class="intro-particle" style="left:48%; bottom:20%; width:6px; height:6px; background:var(--yellow); animation-delay:1s;"></span>
+  <span class="intro-particle" style="left:56%; bottom:12%; width:9px; height:9px; background:var(--pink); animation-delay:1.2s;"></span>
+  <span class="intro-particle" style="left:64%; bottom:26%; width:5px; height:5px; background:var(--green); animation-delay:1.4s;"></span>
+  <span class="intro-particle" style="left:72%; bottom:16%; width:8px; height:8px; background:var(--cyan); animation-delay:1.6s;"></span>
+  <span class="intro-particle" style="left:80%; bottom:22%; width:6px; height:6px; background:var(--yellow); animation-delay:1.8s;"></span>
+  <span class="intro-particle" style="left:88%; bottom:10%; width:7px; height:7px; background:var(--pink); animation-delay:.1s;"></span>
+  <span class="intro-particle" style="left:94%; bottom:28%; width:5px; height:5px; background:var(--green); animation-delay:.3s;"></span>
+  <span class="intro-particle" style="left:4%; bottom:34%; width:6px; height:6px; background:var(--yellow); animation-delay:.5s;"></span>
+  <span class="intro-particle" style="left:60%; bottom:34%; width:8px; height:8px; background:var(--cyan); animation-delay:.7s;"></span>
+  <span class="intro-particle" style="left:36%; bottom:36%; width:5px; height:5px; background:var(--pink); animation-delay:.9s;"></span>
+  <span class="intro-particle" style="left:76%; bottom:34%; width:7px; height:7px; background:var(--green); animation-delay:1.1s;"></span>
   <div class="intro-card">
     <div class="intro-logo">
       <div class="intro-logo-mark">D</div>
@@ -2175,7 +2541,7 @@
 
 <!-- ================= BACKGROUND MUSIC ================= -->
 <audio id="bgMusic" loop preload="auto">
-  <source src="https://raw.githubusercontent.com/julzkeceabiez/github-storage/main/uploads/kelvin-evernight-1787651312068.aac" type="audio/aac">
+  <source src="https://cdn.jsdelivr.net/gh/julzkeceabiez/github-storage@main/uploads/kelvin-evernight-1787651312068.aac" type="audio/aac">
 </audio>
 
 <!-- ================= NAVBAR ================= -->
@@ -2253,7 +2619,7 @@
     <!-- ===== BANNER VIDEO (atas) ===== -->
     <div class="hero-banner" id="heroBanner">
       <video id="heroBannerVideo" autoplay loop muted playsinline preload="auto">
-        <source src="https://raw.githubusercontent.com/julzkeceabiez/file-storage/main/uploads/kelvin-evernight-1787651244538.mp4" type="video/mp4">
+        <source src="https://cdn.jsdelivr.net/gh/julzkeceabiez/file-storage@main/uploads/kelvin-evernight-1787651244538.mp4" type="video/mp4">
       </video>
       <div class="hero-banner-fallback" id="heroBannerFallback">Video gagal dimuat</div>
     </div>
@@ -5083,6 +5449,33 @@ function initIntroAndMusic(){
   }
   requestAnimationFrame(tick);
 
+  // mini confetti burst berulang selagi loading, biar makin rame
+  const introColors = ['#4baee8', '#ffd23f', '#ee5f5f', '#57c26a', '#ffb300'];
+  function spawnConfetti(count, spreadFromCenter){
+    const wrap = document.createElement('div');
+    wrap.className = 'intro-confetti';
+    for(let i = 0; i < count; i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const size = 5 + Math.random() * 7;
+      piece.style.left = spreadFromCenter
+        ? (50 + (Math.random() * 40 - 20)) + 'vw'
+        : (Math.random() * 100) + 'vw';
+      piece.style.width = size + 'px';
+      piece.style.height = (size * 0.4) + 'px';
+      piece.style.background = introColors[Math.floor(Math.random() * introColors.length)];
+      piece.style.animationDuration = (0.8 + Math.random() * 0.9) + 's';
+      piece.style.animationDelay = (Math.random() * 0.3) + 's';
+      wrap.appendChild(piece);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 2200);
+  }
+  const loadingBurst = setInterval(() => {
+    if(enterBtn.classList.contains('ready')){ clearInterval(loadingBurst); return; }
+    spawnConfetti(10, true);
+  }, 900);
+
   let entered = false;
   function enterSite(){
     if(entered || !enterBtn.classList.contains('ready')) return;
@@ -5101,6 +5494,13 @@ function initIntroAndMusic(){
   }
 
   enterBtn.addEventListener('click', enterSite);
+
+  // efek confetti gede pas tombol Enter diklik — murni dekoratif, ga ganggu logic musik/overlay yang lama
+  enterBtn.addEventListener('click', function(){
+    if(!enterBtn.classList.contains('ready')) return;
+    spawnConfetti(60, false);
+    setTimeout(() => spawnConfetti(40, false), 150);
+  });
 
   if(musicBtn && music){
     // knob toggle selalu ngikutin status audio yang sebenarnya (bukan tebakan manual),
@@ -5126,6 +5526,69 @@ function initIntroAndMusic(){
 }
 
 /* ============================================================
+   ANIMASI GLOBAL SE-WEBSITE (scroll reveal + ripple)
+   murni tambahan, ga ganggu logic fitur yang udah ada
+============================================================ */
+function initGlobalLiveAnimations(){
+  // ---- scroll reveal: fade+slide-up pas elemen kelihatan ----
+  const revealSelectors = [
+    '.status-card', '.pill-row', '.feature-card', '.section-card',
+    '.store-card', '.page-head', '.hero-v2', '.hero-v2-sub',
+    '.footer-col', '.track-list'
+  ].join(', ');
+
+  const revealEls = document.querySelectorAll(revealSelectors);
+  revealEls.forEach((el, i) => {
+    el.classList.add('reveal-live');
+    el.style.transitionDelay = Math.min(i % 8, 8) * 60 + 'ms';
+  });
+
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view-live');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in-view-live'));
+  }
+
+  // kalau user pindah halaman (nav / menu), elemen yang baru keliatan langsung di-reveal
+  const pageObserverTarget = document.querySelector('.wrap');
+  if(pageObserverTarget && 'MutationObserver' in window){
+    const mo = new MutationObserver(() => {
+      document.querySelectorAll(revealSelectors + ':not(.reveal-live)').forEach((el, i) => {
+        el.classList.add('reveal-live');
+        el.style.transitionDelay = Math.min(i % 8, 8) * 60 + 'ms';
+        requestAnimationFrame(() => el.classList.add('in-view-live'));
+      });
+    });
+    mo.observe(pageObserverTarget, { childList: true, subtree: true });
+  }
+
+  // ---- ripple effect di semua tombol & pill ----
+  const rippleSelectors = '.pill, .menu-item, .intro-enter, button, .store-order-btn, .nav-cta, .hamburger';
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest(rippleSelectors);
+    if(!target) return;
+    target.classList.add('ripple-live');
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const dot = document.createElement('span');
+    dot.className = 'ripple-dot';
+    dot.style.width = dot.style.height = size + 'px';
+    dot.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    dot.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    target.appendChild(dot);
+    setTimeout(() => dot.remove(), 600);
+  });
+}
+
+/* ============================================================
    INIT ON DOM READY
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -5138,6 +5601,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderStoreProducts();
   initAiSmartAssistant();
   initIntroAndMusic();
+  initGlobalLiveAnimations();
 });
 </script>
 </body>
