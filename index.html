@@ -33,15 +33,9 @@
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  html{background:transparent;}
+  html{background:transparent; scroll-behavior:smooth;}
   body{
-    background:
-      radial-gradient(720px 420px at 8% -6%, rgba(75,163,227,0.08), transparent 60%),
-      radial-gradient(640px 420px at 100% 0%, rgba(75,163,227,0.06), transparent 55%),
-      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
-      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
-      rgba(219,231,255,0.7);
-    background-attachment:fixed;
+    background:#0b0f16;
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
     min-height:100vh;
@@ -60,23 +54,25 @@
     width:100%;
     height:100%;
     object-fit:cover;
-    filter:saturate(1.15) brightness(0.85);
-    animation:siteBgSlowZoom 24s ease-in-out infinite alternate;
+    filter:saturate(1.12) brightness(0.95) contrast(1.03);
+    animation:siteBgSlowZoom 34s ease-in-out infinite alternate;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
   }
   @keyframes siteBgSlowZoom{
-    0%{transform:scale(1);}
-    100%{transform:scale(1.12);}
+    0%{transform:scale(1.02);}
+    100%{transform:scale(1.06);}
   }
   .site-bg-overlay{
     position:fixed;
     inset:0;
     z-index:0;
     background:
-      radial-gradient(720px 420px at 8% -6%, rgba(75,163,227,0.15), transparent 60%),
-      radial-gradient(640px 420px at 100% 0%, rgba(75,163,227,0.1), transparent 55%),
+      radial-gradient(720px 420px at 8% -6%, rgba(75,163,227,0.12), transparent 60%),
+      radial-gradient(640px 420px at 100% 0%, rgba(75,163,227,0.08), transparent 55%),
       linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 28px,
-      rgba(219,231,255,0.45);
+      rgba(219,231,255,0.22);
     pointer-events:none;
   }
 
@@ -183,7 +179,7 @@
     padding:16px 18px;
     text-align:left;
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
-    transition:transform .12s ease, box-shadow .12s ease;
+    transition:transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1);
   }
   .menu-item svg{
     width:22px;height:22px;
@@ -246,7 +242,7 @@
     text-transform:uppercase;
     cursor:pointer;
     color:var(--ink);
-    transition:transform .12s ease, box-shadow .12s ease;
+    transition:transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1);
     white-space:nowrap;
   }
   .pill svg{width:15px;height:15px;flex-shrink:0;}
@@ -292,8 +288,8 @@
     animation:dotPulseLive 1.4s ease-in-out infinite;
   }
   @keyframes dotPulseLive{
-    0%,100%{box-shadow:0 0 6px var(--green); transform:scale(1);}
-    50%{box-shadow:0 0 16px var(--green); transform:scale(1.35);}
+    0%,100%{transform:scale(1); opacity:1;}
+    50%{transform:scale(1.35); opacity:0.75;}
   }
   .status-mini-btn{
     font-family:'JetBrains Mono', monospace;
@@ -429,7 +425,7 @@
     padding:14px 6px;
     cursor:pointer;
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
-    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    transition:border-color .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1);
   }
   .quick-item:hover{border-color:var(--cyan); transform:translate(-1px,-1px); box-shadow:0 0 0 2px var(--cyan), 3px 3px 0px rgba(0,0,0,0.85);}
   .quick-item .icon{
@@ -473,7 +469,7 @@
     padding:14px 16px;
     cursor:pointer;
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
-    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    transition:border-color .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1);
     display:flex;
     align-items:center;
     gap:12px;
@@ -586,7 +582,7 @@
     font-size:13.5px;
     text-transform:uppercase;
     cursor:pointer;
-    transition:transform .15s ease, filter .15s ease, box-shadow .15s ease;
+    transition:transform .2s cubic-bezier(.16,1,.3,1), filter .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1);
     white-space:nowrap;
   }
   button:hover{filter:brightness(1.08); transform:translateY(-1px); box-shadow:var(--glow);}
@@ -901,7 +897,7 @@
     text-decoration:none;
     padding:8px 14px;
     border-radius:7px;
-    transition:background .15s ease, color .15s ease;
+    transition:background .2s cubic-bezier(.16,1,.3,1), color .2s cubic-bezier(.16,1,.3,1);
     cursor:pointer;
     flex-shrink:0;
   }
@@ -1019,7 +1015,7 @@
     border-radius:7px;
     flex-shrink:0;
     white-space:nowrap;
-    transition:background .15s ease;
+    transition:background .2s cubic-bezier(.16,1,.3,1);
   }
   .track-row a.track-dl:hover{background:var(--pink);}
   .track-row a.track-open{
@@ -1354,7 +1350,7 @@
     background:var(--iconbg);
     display:flex;align-items:center;justify-content:center;
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
-    transition:transform .15s ease, box-shadow .15s ease;
+    transition:transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1);
   }
   .platform-icon-circle svg{width:24px;height:24px;}
   .platform-icon-item:hover .platform-icon-circle{transform:translate(-2px,-2px); box-shadow:0 0 0 2px var(--cyan), 3px 3px 0px rgba(0,0,0,0.85); border-color:var(--cyan);}
@@ -1458,7 +1454,7 @@
     overflow:hidden;
     display:flex;
     flex-direction:column;
-    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    transition:border-color .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1);
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
   }
   .store-card:hover{border-color:var(--cyan); transform:translate(0,-2px); box-shadow:0 0 0 2px var(--cyan), 3px 3px 0px rgba(0,0,0,0.85);}
@@ -1544,7 +1540,7 @@
     padding:13px 16px;
     outline:none;
     margin-bottom:14px;
-    transition:border-color .15s ease;
+    transition:border-color .2s cubic-bezier(.16,1,.3,1);
   }
   .shop-search::placeholder{color:var(--dim2);}
   .shop-search:focus{border-color:var(--cyan);}
@@ -1570,7 +1566,7 @@
     padding:9px 16px;
     cursor:pointer;
     white-space:nowrap;
-    transition:background .15s ease, color .15s ease, border-color .15s ease;
+    transition:background .2s cubic-bezier(.16,1,.3,1), color .2s cubic-bezier(.16,1,.3,1), border-color .2s cubic-bezier(.16,1,.3,1);
   }
   .shop-pill.active{background:var(--cyan); border-color:var(--cyan); color:#0b0b0b;}
   .shop-pill:not(.active):hover{border-color:var(--cyan); color:var(--ink);}
@@ -1589,7 +1585,7 @@
     border-radius:18px;
     background:var(--sunken);
     overflow:hidden;
-    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    transition:border-color .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1);
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
   }
   .accordion-item:hover{border-color:var(--cyan); transform:translate(0,-2px); box-shadow:0 0 0 2px var(--cyan), 3px 3px 0px rgba(0,0,0,0.85);}
@@ -1724,7 +1720,7 @@
     font-size:16px;
     line-height:1;
     box-shadow:var(--glow);
-    transition:transform .15s ease, background .15s ease;
+    transition:transform .2s cubic-bezier(.16,1,.3,1), background .2s cubic-bezier(.16,1,.3,1);
   }
   .accordion-head .buy-btn svg{display:none;}
   .accordion-head .buy-btn::before{content:"+";}
@@ -1757,7 +1753,7 @@
   .accordion-body{
     max-height:0;
     overflow:hidden;
-    transition:max-height .3s ease;
+    transition:max-height .35s cubic-bezier(.16,1,.3,1);
   }
   .accordion-item.open .accordion-body{max-height:2400px;}
   .accordion-body-inner{
@@ -1777,8 +1773,27 @@
   }
 
   /* ---------- PAGE SWITCHING (Beranda / Downloader / Tools) ---------- */
-  .page{display:none;}
-  .page.active{display:block;}
+  .page{
+    display:none;
+    opacity:0;
+    transform:translateY(14px);
+  }
+  .page.active{
+    display:block;
+    animation:dzPageIn .45s cubic-bezier(.16,1,.3,1) forwards;
+  }
+  .page.leaving{
+    display:block;
+    animation:dzPageOut .2s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes dzPageIn{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @keyframes dzPageOut{
+    from{opacity:1; transform:translateY(0);}
+    to{opacity:0; transform:translateY(-8px);}
+  }
 
   /* ---------- BADGE UNGGULAN ---------- */
   .feature-card{position:relative; padding-right:78px;}
@@ -1819,7 +1834,7 @@
     text-align:left;
     font-family:'Space Grotesk', sans-serif;
     color:var(--ink);
-    transition:transform .12s ease, box-shadow .12s ease;
+    transition:transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1);
   }
   .category-cta:hover{transform:translate(-2px,-2px); box-shadow:0 0 0 2px var(--cyan), 3px 3px 0px rgba(0,0,0,0.85); border-color:var(--cyan);}
   .category-cta .cicon{
@@ -2069,6 +2084,7 @@
     opacity:0.45;
     z-index:0;
     animation:introBlobMove 5s ease-in-out infinite alternate;
+    will-change:transform;
   }
   #introOverlay::before{
     top:-140px; left:-140px;
@@ -2097,6 +2113,7 @@
     filter:blur(38px);
     opacity:0.4;
     animation:introRingSpin 4s linear infinite;
+    will-change:transform;
   }
   @keyframes introRingSpin{
     to{transform:rotate(360deg);}
@@ -2258,7 +2275,7 @@
     opacity:0;
     pointer-events:none;
     transform:translateY(8px) scale(0.94);
-    transition:transform .12s ease, box-shadow .12s ease;
+    transition:transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s cubic-bezier(.16,1,.3,1);
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
   }
   .intro-enter.ready{
@@ -2408,10 +2425,10 @@
   /* pill row: hover pop lebih hidup + entrance stagger via JS delay */
   .pill{
     transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
-    animation:pillIdleBounce 2.4s ease-in-out infinite;
+    animation:pillIdleBounce .6s ease-in-out 1;
   }
-  .pill:nth-child(2n){animation-delay:.3s;}
-  .pill:nth-child(3n){animation-delay:.6s;}
+  .pill:nth-child(2n){animation-delay:.05s;}
+  .pill:nth-child(3n){animation-delay:.1s;}
   @keyframes pillIdleBounce{
     0%,100%{transform:translateY(0);}
     50%{transform:translateY(-3px);}
@@ -2424,8 +2441,7 @@
   /* topbar: garis bawah gradient jalan + brand dot mantul */
   .topbar{
     position:sticky;
-    background-size:200% 100%;
-    animation:topbarGradientMove 6s linear infinite;
+    animation:none;
   }
   .topbar::after{
     content:'';
@@ -2453,8 +2469,8 @@
     animation:navCtaPulse 2s ease-in-out infinite;
   }
   @keyframes navCtaPulse{
-    0%,100%{box-shadow:3px 3px 0px rgba(0,0,0,0.85), 0 0 0 0 rgba(75,174,232,0.5);}
-    50%{box-shadow:3px 3px 0px rgba(0,0,0,0.85), 0 0 0 6px rgba(75,174,232,0);}
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.045);}
   }
 
   /* tombol & elemen klik-able: ripple effect */
@@ -2517,17 +2533,42 @@
 
   /* elemen yang animasi transform terus-terusan dikasih GPU layer sendiri
      biar browser ga perlu repaint elemen di sekitarnya */
-  .ficon, .pill, .hero-badge-pill, .brand .dot, .status-dot,
-  .site-bg-video-wrap video, .intro-particle, .intro-ring{
+  .feature-card .ficon, .hero-badge-pill, .brand .dot, .status-dot,
+  .site-bg-video-wrap video{
     will-change:transform, opacity;
     transform:translateZ(0);
   }
 
-  /* video bg: filter berat (saturate+brightness) digabung sama animasi
-     zoom bikin browser re-render efeknya tiap frame. Diringanin. */
-  .site-bg-video-wrap video{
-    filter:saturate(1.08) brightness(0.9);
-    animation-duration:34s;
+  /* selagi intro overlay masih nutup layar penuh, halaman di baliknya
+     (topbar, hero, kartu-kartu, video bg) tetap ke-render dan animasinya
+     tetap jalan walau ga kelihatan — ini numpuk bareng ~10 animasi punya
+     intro sendiri + confetti, jadi 1-2 detik pertama numpuk banget dan
+     kerasa patah-patah pas dibuka. Jeda semua animasi halaman di belakang
+     intro, baru lanjut lagi begitu intro-nya kelar (class intro-active
+     dicopot lewat JS pas user klik Enter). */
+  body.intro-active .topbar::after,
+  body.intro-active .brand .dot,
+  body.intro-active .nav-cta,
+  body.intro-active .hamburger,
+  body.intro-active .hero-badge-pill,
+  body.intro-active .feature-card .ficon,
+  body.intro-active .hero-title,
+  body.intro-active .site-bg-video-wrap video{
+    animation-play-state:paused !important;
+  }
+
+  /* hormati pengaturan "reduce motion" di HP/OS user — selain lebih
+     nyaman buat yang sensitif, ini juga langsung matiin semua animasi
+     hias yang jalan terus-terusan biar device low-end/battery-saver
+     ga keteteran render tiap frame */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+    .site-bg-video-wrap video{ animation:none !important; }
   }
 
   /* hormatin device/browser yang minta motion dikurangin */
@@ -2539,10 +2580,505 @@
     }
   }
 
+
+/* ============================================================
+   DINZ MOTION SYSTEM v2 — ANIMATION ONLY
+   Tidak mengubah layout, warna, font, spacing, atau struktur UI.
+============================================================ */
+:root{
+  --motion-ease:cubic-bezier(.22,1,.36,1);
+  --motion-spring:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-reduced-motion:no-preference){
+  /* Smooth existing interactions without changing visual design */
+  .navbar .nav-logo,
+  .navbar .nav-link,
+  .navbar .nav-cta,
+  .hero-badge-pill,
+  .hero-search-row,
+  .platform-icon-item,
+  .quick-item,
+  .card,
+  .tool,
+  .feature-card,
+  .store-card,
+  .section-link-btn,
+  .status-mini-btn,
+  .sync-btn,
+  button,
+  .pill,
+  .menu-item,
+  .link-row,
+  .track-row{
+    transition:
+      transform .26s var(--motion-spring),
+      opacity .26s var(--motion-ease),
+      box-shadow .26s var(--motion-ease),
+      border-color .26s var(--motion-ease),
+      filter .26s var(--motion-ease),
+      background-color .26s var(--motion-ease);
+  }
+
+  /* ---------- FIRST ENTRY: staggered, varied, subtle ---------- */
+  body.motion-play .navbar .nav-logo{
+    animation:motionLogoIn .68s var(--motion-spring) both;
+  }
+  body.motion-play .navbar .nav-link{
+    animation:motionNavIn .56s var(--motion-spring) both;
+    animation-delay:calc(var(--motion-i, 0) * 55ms + 80ms);
+  }
+  body.motion-play .navbar .nav-cta{
+    animation:motionCtaIn .62s var(--motion-spring) both;
+    animation-delay:220ms;
+  }
+  body.motion-play .hero-v2{
+    animation:motionHeroIn .82s var(--motion-spring) both;
+    animation-delay:90ms;
+  }
+  body.motion-play .hero-badge-pill{
+    animation:motionFadeDown .62s var(--motion-spring) both;
+    animation-delay:170ms;
+  }
+  body.motion-play .hero-title{
+    animation:motionTitleIn .88s var(--motion-spring) both, heroTitleShine 3.2s linear infinite 1s;
+    animation-delay:260ms, 1s;
+  }
+  body.motion-play .hero-v2-sub{
+    animation:motionFadeUp .72s var(--motion-spring) both;
+    animation-delay:350ms;
+  }
+  body.motion-play .hero-banner{
+    animation:motionScaleIn .82s var(--motion-spring) both;
+    animation-delay:430ms;
+  }
+  body.motion-play .hero-search-row{
+    animation:motionFromRight .72s var(--motion-spring) both;
+    animation-delay:510ms;
+  }
+  body.motion-play .hero-hint{
+    animation:motionFadeUp .58s var(--motion-spring) both;
+    animation-delay:570ms;
+  }
+  body.motion-play .platform-icon-item{
+    animation:motionScaleIn .58s var(--motion-spring) both;
+    animation-delay:calc(var(--motion-i, 0) * 65ms + 600ms);
+  }
+  body.motion-play .section-card,
+  body.motion-play .status-card,
+  body.motion-play .store-card,
+  body.motion-play .feature-card,
+  body.motion-play .quick-item,
+  body.motion-play .card,
+  body.motion-play .tool{
+    animation:motionCardIn .66s var(--motion-spring) both;
+    animation-delay:calc(var(--motion-i, 0) * 65ms + 180ms);
+  }
+
+  /* Existing idle breathing is softened so it doesn't fight entrance/hover motion. */
+  .feature-card,
+  .section-card,
+  .status-card,
+  .store-card,
+  .page-head{
+    animation-duration:4.8s;
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  .motion-reveal{
+    opacity:0;
+    transform:translate3d(0,28px,0) scale(.985);
+    transition:
+      opacity .62s var(--motion-ease),
+      transform .72s var(--motion-spring);
+    will-change:opacity,transform;
+  }
+  .motion-reveal.motion-in{
+    opacity:1;
+    transform:translate3d(0,0,0) scale(1);
+    will-change:auto;
+  }
+  .motion-reveal[data-motion="left"]{transform:translate3d(-28px,8px,0) scale(.985);}
+  .motion-reveal[data-motion="right"]{transform:translate3d(28px,8px,0) scale(.985);}
+  .motion-reveal[data-motion="scale"]{transform:scale(.94); opacity:0;}
+  .motion-reveal[data-motion="blur"]{transform:translate3d(0,18px,0) scale(.99); filter:blur(5px); opacity:0;}
+  .motion-reveal.motion-in[data-motion="left"],
+  .motion-reveal.motion-in[data-motion="right"],
+  .motion-reveal.motion-in[data-motion="scale"],
+  .motion-reveal.motion-in[data-motion="blur"]{
+    transform:none;
+    filter:none;
+    opacity:1;
+  }
+
+  /* ---------- CHILD STAGGER ---------- */
+  /* :not(.motion-reveal) = jaring pengaman: elemen yang sudah dipegang sistem
+     scroll-reveal (.motion-reveal/.motion-in) tidak boleh direbut opacity:0 di sini,
+     karena itu yang bikin kartu/ikon kelihatan hilang permanen. */
+  .motion-stagger > .motion-child:not(.motion-reveal){
+    opacity:0;
+    transform:translate3d(0,14px,0);
+    transition:opacity .5s var(--motion-ease), transform .58s var(--motion-spring);
+    transition-delay:calc(var(--motion-child-i, 0) * 55ms);
+  }
+  .motion-stagger.motion-in > .motion-child:not(.motion-reveal){
+    opacity:1;
+    transform:none;
+  }
+
+  /* ---------- MICRO INTERACTIONS ---------- */
+  .quick-item:hover,
+  .card:hover,
+  .store-card:hover,
+  .feature-card:hover,
+  .section-card:hover{
+    transform:translate3d(-2px,-3px,0);
+  }
+  .quick-item:hover .icon,
+  .card:hover .icon,
+  .store-card:hover .icon,
+  .feature-card:hover .ficon,
+  .tool-head .icon{
+    transform:translate3d(0,-2px,0) scale(1.035);
+    transition:transform .3s var(--motion-spring);
+  }
+  .platform-icon-item:hover .platform-icon-circle{
+    transform:translate3d(-2px,-3px,0) scale(1.035);
+  }
+  button:hover,
+  .nav-cta:hover,
+  .section-link-btn:hover,
+  .status-mini-btn:hover,
+  .sync-btn:hover,
+  .pill:hover{
+    transform:translate3d(0,-2px,0);
+  }
+  button:active,
+  .nav-cta:active,
+  .section-link-btn:active,
+  .status-mini-btn:active,
+  .sync-btn:active,
+  .pill:active{
+    transform:translate3d(0,0,0) scale(.975);
+    transition-duration:.12s;
+  }
+  .nav-logo:hover{
+    transform:translate3d(0,-2px,0);
+  }
+  .nav-logo-mark{
+    transition:transform .32s var(--motion-spring);
+  }
+  .nav-logo:hover .nav-logo-mark{
+    transform:rotate(-4deg) scale(1.06);
+  }
+  .card::after{
+    transition:transform .28s var(--motion-spring), filter .28s ease;
+  }
+  .card:hover::after{
+    transform:scale(1.08) rotate(3deg);
+  }
+  .store-order-btn:hover svg,
+  .nav-cta:hover svg,
+  .hero-search-row button:hover svg{
+    transform:translateX(2px);
+  }
+  button svg,
+  .nav-cta svg,
+  .store-order-btn svg,
+  .hero-search-row button svg{
+    transition:transform .28s var(--motion-spring);
+  }
+
+  /* ---------- MENU / DROPDOWN ---------- */
+  .menu-overlay.open .menu-item{
+    animation:motionMenuIn .55s var(--motion-spring) both;
+    animation-delay:calc(var(--motion-i, 0) * 55ms + 80ms);
+  }
+  .nav-dropdown-wrap.open .nav-dropdown-menu{
+    animation:motionDropIn .28s var(--motion-spring) both;
+    transform-origin:top center;
+  }
+
+  /* ---------- RESULT / CHAT CONTENT ---------- */
+  .result.show,
+  .panel.show,
+  .enc-result.show{
+    animation:motionRevealPanel .5s var(--motion-spring) both;
+  }
+  .ai-bubble{
+    animation:motionBubbleIn .42s var(--motion-spring) both;
+  }
+  .ai-photo-grid a{
+    transition:transform .28s var(--motion-spring), box-shadow .28s ease;
+  }
+  .ai-photo-grid a:hover{
+    transform:translateY(-3px) scale(1.015);
+    box-shadow:0 7px 0 rgba(0,0,0,.18);
+  }
+  #aiVideoModal{
+    opacity:0;
+    transition:opacity .3s var(--motion-ease);
+  }
+  #aiVideoModal.motion-modal-open{opacity:1;}
+}
+
+@keyframes motionLogoIn{
+  from{opacity:0; transform:translate3d(-12px,-8px,0) scale(.9);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionNavIn{
+  from{opacity:0; transform:translate3d(0,-12px,0);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionCtaIn{
+  from{opacity:0; transform:translate3d(12px,-8px,0) scale(.94);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionHeroIn{
+  from{opacity:0; transform:translate3d(0,18px,0) scale(.975);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionTitleIn{
+  from{opacity:0; transform:translate3d(0,22px,0) scale(.96); filter:blur(5px);}
+  to{opacity:1; transform:none; filter:none;}
+}
+@keyframes motionFadeUp{
+  from{opacity:0; transform:translate3d(0,18px,0);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionFadeDown{
+  from{opacity:0; transform:translate3d(0,-14px,0);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionFromRight{
+  from{opacity:0; transform:translate3d(26px,0,0);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionScaleIn{
+  from{opacity:0; transform:scale(.9);}
+  to{opacity:1; transform:scale(1);}
+}
+@keyframes motionCardIn{
+  from{opacity:0; transform:translate3d(0,24px,0) scale(.965);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionMenuIn{
+  from{opacity:0; transform:translate3d(-18px,10px,0) scale(.98);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionDropIn{
+  from{opacity:0; transform:translateX(-50%) translateY(-8px) scale(.97);}
+  to{opacity:1; transform:translateX(-50%) translateY(0) scale(1);}
+}
+@keyframes motionRevealPanel{
+  from{opacity:0; transform:translate3d(0,14px,0) scale(.985);}
+  to{opacity:1; transform:none;}
+}
+@keyframes motionBubbleIn{
+  from{opacity:0; transform:translate3d(0,8px,0) scale(.985);}
+  to{opacity:1; transform:none;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .motion-reveal,
+  .motion-reveal[data-motion="left"],
+  .motion-reveal[data-motion="right"],
+  .motion-reveal[data-motion="scale"],
+  .motion-reveal[data-motion="blur"]{
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
+  }
+}
+
+
+  /* ============================================================
+     DINZ INTRO MOTION V3 — CINEMATIC / SMOOTH / LOW JANK
+     Animation-only layer. Existing intro UI remains untouched.
+  ============================================================ */
+  #introOverlay{
+    opacity:1;
+    visibility:visible;
+    transform:none;
+    overflow:hidden;
+    isolation:isolate;
+    transition:
+      opacity .72s cubic-bezier(.22,1,.36,1),
+      visibility .72s step-end,
+      filter .72s cubic-bezier(.22,1,.36,1),
+      transform .72s cubic-bezier(.22,1,.36,1);
+  }
+  #introOverlay::before,
+  #introOverlay::after{
+    animation:introBlobV3 8s cubic-bezier(.22,1,.36,1) infinite alternate;
+    filter:blur(24px);
+    opacity:.32;
+  }
+  #introOverlay::after{animation-delay:-3.2s;}
+  @keyframes introBlobV3{
+    0%{transform:translate3d(-12px,8px,0) scale(.92);}
+    50%{transform:translate3d(34px,-24px,0) scale(1.12);}
+    100%{transform:translate3d(-20px,28px,0) scale(.98);}
+  }
+
+  /* soft cinematic light sweep */
+  #introOverlay > .intro-card::before{
+    content:'';
+    position:absolute;
+    inset:-2px;
+    border-radius:inherit;
+    pointer-events:none;
+    z-index:-1;
+    background:linear-gradient(115deg, transparent 25%, rgba(255,255,255,.24) 50%, transparent 75%);
+    background-size:220% 100%;
+    opacity:0;
+    animation:introCardSweepV3 2.2s cubic-bezier(.22,1,.36,1) 1.05s forwards;
+  }
+  @keyframes introCardSweepV3{
+    0%{background-position:120% 0;opacity:0;}
+    18%{opacity:.8;}
+    100%{background-position:-120% 0;opacity:0;}
+  }
+
+  .intro-ring{
+    width:460px;height:460px;
+    opacity:.22;
+    filter:blur(30px);
+    animation:introRingV3 12s linear infinite;
+  }
+  @keyframes introRingV3{
+    from{transform:rotate(0deg) scale(.92);}
+    50%{transform:rotate(180deg) scale(1.06);}
+    to{transform:rotate(360deg) scale(.92);}
+  }
+
+  /* staged entrance of the existing intro UI */
+  .intro-card{
+    opacity:1;
+    transform:translate3d(0,0,0) scale(1);
+    animation:introCardIdleV3 5.5s ease-in-out 1.7s infinite;
+    will-change:transform;
+  }
+  @keyframes introCardIdleV3{
+    0%,100%{transform:translate3d(0,0,0) scale(1);}
+    50%{transform:translate3d(0,-4px,0) scale(1.006);}
+  }
+  .intro-logo,
+  .intro-bar-track,
+  .intro-status,
+  .intro-enter{
+    opacity:0;
+    will-change:transform,opacity;
+  }
+  .intro-logo{transform:translate3d(0,18px,0) scale(.94);}
+  .intro-bar-track{transform:translate3d(0,14px,0) scaleX(.82); transform-origin:center;}
+  .intro-status{transform:translate3d(0,10px,0);}
+  .intro-enter{transform:translate3d(0,18px,0) scale(.94);}
+
+  #introOverlay.intro-v3-ready .intro-logo{
+    animation:introLogoInV3 .72s cubic-bezier(.22,1,.36,1) .08s forwards;
+  }
+  #introOverlay.intro-v3-ready .intro-bar-track{
+    animation:introBarInV3 .62s cubic-bezier(.22,1,.36,1) .28s forwards;
+  }
+  #introOverlay.intro-v3-ready .intro-status{
+    animation:introTextInV3 .56s cubic-bezier(.22,1,.36,1) .42s forwards;
+  }
+  #introOverlay.intro-v3-ready .intro-enter{
+    animation:introButtonInV3 .72s cubic-bezier(.22,1,.36,1) .56s forwards;
+  }
+  @keyframes introLogoInV3{
+    0%{opacity:0;transform:translate3d(0,18px,0) scale(.94) rotate(-2deg);filter:blur(5px);}
+    70%{opacity:1;transform:translate3d(0,-2px,0) scale(1.015) rotate(0);filter:blur(0);}
+    100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0);}
+  }
+  @keyframes introBarInV3{
+    0%{opacity:0;transform:translate3d(0,14px,0) scaleX(.82);}
+    100%{opacity:1;transform:translate3d(0,0,0) scaleX(1);}
+  }
+  @keyframes introTextInV3{
+    from{opacity:0;transform:translate3d(0,10px,0);filter:blur(3px);}
+    to{opacity:1;transform:translate3d(0,0,0);filter:blur(0);}
+  }
+  @keyframes introButtonInV3{
+    0%{opacity:0;transform:translate3d(0,18px,0) scale(.94);filter:blur(3px);}
+    70%{opacity:1;transform:translate3d(0,-2px,0) scale(1.02);filter:blur(0);}
+    100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0);}
+  }
+
+  /* make the old logo wiggle/shimmer subtle instead of distracting */
+  .intro-logo-mark{animation:introMarkV3 3.6s cubic-bezier(.22,1,.36,1) infinite .9s;}
+  @keyframes introMarkV3{
+    0%,82%,100%{transform:rotate(0) scale(1);}
+    88%{transform:rotate(-4deg) scale(1.035);}
+    94%{transform:rotate(3deg) scale(1.015);}
+  }
+  .intro-logo-text{animation:introTextShineV3 3.6s ease-in-out infinite 1s;}
+  @keyframes introTextShineV3{
+    0%,55%,100%{background-position:200% center;}
+    75%{background-position:-100% center;}
+  }
+  .intro-logo-text span{animation:introDotV3 1.8s ease-in-out infinite 1s;}
+  @keyframes introDotV3{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.35);opacity:.72;}}
+
+  .intro-bar-fill{transition:width .08s linear;}
+  .intro-status{animation:introStatusV3 1.8s ease-in-out infinite;}
+  @keyframes introStatusV3{0%,100%{opacity:.65;}50%{opacity:1;}}
+
+  /* page reveal: the website appears as the intro exits, not before */
+  body.intro-active .wrap{
+    opacity:0;
+    transform:translate3d(0,22px,0) scale(.985);
+    filter:blur(4px);
+    transition:none !important;
+  }
+  body.intro-reveal .wrap{
+    opacity:1;
+    transform:translate3d(0,0,0) scale(1);
+    filter:blur(0);
+    transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .95s cubic-bezier(.22,1,.36,1),filter .85s cubic-bezier(.22,1,.36,1) !important;
+  }
+  #introOverlay.intro-exiting{
+    opacity:0;
+    filter:blur(9px);
+    transform:scale(1.025);
+    transition:opacity .68s cubic-bezier(.22,1,.36,1),filter .68s cubic-bezier(.22,1,.36,1),transform .78s cubic-bezier(.22,1,.36,1);
+  }
+  #introOverlay.intro-exiting .intro-card{
+    animation:introCardExitV3 .62s cubic-bezier(.22,1,.36,1) forwards !important;
+  }
+  #introOverlay.intro-exiting .intro-ring{animation:introRingExitV3 .7s cubic-bezier(.22,1,.36,1) forwards !important;}
+  @keyframes introCardExitV3{
+    0%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0);}
+    35%{opacity:1;transform:translate3d(0,-7px,0) scale(1.012);}
+    100%{opacity:0;transform:translate3d(0,-34px,0) scale(.96);filter:blur(5px);}
+  }
+  @keyframes introRingExitV3{
+    to{opacity:0;transform:scale(1.35) rotate(75deg);filter:blur(50px);}
+  }
+
+  @media (max-width:600px){
+    .intro-ring{width:330px;height:330px;}
+    #introOverlay::before,#introOverlay::after{width:300px;height:300px;}
+    body.intro-active .wrap{transform:translate3d(0,14px,0) scale(.99);filter:blur(2px);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #introOverlay *,#introOverlay::before,#introOverlay::after{animation:none !important;transition:none !important;}
+    #introOverlay .intro-logo,#introOverlay .intro-bar-track,#introOverlay .intro-status,#introOverlay .intro-enter{opacity:1 !important;transform:none !important;filter:none !important;}
+    body.intro-active .wrap{opacity:1;transform:none;filter:none;}
+  }
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
 </head>
-<body>
+<body class="intro-active">
 
 <!-- ================= FULL-SITE BACKGROUND VIDEO ================= -->
 <div class="site-bg-video-wrap">
@@ -3049,27 +3585,28 @@ function parseGenericDownload(data, opts={}){
   add(r.hd, 'HD', 'video');
   add(r.sd, 'SD', 'video');
   add(r.video, 'Video', 'video');
-  add(r.url, 'Download', 'file');
-  add(r.link, 'Download', 'file');
-  add(r.download, 'Download', 'file');
-  add(r.audio, 'Audio MP3', 'audio');
-  add(r.mp3, 'Audio MP3', 'audio');
+  add(r.videos, 'Video', 'video');
+  add(r.links, 'Media', opts.defaultType||'video');
+  add(r.download, 'Media', opts.defaultType||'video');
+  add(r.download_url, 'Media', opts.defaultType||'video');
+  add(r.play, 'Video', 'video');
+  add(r.url, 'Media', opts.defaultType||'video');
+  add(r.image, 'Foto', 'image');
+  add(r.images, 'Foto', 'image');
+  add(r.audio, 'Audio', 'audio');
+  add(r.mp3, 'Audio', 'audio');
 
-  let mediaUrl = null, isVid = true;
-  if(candidates.length > 0){
-    mediaUrl = candidates[0].url;
-    isVid = candidates[0].type !== 'audio';
-  } else if(typeof r === 'string' && /^https?:\/\//i.test(r)){
-    mediaUrl = r;
-  }
+  const links = candidates.filter(c=>c.url).map(c=>({label:c.label, url:c.url, type:c.type||opts.defaultType||'video'}));
+  if(links.length===0) throw new Error(`Format respons ${opts.name||'tool ini'} tidak dikenali / media tidak ditemukan`);
+
   return {
-    thumb: r.cover || r.thumbnail || r.thumb || r.image || '',
-    author: r.author || r.username || r.uploader || opts.name || '',
+    thumb: r.thumbnail || r.cover || r.thumb || r.image || '',
+    author: r.author || r.username || r.channel || r.uploader || opts.name || '',
     title: r.title || r.caption || r.desc || opts.defaultTitle || '',
     duration: r.duration || '',
-    mediaUrl: mediaUrl,
-    isVideo: isVid,
-    links: candidates.length > 1 ? candidates : []
+    mediaUrl: links[0].url,
+    isVideo: links[0].type !== 'audio' && links[0].type !== 'image',
+    links: links.length > 1 ? links : []
   };
 }
 
@@ -3078,23 +3615,23 @@ const SERVICES = {
     name: 'TikTok Downloader',
     desc: 'Download video TikTok tanpa watermark / MP3',
     placeholder: 'Tempel link TikTok di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/tiktok?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/tiktok?url=${encodeURIComponent(url)}`,
     parse: data => {
-      if(!data || !data.result) throw new Error('Link tidak valid atau video tidak ditemukan');
-      const res = data.result;
-      const v = res.v_data || res;
+      if(!data.status || !data.result) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result;
+      const labels = ['Tanpa Watermark', 'Standar (tanpa watermark)', 'Dengan Watermark'];
+      const links = [];
+      (r.links||[]).forEach((link,i)=>{ if(link) links.push({ label: labels[i] || `Video ${i+1}`, url: link, type:'video' }); });
+      if(r.music && r.music.url) links.push({ label:'Audio MP3', url:r.music.url, type:'audio' });
+      if(links.length===0) throw new Error('Tidak ada media ditemukan pada respons');
       return {
-        thumb: res.cover || v.cover || (res.author && res.author.avatar) || '',
-        author: (res.author && (res.author.nickname || res.author.unique_id)) || res.nickname || 'TikTok User',
-        title: res.title || res.desc || v.desc || 'Video TikTok',
-        duration: res.duration || v.duration || '',
-        mediaUrl: res.nowm || v.nowm || res.wm || v.wm || res.play || '',
+        thumb: r.thumbnail || '',
+        author: r.author || 'TikTok User',
+        title: r.title || 'Video TikTok',
+        duration: r.duration || '',
+        mediaUrl: links[0].url,
         isVideo: true,
-        links: [
-          { label: 'Tanpa Watermark', url: res.nowm || v.nowm || res.play, type: 'video' },
-          { label: 'Dengan Watermark', url: res.wm || v.wm, type: 'video' },
-          { label: 'Audio MP3', url: res.music || v.music || (res.music_info && res.music_info.play), type: 'audio' },
-        ].filter(l => l.url)
+        links
       };
     }
   },
@@ -3102,24 +3639,22 @@ const SERVICES = {
     name: 'Instagram Downloader',
     desc: 'Download foto, video, Reels, & Story IG',
     placeholder: 'Tempel link post / Reels Instagram di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/igdownload?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/instagram?url=${encodeURIComponent(url)}`,
     parse: data => {
-      if(!data || !data.result) throw new Error('Link Instagram tidak valid atau postingan privat');
-      const res = data.result;
-      const list = Array.isArray(res) ? res : (res.url || res.media || [res]);
-      const first = list[0];
-      const mediaUrl = typeof first === 'string' ? first : (first.url || first.download || '');
+      if(!data.status) throw new Error(data.message || 'Gagal mengambil data Instagram');
+      const links = [];
+      (data.videos||[]).forEach((v,i)=>{ if(v) links.push({ label:`Video ${i+1}`, url:v, type:'video' }); });
+      (data.images||[]).forEach((im,i)=>{ if(im) links.push({ label:`Foto ${i+1}`, url:im, type:'image' }); });
+      if(links.length===0) throw new Error('Tidak ada media ditemukan pada respons');
+      const firstImage = links.find(m=>m.type==='image');
       return {
-        thumb: typeof first === 'object' ? (first.thumb || first.thumbnail || mediaUrl) : mediaUrl,
-        author: res.author || 'Instagram',
-        title: res.caption || res.title || 'Postingan Instagram',
+        thumb: data.thumb || (firstImage ? firstImage.url : ''),
+        author: data.creator || 'Instagram',
+        title: data.type==='video' ? 'Video Instagram' : 'Postingan Instagram',
         duration: '',
-        mediaUrl: mediaUrl,
-        isVideo: !/\.(jpg|jpeg|png|webp)/i.test(mediaUrl),
-        links: list.map((item, i) => {
-          const u = typeof item === 'string' ? item : (item.url || item.download);
-          return { label: `Media ${i+1}`, url: u, type: /\.(jpg|jpeg|png|webp)/i.test(u) ? 'image' : 'video' };
-        })
+        mediaUrl: links[0].url,
+        isVideo: links[0].type !== 'image',
+        links
       };
     }
   },
@@ -3127,21 +3662,18 @@ const SERVICES = {
     name: 'YouTube Video (MP4)',
     desc: 'Download video YouTube berbagai kualitas',
     placeholder: 'Tempel link video YouTube di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/ytmp4?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/ytmp4?url=${encodeURIComponent(url)}`,
     parse: data => {
-      if(!data || !data.result) throw new Error('Link YouTube tidak valid');
-      const res = data.result;
-      const downloadUrl = res.download ? res.download.url : (res.url || res.link || '');
+      if(!data.status || !data.result || !data.result.download) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result;
       return {
-        thumb: res.thumbnail || res.thumb || (res.metadata && res.metadata.thumbnail) || '',
-        author: res.channel || (res.metadata && res.metadata.channel) || 'YouTube',
-        title: res.title || (res.metadata && res.metadata.title) || 'Video YouTube',
-        duration: res.duration || (res.metadata && res.metadata.duration) || '',
-        mediaUrl: downloadUrl,
+        thumb: r.thumbnail || '',
+        author: r.author || 'YouTube',
+        title: r.title || 'Video YouTube',
+        duration: r.duration || '',
+        mediaUrl: r.download,
         isVideo: true,
-        links: [
-          { label: `MP4 (${res.quality || 'HD'})`, url: downloadUrl, type: 'video' }
-        ].filter(l => l.url)
+        links: [{ label: `MP4 ${r.quality||''}`.trim() || 'Video', url: r.download, type:'video' }]
       };
     }
   },
@@ -3149,21 +3681,18 @@ const SERVICES = {
     name: 'YouTube Audio (MP3)',
     desc: 'Download lagu / audio dari YouTube',
     placeholder: 'Tempel link video YouTube di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/ytmp3?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/ytmp3?url=${encodeURIComponent(url)}`,
     parse: data => {
-      if(!data || !data.result) throw new Error('Link YouTube tidak valid');
-      const res = data.result;
-      const downloadUrl = res.download ? res.download.url : (res.url || res.link || '');
+      if(!data.status || !data.result || !data.result.download) throw new Error(data.message || 'Audio tidak ditemukan / link tidak valid');
+      const r = data.result;
       return {
-        thumb: res.thumbnail || res.thumb || '',
-        author: res.channel || 'YouTube',
-        title: res.title || 'Audio YouTube',
-        duration: res.duration || '',
-        mediaUrl: downloadUrl,
+        thumb: r.thumbnail || '',
+        author: r.channel || 'YouTube',
+        title: r.title || 'Audio YouTube',
+        duration: r.duration || '',
+        mediaUrl: r.download,
         isVideo: false,
-        links: [
-          { label: 'Audio MP3', url: downloadUrl, type: 'audio' }
-        ].filter(l => l.url)
+        links: [{ label: 'Audio MP3', url: r.download, type:'audio' }]
       };
     }
   },
@@ -3171,23 +3700,27 @@ const SERVICES = {
     name: 'Facebook Downloader',
     desc: 'Download video Facebook (HD / SD)',
     placeholder: 'Tempel link video Facebook di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/fbdl?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/facebook?url=${encodeURIComponent(url)}`,
     parse: data => {
-      if(!data || !data.result) throw new Error('Link Facebook tidak valid atau video privat');
-      const res = data.result;
-      const hd = res.hd || res.video_hd || '';
-      const sd = res.sd || res.video_sd || res.url || '';
+      if(data.status === false) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result || data;
+      const candidates = [];
+      if(r.hd) candidates.push({ label:'HD', url:r.hd });
+      if(r.sd) candidates.push({ label:'SD', url:r.sd });
+      if(r.url) candidates.push({ label:'Video', url:r.url });
+      if(r.download) candidates.push({ label:'Video', url:r.download });
+      if(Array.isArray(r.links)) r.links.forEach((l,i)=>candidates.push({ label:`Video ${i+1}`, url: typeof l==='string'?l:l.url }));
+      if(Array.isArray(data.videos)) data.videos.forEach((l,i)=>candidates.push({ label:`Video ${i+1}`, url:l }));
+      const links = candidates.filter(c=>c.url).map(c=>({ label:c.label, url:c.url, type:'video' }));
+      if(links.length===0) throw new Error('Format respons Facebook tidak dikenali');
       return {
-        thumb: res.thumbnail || res.thumb || '',
+        thumb: r.thumbnail || '',
         author: 'Facebook',
-        title: res.title || 'Video Facebook',
-        duration: '',
-        mediaUrl: hd || sd,
+        title: r.title || 'Video Facebook',
+        duration: r.duration || '',
+        mediaUrl: links[0].url,
         isVideo: true,
-        links: [
-          { label: 'Video HD', url: hd, type: 'video' },
-          { label: 'Video SD', url: sd, type: 'video' },
-        ].filter(l => l.url)
+        links
       };
     }
   },
@@ -3195,20 +3728,30 @@ const SERVICES = {
     name: 'CapCut Downloader',
     desc: 'Download template video CapCut tanpa watermark',
     placeholder: 'Tempel link template CapCut di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/capcut?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.nexray.eu.cc/downloader/capcut?url=${encodeURIComponent(url)}`,
     parse: data => {
-      if(!data || !data.result) throw new Error('Link CapCut tidak valid');
-      const res = data.result;
+      if(data.status === false) throw new Error(data.message || 'Video tidak ditemukan / link tidak valid');
+      const r = data.result || data.data || data;
+      const candidates = [];
+      if(r.hd) candidates.push({ label:'HD', url:r.hd });
+      if(r.sd) candidates.push({ label:'SD', url:r.sd });
+      if(r.video) candidates.push({ label:'Video', url:r.video });
+      if(r.url) candidates.push({ label:'Video', url:r.url });
+      if(r.download) candidates.push({ label:'Video', url:r.download });
+      if(r.download_url) candidates.push({ label:'Video', url:r.download_url });
+      if(r.play) candidates.push({ label:'Video', url:r.play });
+      if(Array.isArray(r.links)) r.links.forEach((l,i)=>candidates.push({ label:`Video ${i+1}`, url: typeof l==='string'?l:l.url }));
+      if(Array.isArray(r.videos)) r.videos.forEach((l,i)=>candidates.push({ label:`Video ${i+1}`, url: typeof l==='string'?l:l.url }));
+      const links = candidates.filter(c=>c.url).map(c=>({ label:c.label, url:c.url, type:'video' }));
+      if(links.length===0) throw new Error('Format respons CapCut tidak dikenali');
       return {
-        thumb: res.cover || res.thumbnail || '',
-        author: res.author || res.user_name || 'CapCut Creator',
-        title: res.title || 'Template CapCut',
-        duration: res.duration || '',
-        mediaUrl: res.video_ori || res.video || res.url || '',
+        thumb: r.thumbnail || r.cover || '',
+        author: r.author || r.username || 'CapCut Creator',
+        title: r.title || r.desc || 'Video CapCut',
+        duration: r.duration || '',
+        mediaUrl: links[0].url,
         isVideo: true,
-        links: [
-          { label: 'Download Video', url: res.video_ori || res.video || res.url, type: 'video' }
-        ].filter(l => l.url)
+        links
       };
     }
   },
@@ -3216,69 +3759,77 @@ const SERVICES = {
     name: 'Pinterest Downloader',
     desc: 'Download foto / video Pin dari Pinterest',
     placeholder: 'Tempel link Pin Pinterest di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/pinterest?url=${encodeURIComponent(url)}`,
-    parse: data => parseGenericDownload(data, { name: 'Pinterest', defaultTitle: 'Pin Pinterest' })
+    endpoint: url => `https://api.azbry.com/api/download/pinterest?url=${encodeURIComponent(url)}`,
+    parse: data => parseGenericDownload(data, { name: 'Pinterest', defaultType: 'image', defaultTitle: 'Pin Pinterest' })
   },
   twitter: {
     name: 'Twitter / X Downloader',
     desc: 'Download video / GIF dari post Twitter (X)',
     placeholder: 'Tempel link tweet di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/twitter?url=${encodeURIComponent(url)}`,
-    parse: data => parseGenericDownload(data, { name: 'Twitter', defaultTitle: 'Video Twitter' })
+    endpoint: url => `https://api.azbry.com/api/download/twitter?url=${encodeURIComponent(url)}`,
+    parse: data => parseGenericDownload(data, { name: 'Twitter/X', defaultTitle: 'Video Twitter' })
   },
   threads: {
     name: 'Threads Downloader',
     desc: 'Download foto & video dari Threads',
     placeholder: 'Tempel link postingan Threads di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/threads?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/threads?url=${encodeURIComponent(url)}`,
     parse: data => parseGenericDownload(data, { name: 'Threads', defaultTitle: 'Post Threads' })
   },
   reddit: {
     name: 'Reddit Downloader',
     desc: 'Download video & media dari Reddit',
     placeholder: 'Tempel link post Reddit di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/reddit?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/reddit?url=${encodeURIComponent(url)}`,
     parse: data => parseGenericDownload(data, { name: 'Reddit', defaultTitle: 'Media Reddit' })
   },
   soundcloud: {
     name: 'SoundCloud Downloader',
     desc: 'Download lagu / trek dari SoundCloud',
     placeholder: 'Tempel link lagu SoundCloud di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/soundcloud?url=${encodeURIComponent(url)}`,
-    parse: data => parseGenericDownload(data, { name: 'SoundCloud', defaultTitle: 'Trek SoundCloud' })
+    endpoint: url => `https://api.azbry.com/api/download/soundcloud?url=${encodeURIComponent(url)}`,
+    parse: data => parseGenericDownload(data, { name: 'SoundCloud', defaultType: 'audio', defaultTitle: 'Trek SoundCloud' })
   },
   snapchat: {
     name: 'Snapchat Downloader',
     desc: 'Download Spotlight / Story Snapchat',
     placeholder: 'Tempel link Spotlight Snapchat di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/snapchat?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/snapchat?url=${encodeURIComponent(url)}`,
     parse: data => parseGenericDownload(data, { name: 'Snapchat', defaultTitle: 'Snapchat Media' })
   },
   tumblr: {
     name: 'Tumblr Downloader',
     desc: 'Download foto & video dari Tumblr',
     placeholder: 'Tempel link post Tumblr di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/tumblr?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/tumblr?url=${encodeURIComponent(url)}`,
     parse: data => parseGenericDownload(data, { name: 'Tumblr', defaultTitle: 'Tumblr Media' })
   },
   likee: {
     name: 'Likee Downloader',
     desc: 'Download video Likee tanpa watermark',
     placeholder: 'Tempel link video Likee di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/likee?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/likee?url=${encodeURIComponent(url)}`,
     parse: data => parseGenericDownload(data, { name: 'Likee', defaultTitle: 'Video Likee' })
   },
   snackvideo: {
     name: 'SnackVideo Downloader',
     desc: 'Download video SnackVideo tanpa watermark',
     placeholder: 'Tempel link video SnackVideo di sini...',
-    endpoint: url => `https://api.vreden.web.id/api/snackvideo?url=${encodeURIComponent(url)}`,
+    endpoint: url => `https://api.azbry.com/api/download/snackvideo?url=${encodeURIComponent(url)}`,
     parse: data => parseGenericDownload(data, { name: 'SnackVideo', defaultTitle: 'Video SnackVideo' })
   }
 };
 
-/* Helper untuk fetch JSON dengan timeout & pesan error yang manusiawi */
-async function fetchJsonSafe(url, options = {}, timeoutMs = 25000){
+/* Helper untuk fetch JSON dengan timeout & pesan error yang manusiawi.
+   Banyak API downloader gratis tidak mengirim header CORS yang benar,
+   jadi kalau fetch langsung diblokir browser (bukan berarti internet mati),
+   kita otomatis coba ulang lewat proxy CORS publik sebelum benar-benar menyerah. */
+const CORS_PROXIES = [
+  u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+  u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+];
+
+async function fetchOnce(url, options, timeoutMs){
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -3287,17 +3838,40 @@ async function fetchJsonSafe(url, options = {}, timeoutMs = 25000){
     if (!res.ok) {
       throw new Error(`Server merespon dengan status error (${res.status})`);
     }
-    const data = await res.json();
-    return data;
+    return await res.json();
   } catch (err) {
     clearTimeout(timer);
+    throw err;
+  }
+}
+
+function isNetworkOrCorsError(err){
+  return err.name === 'AbortError' || err instanceof TypeError || err.message === 'Failed to fetch';
+}
+
+async function fetchJsonSafe(url, options = {}, timeoutMs = 25000){
+  const isGet = !options.method || options.method.toUpperCase() === 'GET';
+
+  try {
+    return await fetchOnce(url, options, timeoutMs);
+  } catch (err) {
+    if (!isNetworkOrCorsError(err)) throw err;
+
+    // Fallback lewat proxy CORS cuma masuk akal untuk request GET
+    if (isGet) {
+      for (const buildProxyUrl of CORS_PROXIES) {
+        try {
+          return await fetchOnce(buildProxyUrl(url), { ...options, method: 'GET' }, timeoutMs);
+        } catch (proxyErr) {
+          // lanjut coba proxy berikutnya
+        }
+      }
+    }
+
     if (err.name === 'AbortError') {
       throw new Error('Koneksi ke server terlalu lambat (timeout). Coba lagi beberapa saat.');
     }
-    if (err.message === 'Failed to fetch' || err instanceof TypeError) {
-      throw new Error('Gagal terhubung ke server API. Periksa koneksi internetmu atau coba lagi nanti.');
-    }
-    throw err;
+    throw new Error('Gagal terhubung ke server API. Periksa koneksi internetmu atau coba lagi nanti.');
   }
 }
 
@@ -3308,19 +3882,33 @@ let activePageId = 'beranda';
 
 function navigatePage(targetId){
   if(!targetId) return;
-  activePageId = targetId;
 
-  // Sembunyikan semua page
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const currentPage = document.querySelector('.page.active');
+  const targetPage = document.getElementById(targetId) || document.getElementById('beranda');
+  activePageId = document.getElementById(targetId) ? targetId : 'beranda';
 
-  // Tampilkan page tujuan
-  const targetPage = document.getElementById(targetId);
-  if(targetPage){
+  // kalau lagi di halaman yang sama, ga usah animasi ulang
+  if(currentPage === targetPage){
+    return;
+  }
+
+  const doSwitch = () => {
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.remove('active', 'leaving');
+    });
     targetPage.classList.add('active');
+    // scroll ke atas dengan halus tiap ganti halaman
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  if(currentPage && currentPage !== targetPage){
+    currentPage.classList.remove('active');
+    currentPage.classList.add('leaving');
+    // tunggu animasi keluar (dzPageOut) kelar baru munculin halaman baru,
+    // biar transisinya keliatan nyambung bukan patah/loncat
+    setTimeout(doSwitch, 190);
   } else {
-    // fallback ke beranda kalau id tidak ketemu
-    document.getElementById('beranda').classList.add('active');
-    activePageId = 'beranda';
+    doSwitch();
   }
 
   // Update nav-link desktop
@@ -5456,7 +6044,8 @@ function initAiSmartAssistant(){
 }
 
 /* ============================================================
-   INTRO ANIMATION + MUSIK LATAR
+   INTRO ANIMATION + MUSIK LATAR — V3 CINEMATIC
+   Existing functionality preserved; only intro motion/timing changed.
 ============================================================ */
 function initIntroAndMusic(){
   const overlay = document.getElementById('introOverlay');
@@ -5467,106 +6056,113 @@ function initIntroAndMusic(){
   const musicBtn = document.getElementById('musicToggleBtn');
   if(!overlay || !enterBtn) return;
 
-  const steps = ['Menyiapkan tampilan...', 'Memuat aset...', 'Siap!'];
-  if(statusEl) statusEl.textContent = steps[0];
-
-  const DURATION = 1600;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const steps = ['Menyiapkan tampilan...', 'Memuat aset...', 'Menata komponen...', 'Hampir siap...', 'Siap!'];
+  const DURATION = reduced ? 250 : 2200;
   let start = null;
+  let entered = false;
+
+  overlay.classList.add('intro-v3-ready');
+  document.body.classList.add('intro-active');
 
   function tick(ts){
     if(start === null) start = ts;
-    const elapsed = ts - start;
-    const progress = Math.min(elapsed / DURATION, 1);
+    const progress = Math.min((ts - start) / DURATION, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
-
     if(barFill) barFill.style.width = (eased * 100) + '%';
-
     if(statusEl){
-      const stepIdx = Math.min(Math.floor(progress * (steps.length - 1)), steps.length - 1);
-      if(statusEl.textContent !== steps[stepIdx]) statusEl.textContent = steps[stepIdx];
+      const idx = Math.min(Math.floor(progress * steps.length), steps.length - 1);
+      if(statusEl.textContent !== steps[idx]) statusEl.textContent = steps[idx];
     }
-
     if(progress < 1){
       requestAnimationFrame(tick);
     } else {
       if(statusEl) statusEl.textContent = steps[steps.length - 1];
       enterBtn.classList.add('ready');
+      overlay.classList.add('intro-v3-loaded');
     }
   }
   requestAnimationFrame(tick);
 
-  // mini confetti burst berulang selagi loading, biar makin rame
-  const introColors = ['#4baee8', '#ffd23f', '#ee5f5f', '#57c26a', '#ffb300'];
+  const introColors = ['#4baee8','#ffd23f','#ee5f5f','#57c26a','#ffb300'];
   function spawnConfetti(count, spreadFromCenter){
     const wrap = document.createElement('div');
     wrap.className = 'intro-confetti';
-    for(let i = 0; i < count; i++){
+    for(let i=0;i<count;i++){
       const piece = document.createElement('div');
       piece.className = 'confetti-piece';
-      const size = 5 + Math.random() * 7;
+      const size = 4 + Math.random()*6;
       piece.style.left = spreadFromCenter
-        ? (50 + (Math.random() * 40 - 20)) + 'vw'
-        : (Math.random() * 100) + 'vw';
+        ? (50 + (Math.random()*34-17)) + 'vw'
+        : (Math.random()*100) + 'vw';
       piece.style.width = size + 'px';
-      piece.style.height = (size * 0.4) + 'px';
-      piece.style.background = introColors[Math.floor(Math.random() * introColors.length)];
-      piece.style.animationDuration = (0.8 + Math.random() * 0.9) + 's';
-      piece.style.animationDelay = (Math.random() * 0.3) + 's';
+      piece.style.height = (size*.42) + 'px';
+      piece.style.background = introColors[Math.floor(Math.random()*introColors.length)];
+      piece.style.animationDuration = (.85 + Math.random()*.65) + 's';
+      piece.style.animationDelay = (Math.random()*.12) + 's';
       wrap.appendChild(piece);
     }
     document.body.appendChild(wrap);
-    setTimeout(() => wrap.remove(), 2200);
+    setTimeout(()=>wrap.remove(),1900);
   }
-  const loadingBurst = setInterval(() => {
-    if(enterBtn.classList.contains('ready')){ clearInterval(loadingBurst); return; }
-    spawnConfetti(10, true);
-  }, 900);
 
-  let entered = false;
+  /* light atmosphere only — no continuous particle spam */
+  let loadingBurst = null;
+  if(!reduced){
+    loadingBurst = setInterval(()=>{
+      if(enterBtn.classList.contains('ready')){
+        clearInterval(loadingBurst);
+        loadingBurst = null;
+        return;
+      }
+      spawnConfetti(3,true);
+    },1700);
+  }
+
   function enterSite(){
     if(entered || !enterBtn.classList.contains('ready')) return;
     entered = true;
-    overlay.classList.add('intro-hide');
+    if(loadingBurst) clearInterval(loadingBurst);
 
-    // musik cuma bisa diputar otomatis kalau dipicu oleh interaksi user (klik tombol ini),
-    // jadi ini tempat paling aman buat manggil music.play()
+    /* Start the cinematic handoff while the old page stays hidden. */
+    overlay.classList.add('intro-exiting');
+    document.body.classList.add('intro-reveal');
+
+    if(!reduced){
+      spawnConfetti(20,true);
+      setTimeout(()=>spawnConfetti(12,false),120);
+    }
+
+    /* Audio remains user-gesture initiated, preserving the old behavior. */
     if(music){
       music.volume = 0.55;
-      music.play().catch(err => {
-        console.warn('Musik gagal diputar otomatis:', err);
-      });
+      music.play().catch(err => console.warn('Musik gagal diputar otomatis:', err));
     }
-    setTimeout(() => { overlay.style.display = 'none'; }, 550);
+
+    /* Reveal the real website slightly after the exit motion begins. */
+    setTimeout(()=>{
+      document.body.classList.remove('intro-active');
+    },120);
+
+    setTimeout(()=>{
+      overlay.style.display='none';
+      overlay.classList.remove('intro-exiting');
+    },760);
   }
 
   enterBtn.addEventListener('click', enterSite);
 
-  // efek confetti gede pas tombol Enter diklik — murni dekoratif, ga ganggu logic musik/overlay yang lama
-  enterBtn.addEventListener('click', function(){
-    if(!enterBtn.classList.contains('ready')) return;
-    spawnConfetti(60, false);
-    setTimeout(() => spawnConfetti(40, false), 150);
-  });
-
   if(musicBtn && music){
-    // knob toggle selalu ngikutin status audio yang sebenarnya (bukan tebakan manual),
-    // jadi kalau file musiknya gagal load / gagal diputar, toggle otomatis balik ke posisi "off"
-    const syncToggle = () => {
-      musicBtn.classList.toggle('on', !music.paused);
-    };
-    music.addEventListener('play', syncToggle);
-    music.addEventListener('pause', syncToggle);
-    music.addEventListener('error', () => {
+    const syncToggle=()=>musicBtn.classList.toggle('on',!music.paused);
+    music.addEventListener('play',syncToggle);
+    music.addEventListener('pause',syncToggle);
+    music.addEventListener('error',()=>{
       syncToggle();
       console.error('Sumber musik gagal dimuat, cek URL di tag <audio>.');
     });
-
-    musicBtn.addEventListener('click', () => {
-      if(music.paused){
-        music.play().catch(err => console.warn('Musik gagal diputar:', err));
-      } else {
-        music.pause();
-      }
+    musicBtn.addEventListener('click',()=>{
+      if(music.paused) music.play().catch(err=>console.warn('Musik gagal diputar:',err));
+      else music.pause();
     });
   }
 }
@@ -5655,6 +6251,197 @@ document.addEventListener('DOMContentLoaded', () => {
   initIntroAndMusic();
   initGlobalLiveAnimations();
 });
+</script>
+<script>
+
+/* ============================================================
+   DINZ MOTION SYSTEM v2 — JS ENHANCEMENT
+   Animation only: no feature/UI logic is replaced.
+============================================================ */
+(function initDinzMotionV2(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const isLowPower = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+
+  const qs = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+  function addIndexedClass(selector, limit=120){
+    qs(selector).slice(0, limit).forEach((el, i) => {
+      el.style.setProperty('--motion-i', i);
+    });
+  }
+
+  function playEntrance(){
+    if(reduceMotion.matches) return;
+    document.body.classList.remove('motion-play');
+    // Restart only our animation layer, never the existing UI/feature logic.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      addIndexedClass('.navbar .nav-link');
+      addIndexedClass('.platform-icon-item');
+      addIndexedClass('.section-card, .feature-card, .store-card, .quick-item, .card, .tool');
+      document.body.classList.add('motion-play');
+    }));
+  }
+
+  function setupReveal(){
+    const selectors = [
+      '.quick-item',
+      '.card',
+      '.tool',
+      '.feature-card',
+      '.store-card',
+      '.track-row',
+      '.result',
+      '.section-card',
+      '.footer-col',
+      '.links',
+      '.link-row'
+    ].join(',');
+
+    const all = qs(selectors);
+    all.forEach((el, i) => {
+      if(el.dataset.motionReady) return;
+      el.dataset.motionReady = '1';
+      el.classList.add('motion-reveal');
+
+      const modes = ['up','left','right','scale'];
+      const mode = isLowPower ? 'up' : modes[i % modes.length];
+      if(mode !== 'up') el.dataset.motion = mode;
+      el.style.transitionDelay = `${Math.min(i % 7, 6) * 45}ms`;
+    });
+
+    if(reduceMotion.matches || !('IntersectionObserver' in window)){
+      all.forEach(el => el.classList.add('motion-in'));
+      return;
+    }
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(!entry.isIntersecting) return;
+        entry.target.classList.add('motion-in');
+        io.unobserve(entry.target);
+      });
+    }, {threshold:0.08, rootMargin:'0px 0px -55px 0px'});
+
+    all.forEach(el => {
+      if(!el.classList.contains('motion-in')) io.observe(el);
+    });
+  }
+
+  function setupChildrenStagger(){
+    qs('.feature-grid, .store-grid, .quick-grid, .platform-icon-row, .track-list, .links').forEach(parent => {
+      if(parent.dataset.motionStagger) return;
+      // Elemen yang sudah ditandai '.motion-reveal' oleh setupReveal() (feature-card,
+      // store-card, quick-item, card, tool, track-row, dst) JANGAN dobel ditandai
+      // '.motion-child' juga. Dua sistem itu punya aturan CSS opacity:0 yang beda
+      // sumber tapi spesifisitas sama -> yang belakangan didefinisikan "menang", jadi
+      // elemen bisa nyangkut opacity:0 permanen (keliatan "hilang") walaupun
+      // IntersectionObserver-nya sudah nembak class .motion-in. Ini akar masalah
+      // kartu/ikon yang suka ilang pas reveal (contoh: kartu "Order Gampang" atau
+      // ikon shield di "Aman & Gratis" yang kadang ga muncul).
+      const children = Array.from(parent.children).filter(el =>
+        el.nodeType === 1 && !el.classList.contains('motion-reveal')
+      );
+      if(!children.length) return;
+      parent.dataset.motionStagger = '1';
+      parent.classList.add('motion-stagger');
+      children.slice(0, 20).forEach((child, i) => {
+        child.classList.add('motion-child');
+        child.style.setProperty('--motion-child-i', i);
+      });
+    });
+  }
+
+  function setupDynamicContent(){
+    const root = document.querySelector('.wrap') || document.body;
+    if(!root || !('MutationObserver' in window)) return;
+
+    let timer = 0;
+    const mo = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        setupReveal();
+        setupChildrenStagger();
+      }, 90);
+    });
+    mo.observe(root, {childList:true, subtree:true});
+  }
+
+  function setupMenuIndexes(){
+    addIndexedClass('.menu-overlay .menu-item');
+  }
+
+  function setupModalMotion(){
+    if(reduceMotion.matches) return;
+    const original = window.openAiVideoModal;
+    if(typeof original !== 'function') return;
+    if(original.__motionWrapped) return;
+
+    function wrappedModal(...args){
+      original.apply(this, args);
+      requestAnimationFrame(() => {
+        const modal = document.getElementById('aiVideoModal');
+        if(modal){
+          modal.classList.remove('motion-modal-open');
+          requestAnimationFrame(() => modal.classList.add('motion-modal-open'));
+        }
+      });
+    }
+    wrappedModal.__motionWrapped = true;
+    window.openAiVideoModal = wrappedModal;
+  }
+
+  function init(){
+    setupReveal();
+    setupChildrenStagger();
+    setupDynamicContent();
+    setupMenuIndexes();
+    setupModalMotion();
+
+    // Entrance HARUS dimulai setelah intro selesai, bukan saat overlay masih menutup halaman.
+    // Sebelumnya fallback 1400ms bisa membuat animasi selesai di belakang intro,
+    // sehingga saat user akhirnya masuk website terlihat seperti tidak ada entrance animation.
+    const enter = document.getElementById('introEnterBtn');
+    const intro = document.getElementById('introOverlay');
+
+    if(enter){
+      enter.addEventListener('click', () => {
+        // Tunggu sedikit sampai overlay mulai keluar, lalu replay entrance dari awal.
+        setTimeout(playEntrance, 120);
+      }, {passive:true});
+
+      // Jangan menjalankan fallback ketika intro masih aktif.
+      // Hanya fallback jika intro benar-benar sudah tidak aktif/tersembunyi.
+      const waitForIntro = setInterval(() => {
+        const introHidden = !intro ||
+          getComputedStyle(intro).display === 'none' ||
+          intro.classList.contains('intro-hide') ||
+          !document.body.classList.contains('intro-active');
+
+        if(introHidden){
+          clearInterval(waitForIntro);
+          setTimeout(() => {
+            if(!document.body.classList.contains('motion-play')) playEntrance();
+          }, 80);
+        }
+      }, 100);
+      setTimeout(() => clearInterval(waitForIntro), 15000);
+    } else {
+      setTimeout(playEntrance, 120);
+    }
+
+    reduceMotion.addEventListener?.('change', () => {
+      if(reduceMotion.matches) document.body.classList.remove('motion-play');
+      else playEntrance();
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init, {once:true});
+  } else {
+    init();
+  }
+})();
+
 </script>
 </body>
 </html>
