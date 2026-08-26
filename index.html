@@ -3608,6 +3608,335 @@
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
   }
   .win-close-btn:active{transform:translate(1px,1px); box-shadow:1px 1px 0px rgba(0,0,0,0.85);}
+
+  /* ============ PHASE 1: NEW GAMES ============ */
+  .simple-game-canvas-wrap{position:relative; display:flex; justify-content:center; margin:14px auto; max-width:400px;}
+  .simple-game-canvas-wrap canvas{width:100%; max-width:360px; height:auto; background:#0c0f14; border:2.5px solid var(--line); border-radius:14px; box-shadow:3px 3px 0px rgba(0,0,0,0.85); touch-action:none;}
+  .simple-game-overlay{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:rgba(8,10,14,0.86); border-radius:14px; text-align:center; padding:16px;}
+  .simple-game-overlay p{color:var(--txt); font-weight:700; font-size:15px; margin:0;}
+  .dpad{display:grid; grid-template-columns:56px 56px 56px; grid-template-rows:56px 56px; justify-content:center; gap:6px; margin:14px auto; max-width:200px;}
+  .dpad-btn{border:2.5px solid var(--line); border-radius:12px; background:var(--panel); color:var(--txt); font-size:22px; cursor:pointer; box-shadow:2px 2px 0px rgba(0,0,0,0.85);}
+  .dpad-btn:active{transform:translate(1px,1px); box-shadow:none;}
+  .dpad-up{grid-column:2; grid-row:1;}
+  .dpad-left{grid-column:1; grid-row:2;}
+  .dpad-right{grid-column:3; grid-row:2;}
+  .dpad-down{grid-column:2; grid-row:2;}
+  .g2048-board-wrap{position:relative; display:flex; justify-content:center; margin:14px auto; max-width:360px;}
+  .g2048-board{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; width:100%; max-width:360px; aspect-ratio:1/1; background:#0c0f14; border:2.5px solid var(--line); border-radius:14px; padding:8px; box-shadow:3px 3px 0px rgba(0,0,0,0.85); touch-action:none;}
+  .g2048-tile{display:flex; align-items:center; justify-content:center; border-radius:8px; font-family:'Space Grotesk', sans-serif; font-weight:800; font-size:clamp(14px,5vw,26px); background:#171b23; color:var(--txt); transition:background .12s, transform .1s;}
+  .g2048-tile[data-v="2"]{background:#2a2f3a;} .g2048-tile[data-v="4"]{background:#33394a;}
+  .g2048-tile[data-v="8"]{background:var(--pink); color:#fff;} .g2048-tile[data-v="16"]{background:var(--gold); color:#1a1a1a;}
+  .g2048-tile[data-v="32"]{background:var(--cyan); color:#1a1a1a;} .g2048-tile[data-v="64"]{background:var(--green); color:#fff;}
+  .g2048-tile[data-v="128"],.g2048-tile[data-v="256"],.g2048-tile[data-v="512"]{background:#5a4fcf; color:#fff;}
+  .g2048-tile[data-v="1024"],.g2048-tile[data-v="2048"]{background:#e8b400; color:#1a1a1a;}
+  .whack-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-width:340px; margin:14px auto;}
+  .whack-hole{position:relative; aspect-ratio:1/1; border-radius:50%; background:#0c0f14; border:2.5px solid var(--line); overflow:hidden; cursor:pointer; box-shadow:2px 2px 0px rgba(0,0,0,0.85);}
+  .whack-mole{position:absolute; left:50%; bottom:-100%; transform:translateX(-50%); font-size:34px; transition:bottom .12s ease-out; user-select:none;}
+  .whack-hole.up .whack-mole{bottom:6%;}
+  .c4-board{display:grid; grid-template-columns:repeat(7,1fr); gap:6px; max-width:360px; margin:14px auto; background:#0c3d91; border:2.5px solid var(--line); border-radius:14px; padding:8px; box-shadow:3px 3px 0px rgba(0,0,0,0.85);}
+  .c4-cell{position:relative; aspect-ratio:1/1; border-radius:50%; background:#0c0f14; cursor:pointer;}
+  .c4-cell.p1{background:var(--gold);} .c4-cell.p2{background:var(--pink);}
+  .cm-word-box{display:flex; align-items:center; justify-content:center; min-height:110px; margin:14px auto; max-width:360px; background:#0c0f14; border:2.5px solid var(--line); border-radius:14px; box-shadow:3px 3px 0px rgba(0,0,0,0.85); position:relative;}
+  .cm-word{font-family:'Space Grotesk', sans-serif; font-weight:800; font-size:34px;}
+  .typing-target{background:#0c0f14; border:2.5px solid var(--line); border-radius:14px; padding:16px; font-size:15px; line-height:1.7; box-shadow:3px 3px 0px rgba(0,0,0,0.85); margin:14px 0;}
+  .typing-target .tchar{opacity:0.55;}
+  .typing-target .tchar.correct{opacity:1; color:var(--green);}
+  .typing-target .tchar.wrong{opacity:1; color:var(--pink); text-decoration:underline;}
+  .typing-input{width:100%; background:var(--panel); border:2.5px solid var(--line); border-radius:12px; color:var(--txt); padding:12px; font-size:15px; font-family:inherit; resize:none;}
+  .sliding-board{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; max-width:340px; margin:14px auto; aspect-ratio:1/1; background:#0c0f14; border:2.5px solid var(--line); border-radius:14px; padding:8px; box-shadow:3px 3px 0px rgba(0,0,0,0.85);}
+  .sliding-tile{display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cyan); color:#0a0a0a; font-weight:800; font-size:clamp(16px,5vw,24px); cursor:pointer; font-family:'Space Grotesk', sans-serif;}
+  .sliding-tile.empty{background:transparent; cursor:default;}
+</style>
+<!-- ============================================================
+     AIM TRAINER — STYLE (fitur tambahan, terpisah dari style lama)
+============================================================ -->
+<style>
+  .aim-shell{max-width:620px; margin:0 auto;}
+
+  /* ---- HUD row (pakai pola stat-cell yang sudah ada, 4 kolom) ---- */
+  .aim-hud-row{grid-template-columns:repeat(4, 1fr);}
+  .aim-hud-row .stat-cell{padding:10px 4px;}
+  .aim-hud-row .stat-num{font-size:18px; transition:transform .18s cubic-bezier(.34,1.56,.64,1);}
+  .aim-hud-row .stat-num.pop{transform:scale(1.22);}
+  .aim-hud-row .stat-num.combo-pop{transform:scale(1.35); color:var(--pink);}
+  .aim-hud-row .stat-cell.timer-warn .stat-num{color:var(--pink); animation:aimTimerWarn 0.9s ease-in-out infinite;}
+  @keyframes aimTimerWarn{0%,100%{opacity:1;}50%{opacity:0.45;}}
+
+  .aim-hud-actions{display:flex; justify-content:flex-end; margin-bottom:10px;}
+  .aim-icon-btn{
+    width:38px;height:38px;border-radius:10px;
+    border:2.5px solid var(--line);
+    background:var(--panel);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer; box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+    color:var(--ink); flex-shrink:0;
+  }
+  .aim-icon-btn:hover{border-color:var(--cyan); color:var(--cyan);}
+  .aim-icon-btn:active{transform:translate(1px,1px); box-shadow:1px 1px 0px rgba(0,0,0,0.85);}
+  .aim-icon-btn svg{width:18px;height:18px;}
+
+  /* ---- start / result card ---- */
+  .aim-info-card{
+    background:var(--panel);
+    border:2.5px solid var(--line);
+    border-radius:20px;
+    padding:26px 22px;
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
+    text-align:center;
+  }
+  .aim-info-card .aim-big-icon{
+    font-size:44px; line-height:1; margin-bottom:10px;
+    display:inline-block;
+    animation:aimIconFloat 2.6s ease-in-out infinite;
+  }
+  @keyframes aimIconFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  .aim-info-card h3{
+    margin:0 0 8px; font-size:20px; font-weight:700;
+    text-transform:uppercase; font-family:'JetBrains Mono', monospace;
+  }
+  .aim-info-card p{margin:0 0 18px; color:var(--dim); font-size:13.5px; line-height:1.5;}
+  .aim-best-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    border:2.5px solid var(--line); border-radius:999px;
+    padding:8px 16px; margin-bottom:18px;
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:12px;
+    text-transform:uppercase; background:var(--yellow); color:#131313;
+  }
+
+  .aim-btn{
+    border:2.5px solid var(--line);
+    border-radius:12px;
+    padding:14px 18px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    text-transform:uppercase;
+    cursor:pointer;
+    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+    transition:transform .16s cubic-bezier(.16,1,.3,1), box-shadow .16s cubic-bezier(.16,1,.3,1);
+    width:100%;
+  }
+  .aim-btn:hover{transform:translate(-2px,-2px); box-shadow:5px 5px 0px rgba(0,0,0,0.85);}
+  .aim-btn:active{transform:translate(1px,1px); box-shadow:1px 1px 0px rgba(0,0,0,0.85);}
+  .aim-btn-primary{background:var(--cyan); color:#fff;}
+  .aim-btn-ghost{background:var(--panel); color:var(--ink);}
+  .aim-btn-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+  .aim-btn-row .aim-btn{flex:1; min-width:130px;}
+
+  /* ---- arena ---- */
+  .aim-arena-wrap{position:relative;}
+  .aim-arena{
+    position:relative;
+    width:100%;
+    height:min(56vh, 430px);
+    min-height:280px;
+    background:
+      radial-gradient(420px 260px at 50% 0%, rgba(75,174,232,0.10), transparent 65%),
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/22px 22px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/22px 22px,
+      var(--sunken);
+    border:2.5px solid var(--line);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
+    touch-action:none;
+    cursor:crosshair;
+    -webkit-user-select:none;
+    user-select:none;
+  }
+
+  .aim-target{
+    position:absolute;
+    border-radius:50%;
+    transform:translate(-50%,-50%) scale(0);
+    background:radial-gradient(circle at 34% 30%, #7fd0ff 0%, var(--cyan) 55%, #2d86bd 100%);
+    box-shadow:0 0 0 3px rgba(255,255,255,0.65) inset, 0 0 18px 4px rgba(75,174,232,0.55);
+    border:2.5px solid var(--line);
+    cursor:pointer;
+    padding:0; margin:0;
+    animation:aimPop .22s cubic-bezier(.34,1.56,.64,1) forwards, aimGlowPulse 1.1s ease-in-out infinite .22s;
+    will-change:transform, opacity;
+  }
+  .aim-target::after{
+    content:'';
+    position:absolute;
+    inset:26%;
+    border-radius:50%;
+    background:rgba(255,255,255,0.85);
+  }
+  .aim-target.combo-target{
+    background:radial-gradient(circle at 34% 30%, #ffb3c4 0%, var(--pink) 55%, #b23a3a 100%);
+    box-shadow:0 0 0 3px rgba(255,255,255,0.65) inset, 0 0 18px 4px rgba(238,95,95,0.55);
+  }
+  .aim-target.aim-target-hit{
+    animation:aimHitPop .26s ease-out forwards !important;
+    pointer-events:none;
+  }
+  .aim-target.aim-target-expire{
+    animation:aimExpirePop .22s ease-in forwards !important;
+    pointer-events:none;
+  }
+  @keyframes aimPop{
+    0%{transform:translate(-50%,-50%) scale(0); opacity:0;}
+    70%{transform:translate(-50%,-50%) scale(1.08); opacity:1;}
+    100%{transform:translate(-50%,-50%) scale(1); opacity:1;}
+  }
+  @keyframes aimGlowPulse{
+    0%,100%{filter:brightness(1);}
+    50%{filter:brightness(1.16);}
+  }
+  @keyframes aimHitPop{
+    0%{transform:translate(-50%,-50%) scale(1); opacity:1;}
+    100%{transform:translate(-50%,-50%) scale(1.7); opacity:0;}
+  }
+  @keyframes aimExpirePop{
+    0%{transform:translate(-50%,-50%) scale(1); opacity:0.9;}
+    100%{transform:translate(-50%,-50%) scale(0.4); opacity:0;}
+  }
+
+  .aim-particle{
+    position:absolute;
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--cyan);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    animation:aimParticleFly .5s ease-out forwards;
+  }
+  @keyframes aimParticleFly{
+    0%{transform:translate(-50%,-50%) translate(0,0) scale(1); opacity:1;}
+    100%{transform:translate(-50%,-50%) translate(var(--px), var(--py)) scale(0.2); opacity:0;}
+  }
+
+  .aim-ripple{
+    position:absolute;
+    width:36px;height:36px;
+    border-radius:50%;
+    border:2.5px solid var(--pink);
+    transform:translate(-50%,-50%) scale(0.3);
+    pointer-events:none;
+    animation:aimRippleOut .42s ease-out forwards;
+  }
+  @keyframes aimRippleOut{
+    0%{transform:translate(-50%,-50%) scale(0.3); opacity:0.9;}
+    100%{transform:translate(-50%,-50%) scale(1.6); opacity:0;}
+  }
+
+  .aim-float-text{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size:15px;
+    color:var(--cyan);
+    pointer-events:none;
+    text-shadow:0 1px 0 rgba(255,255,255,0.6);
+    animation:aimFloatUp .65s ease-out forwards;
+    white-space:nowrap;
+  }
+  .aim-float-text.miss{color:var(--pink);}
+  @keyframes aimFloatUp{
+    0%{opacity:1; transform:translate(-50%,-50%) translateY(0);}
+    100%{opacity:0; transform:translate(-50%,-50%) translateY(-38px);}
+  }
+
+  .aim-combo-banner{
+    position:absolute;
+    top:10px; left:50%;
+    transform:translate(-50%,-14px) scale(0.85);
+    background:var(--pink);
+    color:#fff;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size:13px;
+    text-transform:uppercase;
+    padding:8px 16px;
+    border-radius:999px;
+    border:2.5px solid var(--line);
+    opacity:0;
+    pointer-events:none;
+    z-index:5;
+  }
+  .aim-combo-banner.show{
+    animation:aimBannerPop 1.1s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes aimBannerPop{
+    0%{opacity:0; transform:translate(-50%,-14px) scale(0.7);}
+    18%{opacity:1; transform:translate(-50%,0) scale(1.05);}
+    30%{transform:translate(-50%,0) scale(1);}
+    80%{opacity:1;}
+    100%{opacity:0; transform:translate(-50%,-6px) scale(0.96);}
+  }
+
+  .aim-level-flash{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size:clamp(22px, 6vw, 30px);
+    color:var(--gold);
+    text-shadow:2px 2px 0 rgba(0,0,0,0.85);
+    opacity:0;
+    pointer-events:none;
+    z-index:6;
+  }
+  .aim-level-flash.show{animation:aimLevelFlash .95s ease-out forwards;}
+  @keyframes aimLevelFlash{
+    0%{opacity:0; transform:scale(0.6);}
+    25%{opacity:1; transform:scale(1.08);}
+    40%{transform:scale(1);}
+    75%{opacity:1;}
+    100%{opacity:0; transform:scale(1.15);}
+  }
+
+  .aim-arena.aim-shake{animation:aimArenaShake .28s ease-in-out;}
+  @keyframes aimArenaShake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-4px);}
+    75%{transform:translateX(4px);}
+  }
+
+  /* ---- pause overlay ---- */
+  .aim-pause-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(11,15,22,0.72);
+    backdrop-filter:blur(3px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:14px;
+    z-index:10;
+    border-radius:18px;
+    text-align:center;
+    padding:20px;
+  }
+  .aim-pause-overlay.show{display:flex;}
+  .aim-pause-overlay h4{
+    color:#fff; margin:0; font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase; font-size:18px; letter-spacing:0.05em;
+  }
+  .aim-pause-overlay .aim-btn-row{width:100%; max-width:280px;}
+
+  /* ---- result grid ---- */
+  .aim-result-row{grid-template-columns:repeat(3, 1fr); margin-bottom:0;}
+  .aim-result-row .stat-cell{padding:14px 6px;}
+  .aim-result-row .stat-num{font-size:18px;}
+  .aim-result-row + .aim-result-row{
+    border-top:none;
+    margin-top:-1px;
+  }
+
+  @media (max-width:480px){
+    .aim-arena{height:min(52vh, 380px); min-height:240px;}
+    .aim-hud-row .stat-num{font-size:16px;}
+    .aim-result-row .stat-num{font-size:15px;}
+    .aim-info-card{padding:22px 16px;}
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
@@ -3953,6 +4282,60 @@
           <h3 style="margin-top:10px;">Cocokkan Kartu</h3>
           <p>Buka dua kartu, ingat posisinya, dan cocokkan semua pasangan dengan langkah sesedikit mungkin.</p>
         </div>
+        <div class="game-card" data-target="game-aim">
+          <div class="gicon">&#8982;</div>
+          <span class="game-tag pink">Skor &amp; Combo</span>
+          <h3 style="margin-top:10px;">Aim Trainer</h3>
+          <p>Klik target secepat dan setepat mungkin sebelum waktu habis. Makin tinggi level, target makin kecil &amp; cepat.</p>
+        </div>
+        <div class="game-card" data-target="game-snake">
+          <div class="gicon">&#128009;</div>
+          <span class="game-tag green">Arcade</span>
+          <h3 style="margin-top:10px;">Snake</h3>
+          <p>Kendalikan ular, makan sebanyak mungkin, dan jangan sampai menabrak diri sendiri atau tembok.</p>
+        </div>
+        <div class="game-card" data-target="game-2048">
+          <div class="gicon">&#128290;</div>
+          <span class="game-tag gold">Puzzle</span>
+          <h3 style="margin-top:10px;">2048</h3>
+          <p>Gabungkan angka yang sama sampai tembus 2048. Sederhana tapi bikin ketagihan.</p>
+        </div>
+        <div class="game-card" data-target="game-breakout">
+          <div class="gicon">&#128308;</div>
+          <span class="game-tag pink">Arcade</span>
+          <h3 style="margin-top:10px;">Breakout</h3>
+          <p>Pantulkan bola pakai paddle untuk hancurkan semua balok. Klasik dan seru.</p>
+        </div>
+        <div class="game-card" data-target="game-whack">
+          <div class="gicon">&#128021;</div>
+          <span class="game-tag green">Reaksi</span>
+          <h3 style="margin-top:10px;">Whack-a-Mole</h3>
+          <p>Pukul tikus yang muncul secepat mungkin sebelum waktu habis. Uji refleksmu!</p>
+        </div>
+        <div class="game-card" data-target="game-c4">
+          <div class="gicon">&#128993;</div>
+          <span class="game-tag gold">Vs Bot</span>
+          <h3 style="margin-top:10px;">Connect Four</h3>
+          <p>Susun 4 keping sejajar lebih dulu dari bot untuk menang. Vertikal, horizontal, atau diagonal.</p>
+        </div>
+        <div class="game-card" data-target="game-colormatch">
+          <div class="gicon">&#127912;</div>
+          <span class="game-tag pink">Reaksi</span>
+          <h3 style="margin-top:10px;">Color Match</h3>
+          <p>Tebak apakah nama warna cocok dengan warna tulisannya, secepat mungkin sebelum waktu habis.</p>
+        </div>
+        <div class="game-card" data-target="game-typing">
+          <div class="gicon">&#8964;&#65039;</div>
+          <span class="game-tag green">Skill</span>
+          <h3 style="margin-top:10px;">Typing Speed</h3>
+          <p>Ketik kalimat yang muncul secepat dan seakurat mungkin. Cek WPM &amp; akurasimu.</p>
+        </div>
+        <div class="game-card" data-target="game-sliding">
+          <div class="gicon">&#128163;</div>
+          <span class="game-tag gold">Puzzle</span>
+          <h3 style="margin-top:10px;">Sliding Puzzle</h3>
+          <p>Geser ubin angka sampai berurutan rapi 1-15. Selesaikan dengan langkah sesedikit mungkin.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -4149,6 +4532,332 @@
       <div class="memory-grid" id="memoryGrid"></div>
       <div class="chess-controls">
         <button type="button" id="memoryResetBtn">Acak Ulang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME AIM TRAINER (fitur tambahan) ================= -->
+  <div id="game-aim" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Aim Trainer</h1>
+        <p>Klik target secepat mungkin, jaga combo, kejar high score</p>
+      </div>
+    </div>
+
+    <div class="aim-shell">
+
+      <!-- ---- START SCREEN ---- -->
+      <div class="aim-info-card" id="aimStartScreen">
+        <span class="aim-big-icon">&#8982;</span>
+        <h3>Siap Latihan?</h3>
+        <p>Target akan muncul acak di area permainan. Klik/tap secepat mungkin sebelum waktu 30 detik habis. Makin lama, target makin kecil &amp; makin cepat!</p>
+        <div class="aim-best-pill">&#127942; High Score: <span id="aimBestInline">0</span></div>
+        <button type="button" class="aim-btn aim-btn-primary" id="aimStartBtn">&#9654; Start Game</button>
+      </div>
+
+      <!-- ---- HUD + ARENA (tampil saat main) ---- -->
+      <div id="aimPlayWrap" style="display:none;">
+        <div class="stat-row aim-hud-row">
+          <div class="stat-cell">
+            <div class="stat-num" id="aimScoreNum">0</div>
+            <div class="stat-label">Score</div>
+          </div>
+          <div class="stat-cell" id="aimTimerCell">
+            <div class="stat-num" id="aimTimerNum">30</div>
+            <div class="stat-label">Waktu</div>
+          </div>
+          <div class="stat-cell online">
+            <div class="stat-num" id="aimComboNum">0</div>
+            <div class="stat-label">Combo</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num" id="aimLevelNum">1</div>
+            <div class="stat-label">Level</div>
+          </div>
+        </div>
+
+        <div class="aim-hud-actions">
+          <button type="button" class="aim-icon-btn" id="aimPauseBtn" aria-label="Jeda">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+        </div>
+
+        <div class="aim-arena-wrap">
+          <div class="aim-arena" id="aimArena">
+            <div class="aim-combo-banner" id="aimComboBanner"></div>
+            <div class="aim-level-flash" id="aimLevelFlash"></div>
+            <div class="aim-pause-overlay" id="aimPauseOverlay">
+              <h4>Dijeda</h4>
+              <div class="aim-btn-row">
+                <button type="button" class="aim-btn aim-btn-primary" id="aimResumeBtn">Lanjutkan</button>
+                <button type="button" class="aim-btn aim-btn-ghost" id="aimRestartBtn">Ulangi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- RESULT SCREEN ---- -->
+      <div class="aim-info-card" id="aimResultScreen" style="display:none;">
+        <span class="aim-big-icon">&#127881;</span>
+        <h3 id="aimResultTitle">Waktu Habis!</h3>
+        <div class="stat-row aim-result-row">
+          <div class="stat-cell online">
+            <div class="stat-num" id="aimResScore">0</div>
+            <div class="stat-label">Score</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num" id="aimResBest">0</div>
+            <div class="stat-label">High Score</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num" id="aimResAccuracy">0%</div>
+            <div class="stat-label">Akurasi</div>
+          </div>
+        </div>
+        <div class="stat-row aim-result-row">
+          <div class="stat-cell">
+            <div class="stat-num" id="aimResClicks">0</div>
+            <div class="stat-label">Total Klik</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num" id="aimResMiss">0</div>
+            <div class="stat-label">Miss</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num" id="aimResCombo">0</div>
+            <div class="stat-label">Best Combo</div>
+          </div>
+        </div>
+        <div class="aim-btn-row" style="margin-top:18px;">
+          <button type="button" class="aim-btn aim-btn-primary" id="aimPlayAgainBtn">&#8635; Main Lagi</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME SNAKE ================= -->
+  <div id="game-snake" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Snake</h1>
+        <p>Makan sebanyak mungkin, jangan tabrak diri sendiri atau tembok</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="stat-row">
+        <div class="stat-cell online"><div class="stat-num" id="snakeScoreNum">0</div><div class="stat-label">Score</div></div>
+        <div class="stat-cell"><div class="stat-num" id="snakeBestNum">0</div><div class="stat-label">High Score</div></div>
+      </div>
+      <div class="simple-game-canvas-wrap">
+        <canvas id="snakeCanvas" width="360" height="360"></canvas>
+        <div class="simple-game-overlay" id="snakeOverlay">
+          <p id="snakeOverlayText">Tekan Mulai untuk main</p>
+          <button type="button" class="aim-btn aim-btn-primary" id="snakeStartBtn">&#9654; Mulai</button>
+        </div>
+      </div>
+      <div class="dpad" id="snakeDpad">
+        <button type="button" class="dpad-btn dpad-up" data-dir="up">&#8593;</button>
+        <button type="button" class="dpad-btn dpad-left" data-dir="left">&#8592;</button>
+        <button type="button" class="dpad-btn dpad-right" data-dir="right">&#8594;</button>
+        <button type="button" class="dpad-btn dpad-down" data-dir="down">&#8595;</button>
+      </div>
+      <div class="game-diff-row">
+        <button type="button" id="snakePauseBtn">Jeda</button>
+        <button type="button" id="snakeRestartBtn">Ulangi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME 2048 ================= -->
+  <div id="game-2048" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>2048</h1>
+        <p>Gabungkan angka sama sampai tembus 2048</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="stat-row">
+        <div class="stat-cell online"><div class="stat-num" id="g2048ScoreNum">0</div><div class="stat-label">Score</div></div>
+        <div class="stat-cell"><div class="stat-num" id="g2048BestNum">0</div><div class="stat-label">High Score</div></div>
+      </div>
+      <div class="g2048-board-wrap">
+        <div class="g2048-board" id="g2048Board"></div>
+        <div class="simple-game-overlay" id="g2048Overlay" style="display:none;">
+          <p id="g2048OverlayText">Game Over!</p>
+          <button type="button" class="aim-btn aim-btn-primary" id="g2048RetryBtn">&#8635; Main Lagi</button>
+        </div>
+      </div>
+      <div class="game-diff-row">
+        <button type="button" id="g2048RestartBtn">Acak Ulang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME BREAKOUT ================= -->
+  <div id="game-breakout" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Breakout</h1>
+        <p>Pantulkan bola, hancurkan semua balok</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="stat-row">
+        <div class="stat-cell online"><div class="stat-num" id="brkScoreNum">0</div><div class="stat-label">Score</div></div>
+        <div class="stat-cell"><div class="stat-num" id="brkLivesNum">3</div><div class="stat-label">Nyawa</div></div>
+        <div class="stat-cell"><div class="stat-num" id="brkBestNum">0</div><div class="stat-label">High Score</div></div>
+      </div>
+      <div class="simple-game-canvas-wrap">
+        <canvas id="brkCanvas" width="360" height="420"></canvas>
+        <div class="simple-game-overlay" id="brkOverlay">
+          <p id="brkOverlayText">Tekan Mulai untuk main</p>
+          <button type="button" class="aim-btn aim-btn-primary" id="brkStartBtn">&#9654; Mulai</button>
+        </div>
+      </div>
+      <p class="game-status-text" style="color:var(--dim2);">Geser jari / mouse di atas canvas untuk gerakkan paddle</p>
+      <div class="game-diff-row">
+        <button type="button" id="brkPauseBtn">Jeda</button>
+        <button type="button" id="brkRestartBtn">Ulangi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME WHACK-A-MOLE ================= -->
+  <div id="game-whack" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Whack-a-Mole</h1>
+        <p>Pukul tikus yang muncul secepat mungkin</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="stat-row">
+        <div class="stat-cell online"><div class="stat-num" id="whackScoreNum">0</div><div class="stat-label">Score</div></div>
+        <div class="stat-cell"><div class="stat-num" id="whackTimeNum">30</div><div class="stat-label">Waktu</div></div>
+        <div class="stat-cell"><div class="stat-num" id="whackBestNum">0</div><div class="stat-label">High Score</div></div>
+      </div>
+      <div class="whack-grid" id="whackGrid"></div>
+      <div class="simple-game-overlay" id="whackOverlay">
+        <p id="whackOverlayText">Tekan Mulai untuk main</p>
+        <button type="button" class="aim-btn aim-btn-primary" id="whackStartBtn">&#9654; Mulai</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME CONNECT FOUR ================= -->
+  <div id="game-c4" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Connect Four</h1>
+        <p>Susun 4 keping sejajar lebih dulu dari bot</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="game-status-text" id="c4StatusText">Giliranmu (Kuning)</div>
+      <div class="c4-board" id="c4Board"></div>
+      <div class="game-diff-row">
+        <button type="button" id="c4ResetBtn">Main Lagi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME COLOR MATCH ================= -->
+  <div id="game-colormatch" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Color Match</h1>
+        <p>Tebak apakah nama warna cocok dengan warna tulisannya</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="stat-row">
+        <div class="stat-cell online"><div class="stat-num" id="cmScoreNum">0</div><div class="stat-label">Score</div></div>
+        <div class="stat-cell"><div class="stat-num" id="cmTimeNum">20</div><div class="stat-label">Waktu</div></div>
+        <div class="stat-cell"><div class="stat-num" id="cmBestNum">0</div><div class="stat-label">High Score</div></div>
+      </div>
+      <div class="cm-word-box">
+        <span class="cm-word" id="cmWord">MERAH</span>
+      </div>
+      <div class="simple-game-overlay" id="cmOverlay">
+        <p id="cmOverlayText">Tekan Mulai untuk main</p>
+        <button type="button" class="aim-btn aim-btn-primary" id="cmStartBtn">&#9654; Mulai</button>
+      </div>
+      <div class="game-diff-row">
+        <button type="button" id="cmYesBtn">&#10003; Cocok</button>
+        <button type="button" id="cmNoBtn">&#10007; Tidak Cocok</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME TYPING SPEED ================= -->
+  <div id="game-typing" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Typing Speed</h1>
+        <p>Ketik kalimat secepat dan seakurat mungkin</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="stat-row">
+        <div class="stat-cell online"><div class="stat-num" id="typeWpmNum">0</div><div class="stat-label">WPM</div></div>
+        <div class="stat-cell"><div class="stat-num" id="typeAccNum">100%</div><div class="stat-label">Akurasi</div></div>
+        <div class="stat-cell"><div class="stat-num" id="typeBestNum">0</div><div class="stat-label">Best WPM</div></div>
+      </div>
+      <p class="typing-target" id="typeTarget">Tekan Mulai untuk mengambil kalimat</p>
+      <textarea id="typeInput" class="typing-input" rows="3" placeholder="Ketik di sini..." disabled></textarea>
+      <div class="game-diff-row">
+        <button type="button" id="typeStartBtn">&#9654; Mulai</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME SLIDING PUZZLE ================= -->
+  <div id="game-sliding" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Sliding Puzzle</h1>
+        <p>Susun ubin angka 1-15 dengan langkah sesedikit mungkin</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="stat-row">
+        <div class="stat-cell online"><div class="stat-num" id="slideMovesNum">0</div><div class="stat-label">Langkah</div></div>
+        <div class="stat-cell"><div class="stat-num" id="slideBestNum">-</div><div class="stat-label">Rekor</div></div>
+      </div>
+      <div class="sliding-board" id="slidingBoard"></div>
+      <div class="game-diff-row">
+        <button type="button" id="slideShuffleBtn">Acak Ulang</button>
       </div>
     </div>
   </div>
@@ -4684,6 +5393,16 @@ async function fetchJsonSafe(url, options = {}, timeoutMs = 25000){
 ============================================================ */
 let activePageId = 'beranda';
 
+// ===== PHASE 1: lifecycle game baru (registry + stop otomatis saat pindah halaman) =====
+let activeGameStopFn = null;
+function registerGameCleanup(fn){ activeGameStopFn = (typeof fn === 'function') ? fn : null; }
+function stopActiveGame(){
+  if(typeof activeGameStopFn === 'function'){
+    try{ activeGameStopFn(); }catch(err){ /* abaikan error cleanup */ }
+  }
+  activeGameStopFn = null;
+}
+
 function navigatePage(targetId){
   if(!targetId) return;
 
@@ -4694,6 +5413,12 @@ function navigatePage(targetId){
   // kalau lagi di halaman yang sama, ga usah animasi ulang
   if(currentPage === targetPage){
     return;
+  }
+
+  // Stop game baru (Snake/2048/Breakout/dst) begitu user pindah dari halamannya,
+  // biar tidak jalan terus di background dan boros CPU.
+  if(currentPage && currentPage.id !== targetId){
+    stopActiveGame();
   }
 
   const doSwitch = () => {
@@ -7208,6 +7933,7 @@ function initGamesHub(){
   initGuessGame();
   initRpsGame();
   initMemoryGame();
+  initAimTrainer();
   initWinCelebration();
 }
 
@@ -8047,6 +8773,409 @@ function initMemoryGame(){
 }
 
 /* ============================================================
+   AIM TRAINER — GAME LOGIC (fitur tambahan, tidak mengubah game lain)
+============================================================ */
+function initAimTrainer(){
+  const page = document.getElementById('game-aim');
+  if(!page || page.dataset.aimReady) return;
+  page.dataset.aimReady = '1';
+
+  const startScreen   = document.getElementById('aimStartScreen');
+  const playWrap       = document.getElementById('aimPlayWrap');
+  const resultScreen  = document.getElementById('aimResultScreen');
+  const arena          = document.getElementById('aimArena');
+  const startBtn       = document.getElementById('aimStartBtn');
+  const pauseBtn       = document.getElementById('aimPauseBtn');
+  const resumeBtn      = document.getElementById('aimResumeBtn');
+  const restartBtn     = document.getElementById('aimRestartBtn');
+  const playAgainBtn   = document.getElementById('aimPlayAgainBtn');
+  const pauseOverlay   = document.getElementById('aimPauseOverlay');
+  const comboBanner    = document.getElementById('aimComboBanner');
+  const levelFlash     = document.getElementById('aimLevelFlash');
+
+  const scoreNumEl = document.getElementById('aimScoreNum');
+  const timerNumEl = document.getElementById('aimTimerNum');
+  const timerCell  = document.getElementById('aimTimerCell');
+  const comboNumEl = document.getElementById('aimComboNum');
+  const levelNumEl = document.getElementById('aimLevelNum');
+  const bestInline = document.getElementById('aimBestInline');
+
+  const resultTitle = document.getElementById('aimResultTitle');
+  const resScore    = document.getElementById('aimResScore');
+  const resBest     = document.getElementById('aimResBest');
+  const resAccuracy = document.getElementById('aimResAccuracy');
+  const resClicks   = document.getElementById('aimResClicks');
+  const resMiss     = document.getElementById('aimResMiss');
+  const resCombo    = document.getElementById('aimResCombo');
+
+  if(!arena || !startBtn) return;
+
+  const GAME_DURATION   = 30;   // detik
+  const HITS_PER_LEVEL  = 8;
+  const MAX_LEVEL       = 8;
+  const reduceMotionMQ  = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const st = {
+    running:false, paused:false,
+    score:0, combo:0, bestCombo:0,
+    hits:0, missClicks:0, expired:0,
+    level:1, timeLeft:GAME_DURATION,
+    target:null, targetLifespan:0, targetSpawnedAt:0,
+    targetTimeout:null, countdownId:null, pauseRemainingTargetMs:null
+  };
+
+  /* ---------------- localStorage high score ---------------- */
+  function loadBest(){
+    try{ return parseInt(localStorage.getItem('dinz_aim_best') || '0', 10) || 0; }catch(e){ return 0; }
+  }
+  function saveBest(v){
+    try{ localStorage.setItem('dinz_aim_best', String(v)); }catch(e){}
+  }
+  bestInline.textContent = loadBest();
+
+  /* ---------------- Web Audio SFX (tanpa file eksternal) ---------------- */
+  let audioCtx = null;
+  function ensureAudio(){
+    if(audioCtx) { if(audioCtx.state === 'suspended') audioCtx.resume(); return; }
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+  }
+  function playTone(freq, dur, type, vol){
+    if(!audioCtx) return;
+    try{
+      const t0 = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, t0);
+      gain.gain.setValueAtTime(vol != null ? vol : 0.15, t0);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur);
+    }catch(e){}
+  }
+  function sfxHit(combo){ playTone(560 + Math.min(combo, 20) * 14, 0.09, 'triangle', 0.16); }
+  function sfxMiss(){ playTone(150, 0.14, 'sawtooth', 0.10); }
+  function sfxCombo(){ playTone(880, 0.1, 'square', 0.11); setTimeout(() => playTone(1180, 0.12, 'square', 0.1), 70); }
+  function sfxGameOver(){
+    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => playTone(f, 0.18, 'triangle', 0.13), i * 110));
+  }
+
+  /* ---------------- helper animasi kecil ---------------- */
+  function pop(el, cls){
+    cls = cls || 'pop';
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), 240);
+  }
+
+  function spawnFloatTextAt(x, y, text, isMiss){
+    const ft = document.createElement('div');
+    ft.className = 'aim-float-text' + (isMiss ? ' miss' : '');
+    ft.textContent = text;
+    ft.style.left = x + 'px';
+    ft.style.top = y + 'px';
+    arena.appendChild(ft);
+    setTimeout(() => ft.remove(), 650);
+  }
+
+  function spawnParticles(x, y){
+    if(reduceMotionMQ.matches) return;
+    const count = 6;
+    for(let i = 0; i < count; i++){
+      const p = document.createElement('span');
+      p.className = 'aim-particle';
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+      const dist = 24 + Math.random() * 14;
+      p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
+      p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      arena.appendChild(p);
+      setTimeout(() => p.remove(), 520);
+    }
+  }
+
+  function spawnRipple(x, y){
+    const r = document.createElement('div');
+    r.className = 'aim-ripple';
+    r.style.left = x + 'px';
+    r.style.top = y + 'px';
+    arena.appendChild(r);
+    setTimeout(() => r.remove(), 440);
+  }
+
+  function showComboBanner(combo){
+    comboBanner.textContent = `Combo x${combo}!`;
+    comboBanner.classList.remove('show');
+    void comboBanner.offsetWidth;
+    comboBanner.classList.add('show');
+  }
+
+  function showLevelFlash(level){
+    levelFlash.textContent = `LEVEL ${level}!`;
+    levelFlash.classList.remove('show');
+    void levelFlash.offsetWidth;
+    levelFlash.classList.add('show');
+  }
+
+  function shakeArena(){
+    arena.classList.remove('aim-shake');
+    void arena.offsetWidth;
+    arena.classList.add('aim-shake');
+  }
+
+  /* ---------------- target lifecycle ---------------- */
+  function removeTargetImmediate(){
+    if(st.target){ st.target.remove(); st.target = null; }
+    if(st.targetTimeout){ clearTimeout(st.targetTimeout); st.targetTimeout = null; }
+  }
+
+  function spawnTarget(){
+    if(!st.running || st.paused) return;
+    removeTargetImmediate();
+
+    const rect = arena.getBoundingClientRect();
+    const level = st.level;
+    const size = Math.max(32, 68 - (level - 1) * 5);
+    const lifespan = Math.max(650, 1500 - (level - 1) * 115);
+    const isBonus = st.combo >= 3 && Math.random() < 0.18;
+
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'aim-target' + (isBonus ? ' combo-target' : '');
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.dataset.bonus = isBonus ? '1' : '0';
+
+    const pad = size / 2 + 6;
+    const spanX = Math.max(0, rect.width - pad * 2);
+    const spanY = Math.max(0, rect.height - pad * 2);
+    const x = pad + Math.random() * spanX;
+    const y = pad + Math.random() * spanY;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+
+    el.addEventListener('pointerdown', onTargetHit, { once:true });
+    arena.appendChild(el);
+
+    st.target = el;
+    st.targetLifespan = lifespan;
+    st.targetSpawnedAt = performance.now();
+    st.targetTimeout = setTimeout(() => expireTarget(el), lifespan);
+  }
+
+  function onTargetHit(e){
+    e.stopPropagation();
+    e.preventDefault();
+    const el = e.currentTarget;
+    if(el !== st.target || !st.running || st.paused) return;
+
+    if(st.targetTimeout){ clearTimeout(st.targetTimeout); st.targetTimeout = null; }
+    st.target = null;
+
+    const isBonus = el.dataset.bonus === '1';
+    st.hits++;
+    st.combo++;
+    if(st.combo > st.bestCombo) st.bestCombo = st.combo;
+
+    const multiplier = 1 + Math.floor(st.combo / 5) * 0.5;
+    let gained = Math.round(10 * multiplier);
+    if(isBonus) gained *= 2;
+    st.score += gained;
+
+    const x = parseFloat(el.style.left), y = parseFloat(el.style.top);
+
+    scoreNumEl.textContent = st.score; pop(scoreNumEl);
+    comboNumEl.textContent = st.combo; pop(comboNumEl, 'combo-pop');
+    spawnFloatTextAt(x, y, '+' + gained, false);
+    spawnParticles(x, y);
+    sfxHit(st.combo);
+
+    if(st.combo > 0 && st.combo % 5 === 0){
+      showComboBanner(st.combo);
+      sfxCombo();
+    }
+
+    if(st.hits % HITS_PER_LEVEL === 0 && st.level < MAX_LEVEL){
+      st.level++;
+      levelNumEl.textContent = st.level; pop(levelNumEl);
+      showLevelFlash(st.level);
+    }
+
+    el.classList.add('aim-target-hit');
+    setTimeout(() => el.remove(), 260);
+
+    if(st.running && !st.paused) spawnTarget();
+  }
+
+  function expireTarget(el){
+    if(el !== st.target) return;
+    st.target = null;
+    st.targetTimeout = null;
+    st.expired++;
+    st.combo = 0;
+    comboNumEl.textContent = '0';
+    el.classList.add('aim-target-expire');
+    setTimeout(() => el.remove(), 220);
+    sfxMiss();
+    if(st.running && !st.paused) spawnTarget();
+  }
+
+  arena.addEventListener('pointerdown', (e) => {
+    if(!st.running || st.paused) return;
+    if(e.target !== arena) return; // klik kena target/elemen lain, biarkan handler masing-masing
+    st.missClicks++;
+    st.combo = 0;
+    comboNumEl.textContent = '0';
+    const rect = arena.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    spawnRipple(x, y);
+    spawnFloatTextAt(x, y, 'Miss', true);
+    shakeArena();
+    sfxMiss();
+  });
+
+  /* ---------------- timer & lifecycle game ---------------- */
+  function tickTimer(){
+    if(!st.running || st.paused) return;
+    st.timeLeft--;
+    timerNumEl.textContent = st.timeLeft;
+    pop(timerNumEl);
+    timerCell.classList.toggle('timer-warn', st.timeLeft <= 5 && st.timeLeft > 0);
+    if(st.timeLeft <= 0) endGame();
+  }
+
+  function hardStopTimers(){
+    if(st.countdownId){ clearInterval(st.countdownId); st.countdownId = null; }
+    if(st.targetTimeout){ clearTimeout(st.targetTimeout); st.targetTimeout = null; }
+  }
+
+  function resetHud(){
+    scoreNumEl.textContent = '0';
+    timerNumEl.textContent = String(GAME_DURATION);
+    comboNumEl.textContent = '0';
+    levelNumEl.textContent = '1';
+    timerCell.classList.remove('timer-warn');
+  }
+
+  function startGame(){
+    hardStopTimers();
+    removeTargetImmediate();
+    st.running = true; st.paused = false;
+    st.score = 0; st.combo = 0; st.bestCombo = 0;
+    st.hits = 0; st.missClicks = 0; st.expired = 0;
+    st.level = 1; st.timeLeft = GAME_DURATION;
+    st.pauseRemainingTargetMs = null;
+
+    resetHud();
+    startScreen.style.display = 'none';
+    resultScreen.style.display = 'none';
+    playWrap.style.display = '';
+    pauseOverlay.classList.remove('show');
+
+    st.countdownId = setInterval(tickTimer, 1000);
+    spawnTarget();
+  }
+
+  function pauseGame(){
+    if(!st.running || st.paused) return;
+    st.paused = true;
+    pauseOverlay.classList.add('show');
+    if(st.countdownId){ clearInterval(st.countdownId); st.countdownId = null; }
+    if(st.target && st.targetTimeout){
+      clearTimeout(st.targetTimeout);
+      st.targetTimeout = null;
+      const elapsed = performance.now() - st.targetSpawnedAt;
+      st.pauseRemainingTargetMs = Math.max(150, st.targetLifespan - elapsed);
+    }
+  }
+
+  function resumeGame(){
+    if(!st.running || !st.paused) return;
+    st.paused = false;
+    pauseOverlay.classList.remove('show');
+    st.countdownId = setInterval(tickTimer, 1000);
+    if(st.target && st.pauseRemainingTargetMs){
+      st.targetSpawnedAt = performance.now();
+      const remain = st.pauseRemainingTargetMs;
+      st.pauseRemainingTargetMs = null;
+      st.targetTimeout = setTimeout(() => expireTarget(st.target), remain);
+    }
+  }
+
+  function endGame(){
+    st.running = false; st.paused = false;
+    hardStopTimers();
+    removeTargetImmediate();
+    pauseOverlay.classList.remove('show');
+    playWrap.style.display = 'none';
+
+    const totalClick = st.hits + st.missClicks;
+    const missTotal = st.missClicks + st.expired;
+    const accuracy = totalClick > 0 ? Math.round((st.hits / totalClick) * 100) : 0;
+
+    let best = loadBest();
+    let isNewBest = false;
+    if(st.score > best){ best = st.score; saveBest(best); isNewBest = true; }
+
+    resultTitle.textContent = isNewBest ? 'Rekor Baru! \uD83C\uDFC6' : 'Waktu Habis!';
+    resScore.textContent = st.score;
+    resBest.textContent = best;
+    resAccuracy.textContent = accuracy + '%';
+    resClicks.textContent = totalClick;
+    resMiss.textContent = missTotal;
+    resCombo.textContent = st.bestCombo;
+    bestInline.textContent = best;
+
+    resultScreen.style.display = '';
+    sfxGameOver();
+
+    if(isNewBest && typeof window.showWinCelebration === 'function'){
+      window.showWinCelebration('Rekor Baru!', `Score akhir kamu ${st.score} poin \uD83C\uDFAF`);
+    }
+  }
+
+  /* ---------------- tombol ---------------- */
+  startBtn.addEventListener('click', () => { ensureAudio(); startGame(); });
+
+  pauseBtn.addEventListener('click', () => {
+    if(!st.running) return;
+    if(st.paused) resumeGame(); else pauseGame();
+  });
+
+  resumeBtn.addEventListener('click', resumeGame);
+
+  restartBtn.addEventListener('click', () => {
+    pauseOverlay.classList.remove('show');
+    startGame();
+  });
+
+  playAgainBtn.addEventListener('click', () => {
+    resultScreen.style.display = 'none';
+    startGame();
+  });
+
+  /* ---------------- pastikan game berhenti saat pindah halaman ---------------- */
+  if('MutationObserver' in window){
+    const mo = new MutationObserver(() => {
+      const isActive = page.classList.contains('active');
+      if(!isActive && st.running && !st.paused){
+        pauseGame();
+      }
+    });
+    mo.observe(page, { attributes:true, attributeFilter:['class'] });
+  }
+
+  // Hentikan timer kalau tab disembunyikan lama (hemat baterai, cegah drift)
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden && st.running && !st.paused) pauseGame();
+  });
+}
+
+/* ============================================================
    INIT ON DOM READY
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -8253,6 +9382,806 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 })();
 
+</script>
+
+<!-- ============================================================
+     PHASE 1: GAME PORTAL BARU (Snake, 2048, Breakout, Whack-a-Mole,
+     Connect Four, Color Match, Typing Speed, Sliding Puzzle)
+     Semua game lazy-init (baru jalan saat dibuka) & auto-stop saat
+     halaman ditinggalkan lewat stopActiveGame() / registerGameCleanup().
+============================================================ -->
+<script>
+(function(){
+  'use strict';
+
+  function lsGet(key, fallback){
+    try{ const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); }catch(e){ return fallback; }
+  }
+  function lsSet(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ /* storage penuh/diblokir, abaikan */ }
+  }
+  function beep(freq, dur, type, vol){
+    try{
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return;
+      if(!window.__dzGameAC) window.__dzGameAC = new AC();
+      const ctx = window.__dzGameAC;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.value = freq || 440;
+      gain.gain.value = (vol !== undefined ? vol : 0.06);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (dur || 0.15));
+      osc.stop(ctx.currentTime + (dur || 0.15) + 0.02);
+    }catch(e){ /* audio tidak tersedia, abaikan */ }
+  }
+
+  /* ===================== SNAKE ===================== */
+  (function(){
+    const canvas = document.getElementById('snakeCanvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('snakeOverlay');
+    const overlayText = document.getElementById('snakeOverlayText');
+    const startBtn = document.getElementById('snakeStartBtn');
+    const pauseBtn = document.getElementById('snakePauseBtn');
+    const restartBtn = document.getElementById('snakeRestartBtn');
+    const scoreNum = document.getElementById('snakeScoreNum');
+    const bestNum = document.getElementById('snakeBestNum');
+    const dpad = document.getElementById('snakeDpad');
+
+    const GRID = 18, CELLPX = 20;
+    let snake, dir, nextDir, food, score, best, loopId, running, paused, speedMs;
+
+    function reset(){
+      snake = [{x:8,y:9},{x:7,y:9},{x:6,y:9}];
+      dir = 'right'; nextDir = 'right';
+      score = 0; speedMs = 130;
+      best = lsGet('dz_snake_best', 0);
+      scoreNum.textContent = '0';
+      bestNum.textContent = best;
+      placeFood();
+      draw();
+    }
+    function placeFood(){
+      let ok = false;
+      while(!ok){
+        food = {x: Math.floor(Math.random()*GRID), y: Math.floor(Math.random()*GRID)};
+        ok = !snake.some(s => s.x === food.x && s.y === food.y);
+      }
+    }
+    function draw(){
+      ctx.fillStyle = '#0c0f14';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#ee5f5f';
+      ctx.fillRect(food.x*CELLPX+2, food.y*CELLPX+2, CELLPX-4, CELLPX-4);
+      snake.forEach((s,i) => {
+        ctx.fillStyle = i === 0 ? '#5ee6c8' : '#2f8f7c';
+        ctx.fillRect(s.x*CELLPX+1, s.y*CELLPX+1, CELLPX-2, CELLPX-2);
+      });
+    }
+    function step(){
+      if(paused) return;
+      dir = nextDir;
+      const head = {...snake[0]};
+      if(dir === 'up') head.y--; else if(dir === 'down') head.y++;
+      else if(dir === 'left') head.x--; else head.x++;
+
+      if(head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID || snake.some(s => s.x === head.x && s.y === head.y)){
+        gameOver();
+        return;
+      }
+      snake.unshift(head);
+      if(head.x === food.x && head.y === food.y){
+        score += 10;
+        scoreNum.textContent = score;
+        beep(660,0.08,'square',0.05);
+        placeFood();
+        if(speedMs > 60) speedMs -= 2;
+      } else {
+        snake.pop();
+      }
+      draw();
+    }
+    function loop(){
+      step();
+      loopId = setTimeout(loop, speedMs);
+    }
+    function gameOver(){
+      running = false;
+      clearTimeout(loopId);
+      beep(140,0.3,'sawtooth',0.06);
+      if(score > best){ best = score; lsSet('dz_snake_best', best); bestNum.textContent = best; }
+      overlayText.textContent = 'Game Over! Skor: ' + score;
+      startBtn.textContent = '\u21bb Main Lagi';
+      overlay.style.display = 'flex';
+    }
+    function start(){
+      reset();
+      running = true; paused = false;
+      overlay.style.display = 'none';
+      clearTimeout(loopId);
+      loop();
+      registerGameCleanup(stop);
+    }
+    function stop(){
+      running = false;
+      clearTimeout(loopId);
+    }
+    function setDir(d){
+      const opp = {up:'down', down:'up', left:'right', right:'left'};
+      if(!running || paused) return;
+      if(opp[d] === dir) return;
+      nextDir = d;
+    }
+
+    startBtn.addEventListener('click', start);
+    restartBtn.addEventListener('click', start);
+    pauseBtn.addEventListener('click', () => {
+      if(!running) return;
+      paused = !paused;
+      pauseBtn.textContent = paused ? 'Lanjut' : 'Jeda';
+    });
+    dpad.addEventListener('click', e => {
+      const btn = e.target.closest('[data-dir]');
+      if(btn) setDir(btn.getAttribute('data-dir'));
+    });
+    document.addEventListener('keydown', e => {
+      if(document.getElementById('game-snake') && !document.getElementById('game-snake').classList.contains('active')) return;
+      const map = {ArrowUp:'up', ArrowDown:'down', ArrowLeft:'left', ArrowRight:'right'};
+      if(map[e.key]){ e.preventDefault(); setDir(map[e.key]); }
+    });
+    reset();
+  })();
+
+  /* ===================== 2048 ===================== */
+  (function(){
+    const board = document.getElementById('g2048Board');
+    if(!board) return;
+    const overlay = document.getElementById('g2048Overlay');
+    const overlayText = document.getElementById('g2048OverlayText');
+    const retryBtn = document.getElementById('g2048RetryBtn');
+    const restartBtn = document.getElementById('g2048RestartBtn');
+    const scoreNum = document.getElementById('g2048ScoreNum');
+    const bestNum = document.getElementById('g2048BestNum');
+    const SIZE = 4;
+    let grid, score, best, touchStartX, touchStartY;
+
+    function newGrid(){
+      grid = Array.from({length:SIZE}, () => Array(SIZE).fill(0));
+      score = 0;
+      best = lsGet('dz_2048_best', 0);
+      addTile(); addTile();
+      render();
+      overlay.style.display = 'none';
+    }
+    function addTile(){
+      const empties = [];
+      for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(grid[r][c] === 0) empties.push([r,c]);
+      if(!empties.length) return;
+      const [r,c] = empties[Math.floor(Math.random()*empties.length)];
+      grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+    }
+    function render(){
+      board.innerHTML = '';
+      for(let r=0;r<SIZE;r++){
+        for(let c=0;c<SIZE;c++){
+          const v = grid[r][c];
+          const tile = document.createElement('div');
+          tile.className = 'g2048-tile';
+          if(v){ tile.setAttribute('data-v', v); tile.textContent = v; }
+          board.appendChild(tile);
+        }
+      }
+      scoreNum.textContent = score;
+      bestNum.textContent = best;
+    }
+    function slideRow(row){
+      const arr = row.filter(v => v !== 0);
+      for(let i=0;i<arr.length-1;i++){
+        if(arr[i] === arr[i+1]){
+          arr[i] *= 2; score += arr[i];
+          arr.splice(i+1,1);
+        }
+      }
+      while(arr.length < SIZE) arr.push(0);
+      return arr;
+    }
+    function rotateGrid(g){
+      const n = Array.from({length:SIZE}, () => Array(SIZE).fill(0));
+      for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) n[c][SIZE-1-r] = g[r][c];
+      return n;
+    }
+    function move(dir){
+      let moved = false;
+      let g = grid;
+      let rotations = {left:0, up:1, right:2, down:3}[dir];
+      for(let i=0;i<rotations;i++) g = rotateGrid(g);
+      const newG = g.map(row => slideRow(row));
+      if(JSON.stringify(newG) !== JSON.stringify(g)) moved = true;
+      let result = newG;
+      for(let i=0;i<(4-rotations)%4;i++) result = rotateGrid(result);
+      if(moved){
+        grid = result;
+        addTile();
+        beep(500,0.06,'square',0.04);
+        render();
+        if(best < score){ best = score; lsSet('dz_2048_best', best); }
+        checkGameOver();
+      }
+    }
+    function canMove(){
+      for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++){
+        if(grid[r][c] === 0) return true;
+        if(c < SIZE-1 && grid[r][c] === grid[r][c+1]) return true;
+        if(r < SIZE-1 && grid[r][c] === grid[r+1][c]) return true;
+      }
+      return false;
+    }
+    function checkGameOver(){
+      if(!canMove()){
+        overlayText.textContent = 'Game Over! Skor: ' + score;
+        overlay.style.display = 'flex';
+        beep(140,0.3,'sawtooth',0.06);
+      }
+    }
+    function keyHandler(e){
+      if(!document.getElementById('game-2048').classList.contains('active')) return;
+      const map = {ArrowLeft:'left', ArrowRight:'right', ArrowUp:'up', ArrowDown:'down'};
+      if(map[e.key]){ e.preventDefault(); move(map[e.key]); }
+    }
+    function touchStart(e){
+      const t = e.touches[0];
+      touchStartX = t.clientX; touchStartY = t.clientY;
+    }
+    function touchEnd(e){
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartX, dy = t.clientY - touchStartY;
+      if(Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+      if(Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 'right' : 'left');
+      else move(dy > 0 ? 'down' : 'up');
+    }
+
+    document.addEventListener('keydown', keyHandler);
+    board.addEventListener('touchstart', touchStart, {passive:true});
+    board.addEventListener('touchend', touchEnd, {passive:true});
+    retryBtn.addEventListener('click', newGrid);
+    restartBtn.addEventListener('click', newGrid);
+    newGrid();
+    registerGameCleanup(() => {});
+  })();
+
+  /* ===================== BREAKOUT ===================== */
+  (function(){
+    const canvas = document.getElementById('brkCanvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('brkOverlay');
+    const overlayText = document.getElementById('brkOverlayText');
+    const startBtn = document.getElementById('brkStartBtn');
+    const pauseBtn = document.getElementById('brkPauseBtn');
+    const restartBtn = document.getElementById('brkRestartBtn');
+    const scoreNum = document.getElementById('brkScoreNum');
+    const livesNum = document.getElementById('brkLivesNum');
+    const bestNum = document.getElementById('brkBestNum');
+
+    const W = canvas.width, H = canvas.height;
+    let paddle, ball, bricks, score, lives, best, rafId, running, paused;
+
+    function initBricks(){
+      bricks = [];
+      const rows = 5, cols = 7, bw = (W-20)/cols, bh = 18;
+      const colors = ['#ee5f5f','#ffb300','#5ee6c8','#57c26a','#5a4fcf'];
+      for(let r=0;r<rows;r++){
+        for(let c=0;c<cols;c++){
+          bricks.push({x:10+c*bw, y:30+r*(bh+6), w:bw-4, h:bh, alive:true, color:colors[r%colors.length]});
+        }
+      }
+    }
+    function reset(){
+      paddle = {w:70, h:10, x:(W-70)/2};
+      ball = {x:W/2, y:H-40, vx:3, vy:-3.6, r:6};
+      score = 0; lives = 3;
+      best = lsGet('dz_breakout_best', 0);
+      scoreNum.textContent = 0; livesNum.textContent = 3; bestNum.textContent = best;
+      initBricks();
+      draw();
+    }
+    function draw(){
+      ctx.fillStyle = '#0c0f14'; ctx.fillRect(0,0,W,H);
+      bricks.forEach(b => { if(b.alive){ ctx.fillStyle = b.color; ctx.fillRect(b.x,b.y,b.w,b.h); } });
+      ctx.fillStyle = '#5ee6c8';
+      ctx.fillRect(paddle.x, H-18, paddle.w, paddle.h);
+      ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill();
+    }
+    function update(){
+      if(paused) return;
+      ball.x += ball.vx; ball.y += ball.vy;
+      if(ball.x < ball.r || ball.x > W-ball.r) ball.vx *= -1;
+      if(ball.y < ball.r) ball.vy *= -1;
+      if(ball.y + ball.r >= H-18 && ball.y + ball.r <= H-8 && ball.x >= paddle.x && ball.x <= paddle.x+paddle.w){
+        ball.vy = -Math.abs(ball.vy);
+        const hitPos = (ball.x - (paddle.x + paddle.w/2)) / (paddle.w/2);
+        ball.vx = hitPos * 4;
+        beep(400,0.06,'square',0.04);
+      }
+      if(ball.y > H){
+        lives--; livesNum.textContent = lives;
+        beep(160,0.2,'sawtooth',0.05);
+        if(lives <= 0){ gameOver(); return; }
+        ball.x = W/2; ball.y = H-40; ball.vx = 3; ball.vy = -3.6;
+      }
+      bricks.forEach(b => {
+        if(!b.alive) return;
+        if(ball.x > b.x && ball.x < b.x+b.w && ball.y-ball.r < b.y+b.h && ball.y+ball.r > b.y){
+          b.alive = false; ball.vy *= -1;
+          score += 10; scoreNum.textContent = score;
+          beep(700,0.05,'square',0.04);
+        }
+      });
+      if(bricks.every(b => !b.alive)){ win(); return; }
+      draw();
+      rafId = requestAnimationFrame(update);
+    }
+    function gameOver(){
+      running = false;
+      cancelAnimationFrame(rafId);
+      if(score > best){ best = score; lsSet('dz_breakout_best', best); bestNum.textContent = best; }
+      overlayText.textContent = 'Game Over! Skor: ' + score;
+      startBtn.textContent = '\u21bb Main Lagi';
+      overlay.style.display = 'flex';
+    }
+    function win(){
+      running = false;
+      cancelAnimationFrame(rafId);
+      if(score > best){ best = score; lsSet('dz_breakout_best', best); bestNum.textContent = best; }
+      overlayText.textContent = 'Menang! Semua balok pecah. Skor: ' + score;
+      startBtn.textContent = '\u21bb Main Lagi';
+      overlay.style.display = 'flex';
+    }
+    function start(){
+      reset();
+      running = true; paused = false;
+      overlay.style.display = 'none';
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(update);
+      registerGameCleanup(stop);
+    }
+    function stop(){
+      running = false;
+      cancelAnimationFrame(rafId);
+    }
+    function movePaddleTo(clientX){
+      const rect = canvas.getBoundingClientRect();
+      const scale = W / rect.width;
+      let x = (clientX - rect.left) * scale - paddle.w/2;
+      paddle.x = Math.max(0, Math.min(W-paddle.w, x));
+    }
+    canvas.addEventListener('mousemove', e => { if(running && !paused) movePaddleTo(e.clientX); });
+    canvas.addEventListener('touchmove', e => { if(running && !paused){ movePaddleTo(e.touches[0].clientX); e.preventDefault(); } }, {passive:false});
+    startBtn.addEventListener('click', start);
+    restartBtn.addEventListener('click', start);
+    pauseBtn.addEventListener('click', () => {
+      if(!running) return;
+      paused = !paused;
+      pauseBtn.textContent = paused ? 'Lanjut' : 'Jeda';
+      if(!paused) rafId = requestAnimationFrame(update);
+    });
+    reset();
+  })();
+
+  /* ===================== WHACK-A-MOLE ===================== */
+  (function(){
+    const grid = document.getElementById('whackGrid');
+    if(!grid) return;
+    const overlay = document.getElementById('whackOverlay');
+    const overlayText = document.getElementById('whackOverlayText');
+    const startBtn = document.getElementById('whackStartBtn');
+    const scoreNum = document.getElementById('whackScoreNum');
+    const timeNum = document.getElementById('whackTimeNum');
+    const bestNum = document.getElementById('whackBestNum');
+
+    let holes = [], score, best, timeLeft, timerId, moleTimerId, running;
+
+    function build(){
+      grid.innerHTML = '';
+      holes = [];
+      for(let i=0;i<9;i++){
+        const hole = document.createElement('div');
+        hole.className = 'whack-hole';
+        const mole = document.createElement('div');
+        mole.className = 'whack-mole';
+        mole.textContent = '\ud83d\udc39';
+        hole.appendChild(mole);
+        hole.addEventListener('click', () => hit(hole));
+        grid.appendChild(hole);
+        holes.push(hole);
+      }
+      best = lsGet('dz_whack_best', 0);
+      bestNum.textContent = best;
+    }
+    function popRandom(){
+      holes.forEach(h => h.classList.remove('up'));
+      const h = holes[Math.floor(Math.random()*holes.length)];
+      h.classList.add('up');
+      moleTimerId = setTimeout(popRandom, 550 + Math.random()*450);
+    }
+    function hit(hole){
+      if(!running) return;
+      if(hole.classList.contains('up')){
+        hole.classList.remove('up');
+        score += 10;
+        scoreNum.textContent = score;
+        beep(700,0.06,'square',0.05);
+      }
+    }
+    function tick(){
+      timeLeft--;
+      timeNum.textContent = timeLeft;
+      if(timeLeft <= 0) endGame();
+    }
+    function endGame(){
+      running = false;
+      clearInterval(timerId);
+      clearTimeout(moleTimerId);
+      holes.forEach(h => h.classList.remove('up'));
+      if(score > best){ best = score; lsSet('dz_whack_best', best); bestNum.textContent = best; }
+      overlayText.textContent = 'Waktu Habis! Skor: ' + score;
+      startBtn.textContent = '\u21bb Main Lagi';
+      overlay.style.display = 'flex';
+    }
+    function start(){
+      score = 0; timeLeft = 30;
+      scoreNum.textContent = 0; timeNum.textContent = 30;
+      overlay.style.display = 'none';
+      running = true;
+      clearInterval(timerId); clearTimeout(moleTimerId);
+      timerId = setInterval(tick, 1000);
+      popRandom();
+      registerGameCleanup(stop);
+    }
+    function stop(){
+      running = false;
+      clearInterval(timerId);
+      clearTimeout(moleTimerId);
+    }
+    startBtn.addEventListener('click', start);
+    build();
+  })();
+
+  /* ===================== CONNECT FOUR ===================== */
+  (function(){
+    const boardEl = document.getElementById('c4Board');
+    if(!boardEl) return;
+    const statusText = document.getElementById('c4StatusText');
+    const resetBtn = document.getElementById('c4ResetBtn');
+    const ROWS = 6, COLS = 7;
+    let board, turnPlayer, over;
+
+    function reset(){
+      board = Array.from({length:ROWS}, () => Array(COLS).fill(0));
+      turnPlayer = true; over = false;
+      statusText.textContent = 'Giliranmu (Kuning)';
+      render();
+    }
+    function render(){
+      boardEl.innerHTML = '';
+      for(let r=0;r<ROWS;r++){
+        for(let c=0;c<COLS;c++){
+          const cell = document.createElement('div');
+          cell.className = 'c4-cell' + (board[r][c] === 1 ? ' p1' : board[r][c] === 2 ? ' p2' : '');
+          cell.setAttribute('data-col', c);
+          boardEl.appendChild(cell);
+        }
+      }
+    }
+    function drop(col, player){
+      for(let r=ROWS-1;r>=0;r--){
+        if(board[r][col] === 0){ board[r][col] = player; return r; }
+      }
+      return -1;
+    }
+    function checkWin(player){
+      const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+      for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+        if(board[r][c] !== player) continue;
+        for(const [dr,dc] of dirs){
+          let count = 1;
+          for(let k=1;k<4;k++){
+            const nr = r+dr*k, nc = c+dc*k;
+            if(nr<0||nr>=ROWS||nc<0||nc>=COLS||board[nr][nc]!==player) break;
+            count++;
+          }
+          if(count >= 4) return true;
+        }
+      }
+      return false;
+    }
+    function boardFull(){ return board[0].every(v => v !== 0); }
+    function botMove(){
+      const validCols = [];
+      for(let c=0;c<COLS;c++) if(board[0][c] === 0) validCols.push(c);
+      if(!validCols.length) return;
+      // Coba menang, lalu coba blokir, kalau tidak acak
+      for(const c of validCols){
+        const r = drop(c, 2);
+        if(checkWin(2)){ finish(2, c); return; }
+        board[r][c] = 0;
+      }
+      for(const c of validCols){
+        const r = drop(c, 1);
+        const blocked = checkWin(1);
+        board[r][c] = 0;
+        if(blocked){
+          drop(c, 2);
+          if(checkWin(2)) return finish(2, c);
+          render();
+          if(boardFull()) finish(0);
+          return;
+        }
+      }
+      const c = validCols[Math.floor(Math.random()*validCols.length)];
+      drop(c, 2);
+      if(checkWin(2)) return finish(2, c);
+      render();
+      if(boardFull()) finish(0);
+    }
+    function finish(winner){
+      over = true;
+      render();
+      beep(winner === 1 ? 700 : 160, 0.25, winner === 1 ? 'square' : 'sawtooth', 0.05);
+      statusText.textContent = winner === 1 ? '\ud83c\udf89 Kamu Menang!' : winner === 2 ? 'Bot Menang!' : 'Seri!';
+    }
+    boardEl.addEventListener('click', e => {
+      if(over || !turnPlayer) return;
+      const cell = e.target.closest('.c4-cell');
+      if(!cell) return;
+      const col = parseInt(cell.getAttribute('data-col'), 10);
+      if(board[0][col] !== 0) return;
+      drop(col, 1);
+      if(checkWin(1)){ finish(1); return; }
+      render();
+      if(boardFull()){ finish(0); return; }
+      turnPlayer = false;
+      statusText.textContent = 'Bot berpikir...';
+      setTimeout(() => {
+        if(over) return;
+        botMove();
+        if(!over){ turnPlayer = true; statusText.textContent = 'Giliranmu (Kuning)'; }
+      }, 450);
+    });
+    resetBtn.addEventListener('click', reset);
+    reset();
+    registerGameCleanup(() => {});
+  })();
+
+  /* ===================== COLOR MATCH ===================== */
+  (function(){
+    const wordEl = document.getElementById('cmWord');
+    if(!wordEl) return;
+    const overlay = document.getElementById('cmOverlay');
+    const overlayText = document.getElementById('cmOverlayText');
+    const startBtn = document.getElementById('cmStartBtn');
+    const yesBtn = document.getElementById('cmYesBtn');
+    const noBtn = document.getElementById('cmNoBtn');
+    const scoreNum = document.getElementById('cmScoreNum');
+    const timeNum = document.getElementById('cmTimeNum');
+    const bestNum = document.getElementById('cmBestNum');
+
+    const colors = [
+      {name:'MERAH', hex:'#ee5f5f'}, {name:'HIJAU', hex:'#57c26a'},
+      {name:'KUNING', hex:'#ffb300'}, {name:'BIRU', hex:'#4aa3ff'},
+      {name:'UNGU', hex:'#a45fee'}
+    ];
+    let score, best, timeLeft, timerId, running, currentMatch;
+
+    function nextWord(){
+      const wordColor = colors[Math.floor(Math.random()*colors.length)];
+      const isMatch = Math.random() < 0.5;
+      let displayColor = wordColor;
+      if(!isMatch){
+        const others = colors.filter(c => c.name !== wordColor.name);
+        displayColor = others[Math.floor(Math.random()*others.length)];
+      }
+      currentMatch = isMatch;
+      wordEl.textContent = wordColor.name;
+      wordEl.style.color = displayColor.hex;
+    }
+    function answer(userSaysMatch){
+      if(!running) return;
+      if(userSaysMatch === currentMatch){
+        score += 5; scoreNum.textContent = score;
+        beep(700,0.05,'square',0.04);
+      } else {
+        score = Math.max(0, score - 2); scoreNum.textContent = score;
+        beep(180,0.12,'sawtooth',0.05);
+      }
+      nextWord();
+    }
+    function tick(){
+      timeLeft--;
+      timeNum.textContent = timeLeft;
+      if(timeLeft <= 0) endGame();
+    }
+    function endGame(){
+      running = false;
+      clearInterval(timerId);
+      best = lsGet('dz_colormatch_best', 0);
+      if(score > best){ best = score; lsSet('dz_colormatch_best', best); }
+      bestNum.textContent = best;
+      overlayText.textContent = 'Waktu Habis! Skor: ' + score;
+      startBtn.textContent = '\u21bb Main Lagi';
+      overlay.style.display = 'flex';
+    }
+    function start(){
+      score = 0; timeLeft = 20;
+      scoreNum.textContent = 0; timeNum.textContent = 20;
+      bestNum.textContent = lsGet('dz_colormatch_best', 0);
+      overlay.style.display = 'none';
+      running = true;
+      nextWord();
+      clearInterval(timerId);
+      timerId = setInterval(tick, 1000);
+      registerGameCleanup(stop);
+    }
+    function stop(){
+      running = false;
+      clearInterval(timerId);
+    }
+    startBtn.addEventListener('click', start);
+    yesBtn.addEventListener('click', () => answer(true));
+    noBtn.addEventListener('click', () => answer(false));
+    bestNum.textContent = lsGet('dz_colormatch_best', 0);
+    nextWord();
+  })();
+
+  /* ===================== TYPING SPEED ===================== */
+  (function(){
+    const targetEl = document.getElementById('typeTarget');
+    if(!targetEl) return;
+    const input = document.getElementById('typeInput');
+    const startBtn = document.getElementById('typeStartBtn');
+    const wpmNum = document.getElementById('typeWpmNum');
+    const accNum = document.getElementById('typeAccNum');
+    const bestNum = document.getElementById('typeBestNum');
+
+    const sentences = [
+      'Dinz Downloader memudahkan kamu mengunduh video dan musik dari berbagai platform.',
+      'Latihan mengetik setiap hari akan membuat jarimu makin lincah di keyboard.',
+      'Jangan menyerah, teruslah belajar hal baru setiap hari walau sedikit demi sedikit.',
+      'Kopi hangat dan musik pelan adalah teman terbaik saat menulis kode di malam hari.',
+      'Teknologi terus berkembang, jadi penting untuk selalu mengasah kemampuan baru.',
+      'Semangat pagi ini akan menentukan bagaimana harimu berjalan hingga malam nanti.'
+    ];
+    let target = '', startTime = null, timerId = null, running = false;
+
+    function render(){
+      targetEl.innerHTML = target.split('').map(ch => `<span class="tchar">${ch}</span>`).join('');
+    }
+    function pickSentence(){
+      target = sentences[Math.floor(Math.random()*sentences.length)];
+      render();
+    }
+    function updateProgress(){
+      const typed = input.value;
+      const spans = targetEl.querySelectorAll('.tchar');
+      let correct = 0;
+      spans.forEach((span, i) => {
+        if(i >= typed.length){ span.className = 'tchar'; return; }
+        if(typed[i] === target[i]){ span.className = 'tchar correct'; correct++; }
+        else span.className = 'tchar wrong';
+      });
+      const acc = typed.length ? Math.round((correct/typed.length)*100) : 100;
+      accNum.textContent = acc + '%';
+      if(typed.length >= target.length) finish(correct);
+    }
+    function finish(correct){
+      running = false;
+      input.disabled = true;
+      const elapsedMin = Math.max((Date.now() - startTime) / 60000, 0.02);
+      const words = target.split(' ').length;
+      const wpm = Math.round(words / elapsedMin);
+      wpmNum.textContent = wpm;
+      const best = lsGet('dz_typing_best', 0);
+      if(wpm > best){ lsSet('dz_typing_best', wpm); bestNum.textContent = wpm; }
+      beep(700,0.15,'square',0.05);
+      startBtn.textContent = '\u21bb Coba Lagi';
+    }
+    function start(){
+      pickSentence();
+      input.value = '';
+      input.disabled = false;
+      input.focus();
+      startTime = Date.now();
+      running = true;
+      wpmNum.textContent = 0;
+      accNum.textContent = '100%';
+      registerGameCleanup(stop);
+    }
+    function stop(){
+      running = false;
+    }
+    input.addEventListener('input', () => { if(running) updateProgress(); });
+    startBtn.addEventListener('click', start);
+    bestNum.textContent = lsGet('dz_typing_best', 0);
+    render();
+  })();
+
+  /* ===================== SLIDING PUZZLE (15-puzzle) ===================== */
+  (function(){
+    const boardEl = document.getElementById('slidingBoard');
+    if(!boardEl) return;
+    const movesNum = document.getElementById('slideMovesNum');
+    const bestNum = document.getElementById('slideBestNum');
+    const shuffleBtn = document.getElementById('slideShuffleBtn');
+    const SIZE = 4;
+    let tiles, moves, best;
+
+    function isSolvable(arr){
+      let inv = 0;
+      const flat = arr.filter(v => v !== 0);
+      for(let i=0;i<flat.length;i++) for(let j=i+1;j<flat.length;j++) if(flat[i] > flat[j]) inv++;
+      return inv % 2 === 0;
+    }
+    function shuffle(){
+      let arr;
+      do{
+        arr = Array.from({length:16}, (_,i) => i);
+        for(let i=arr.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [arr[i],arr[j]] = [arr[j],arr[i]];
+        }
+      } while(!isSolvable(arr) || isSolved(arr));
+      tiles = arr;
+      moves = 0;
+      movesNum.textContent = 0;
+      best = lsGet('dz_sliding_best', null);
+      bestNum.textContent = best === null ? '-' : best;
+      render();
+    }
+    function isSolved(arr){
+      for(let i=0;i<15;i++) if(arr[i] !== i+1) return false;
+      return arr[15] === 0;
+    }
+    function render(){
+      boardEl.innerHTML = '';
+      tiles.forEach((v, idx) => {
+        const tile = document.createElement('div');
+        tile.className = 'sliding-tile' + (v === 0 ? ' empty' : '');
+        if(v !== 0){ tile.textContent = v; tile.setAttribute('data-idx', idx); }
+        boardEl.appendChild(tile);
+      });
+    }
+    function tryMove(idx){
+      const emptyIdx = tiles.indexOf(0);
+      const r1 = Math.floor(idx/SIZE), c1 = idx%SIZE;
+      const r2 = Math.floor(emptyIdx/SIZE), c2 = emptyIdx%SIZE;
+      const adjacent = (Math.abs(r1-r2) + Math.abs(c1-c2)) === 1;
+      if(!adjacent) return;
+      [tiles[idx], tiles[emptyIdx]] = [tiles[emptyIdx], tiles[idx]];
+      moves++;
+      movesNum.textContent = moves;
+      beep(500,0.04,'square',0.03);
+      render();
+      if(isSolved(tiles)){
+        beep(800,0.2,'square',0.06);
+        if(best === null || moves < best){ best = moves; lsSet('dz_sliding_best', best); bestNum.textContent = best; }
+        setTimeout(() => alert('Selesai dalam ' + moves + ' langkah!'), 80);
+      }
+    }
+    boardEl.addEventListener('click', e => {
+      const tile = e.target.closest('.sliding-tile:not(.empty)');
+      if(!tile) return;
+      tryMove(parseInt(tile.getAttribute('data-idx'), 10));
+    });
+    shuffleBtn.addEventListener('click', shuffle);
+    shuffle();
+    registerGameCleanup(() => {});
+  })();
+
+})();
 </script>
 </body>
 </html>
