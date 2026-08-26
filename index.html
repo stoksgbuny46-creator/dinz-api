@@ -3092,8 +3092,525 @@
     body.intro-active .wrap{opacity:1;transform:none;}
   }
 
+
+  /* ================= GAME & FUN HUB ================= */
+  .games-hub-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+    gap:14px;
+  }
+  .game-card{
+    position:relative;
+    border:2.5px solid var(--line);
+    border-radius:18px;
+    background:var(--sunken);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    cursor:pointer;
+    padding:18px;
+    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+    transition:border-color .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1);
+  }
+  .game-card:hover{border-color:var(--cyan); transform:translate(0,-2px); box-shadow:0 0 0 2px var(--cyan), 3px 3px 0px rgba(0,0,0,0.85);}
+  .game-card .gicon{
+    width:52px;height:52px;
+    border-radius:14px;
+    background:var(--panel);
+    border:2.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;
+    margin-bottom:12px;
+    box-shadow:2px 2px 0px rgba(0,0,0,0.85);
+  }
+  .game-card h3{
+    font-size:15px;
+    margin:0 0 6px;
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+  }
+  .game-card p{
+    font-size:12.5px;
+    color:var(--dim);
+    margin:0 0 12px;
+    line-height:1.5;
+    flex-grow:1;
+  }
+  .game-card .game-tag{
+    align-self:flex-start;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    border:2px solid var(--cyan);
+    border-radius:999px;
+    padding:4px 10px;
+    background:var(--cyan-bg);
+  }
+  .game-card .game-tag.pink{color:var(--pink); border-color:var(--pink); background:rgba(238,95,95,0.12);}
+  .game-card .game-tag.gold{color:var(--gold); border-color:var(--gold); background:rgba(255,179,0,0.12);}
+  .game-card .game-tag.green{color:var(--green); border-color:var(--green); background:rgba(87,194,106,0.12);}
+
+  /* ---- shared game shell ---- */
+  .game-shell{max-width:460px; margin:0 auto;}
+  .game-status-card{
+    background:var(--panel);
+    border:2.5px solid var(--line);
+    border-radius:18px;
+    padding:14px 18px;
+    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .game-status-text{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .game-status-text.thinking{color:var(--pink);}
+  .game-status-text.win{color:var(--green);}
+  .game-status-text.lose{color:var(--pink);}
+  .game-status-text .think-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--pink);
+    animation:dotPulseLive 1s ease-in-out infinite;
+    flex-shrink:0;
+  }
+  .game-diff-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .game-diff-pill{
+    border:2.5px solid var(--line);
+    border-radius:999px;
+    padding:7px 13px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:11px;
+    text-transform:uppercase;
+    cursor:pointer;
+    background:var(--panel);
+    color:var(--ink);
+  }
+  .game-diff-pill.active{background:var(--cyan); color:#fff; border-color:var(--cyan);}
+
+  /* ---- chess board (wood style) ---- */
+  .chess-board-wrap{
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, transparent 2px, transparent 7px),
+      linear-gradient(155deg, #8a5a2e 0%, #6b431f 45%, #4a2c12 100%);
+    border:3px solid var(--line);
+    border-radius:20px;
+    padding:14px;
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
+  }
+  .chess-board{
+    display:grid;
+    grid-template-columns:repeat(8, 1fr);
+    grid-template-rows:repeat(8, 1fr);
+    width:100%;
+    aspect-ratio:1/1;
+    border:4px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.5), inset 0 2px 10px rgba(0,0,0,0.35);
+  }
+  .chess-sq{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    aspect-ratio:1/1;
+    cursor:pointer;
+    user-select:none;
+    -webkit-user-select:none;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.35);
+  }
+  .chess-sq.light{
+    background:linear-gradient(160deg, #f0d9b0 0%, #e3c48a 100%);
+  }
+  .chess-sq.dark{
+    background:linear-gradient(160deg, #b3703a 0%, #8a5426 100%);
+  }
+  .chess-sq.selected{box-shadow:inset 0 0 0 3px var(--cyan);}
+  .chess-sq.last-move{background:rgba(255,179,0,0.38);}
+  .chess-sq.in-check{background:rgba(238,95,95,0.5);}
+  .chess-sq .move-dot{
+    position:absolute;
+    width:26%; height:26%;
+    border-radius:50%;
+    background:rgba(20,20,26,0.32);
+    pointer-events:none;
+  }
+  .chess-sq .move-dot.capture{
+    width:100%; height:100%;
+    border-radius:0;
+    background:transparent;
+    box-shadow:inset 0 0 0 3px rgba(238,95,95,0.8);
+  }
+  .chess-piece{
+    font-size:clamp(20px, 6.4vw, 34px);
+    line-height:1;
+    filter:drop-shadow(1px 1.5px 0 rgba(0,0,0,0.55));
+    transition:transform .12s ease;
+  }
+  .chess-piece.white-p{color:#fdfdfa; -webkit-text-stroke:1px rgba(0,0,0,0.75);}
+  .chess-piece.black-p{color:#1a1108; -webkit-text-stroke:1px rgba(0,0,0,0.35);}
+  .chess-sq.selected .chess-piece{transform:scale(1.12);}
+  .chess-coord{
+    position:absolute;
+    font-family:'JetBrains Mono', monospace;
+    font-size:8px;
+    font-weight:700;
+    opacity:0.55;
+    top:2px; left:3px;
+  }
+  .chess-controls{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .chess-controls button{
+    flex:1;
+    min-width:110px;
+    border:2.5px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    cursor:pointer;
+    background:var(--panel);
+    color:var(--ink);
+  }
+  .chess-controls button:hover{border-color:var(--cyan); color:var(--cyan);}
+
+  /* ---- math game ---- */
+  .math-card{
+    background:var(--panel);
+    border:2.5px solid var(--line);
+    border-radius:20px;
+    padding:28px 20px;
+    text-align:center;
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
+  }
+  .math-equation{
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(28px, 9vw, 42px);
+    font-weight:700;
+    margin:6px 0 22px;
+    letter-spacing:0.02em;
+  }
+  .math-options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .math-opt{
+    border:2.5px solid var(--line);
+    border-radius:12px;
+    padding:16px 8px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:18px;
+    cursor:pointer;
+    background:var(--sunken);
+    color:var(--ink);
+    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+  }
+  .math-opt:hover{border-color:var(--cyan); transform:translate(-1px,-1px);}
+  .math-opt.correct{background:var(--green); border-color:var(--green); color:#fff;}
+  .math-opt.wrong{background:var(--pink); border-color:var(--pink); color:#fff;}
+  .math-stats-row{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    border:2.5px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .math-stats-row .stat-cell{padding:12px 8px;}
+
+  /* ---- number guess ---- */
+  .guess-input-row{display:flex; gap:8px; margin-bottom:14px;}
+  .guess-input-row input{
+    flex:1;
+    border:2.5px solid var(--line);
+    border-radius:11px;
+    padding:12px 14px;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:16px;
+    font-weight:700;
+    background:var(--sunken);
+    color:var(--ink);
+    outline:none;
+  }
+  .guess-input-row input:focus{border-color:var(--cyan);}
+  .guess-input-row button{
+    border:2.5px solid var(--line);
+    border-radius:11px;
+    padding:0 20px;
+    background:var(--cyan);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .guess-chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .guess-chip{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    font-weight:700;
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:5px 10px;
+    background:var(--sunken);
+  }
+  .guess-chip.hi{color:var(--pink); border-color:var(--pink);}
+  .guess-chip.lo{color:var(--cyan); border-color:var(--cyan);}
+
+  /* ---- tic tac toe ---- */
+  .ttt-board{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    background:var(--panel);
+    border:2.5px solid var(--line);
+    border-radius:18px;
+    padding:12px;
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
+  }
+  .ttt-cell{
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2.5px solid var(--line);
+    border-radius:12px;
+    background:var(--sunken);
+    font-family:'JetBrains Mono', monospace;
+    font-size:clamp(28px, 10vw, 44px);
+    font-weight:800;
+    cursor:pointer;
+  }
+  .ttt-cell.x{color:var(--cyan);}
+  .ttt-cell.o{color:var(--pink);}
+  .ttt-cell.win{background:rgba(255,179,0,0.28);}
+
+  /* ---- rock paper scissors ---- */
+  .rps-arena{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--panel);
+    border:2.5px solid var(--line);
+    border-radius:18px;
+    padding:22px 14px;
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
+    margin-bottom:16px;
+  }
+  .rps-side{flex:1; text-align:center;}
+  .rps-side .rps-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    color:var(--dim2);
+    margin-bottom:8px;
+  }
+  .rps-emoji{
+    font-size:46px;
+    line-height:1;
+    display:inline-block;
+  }
+  .rps-emoji.animate{animation:rpsPop .45s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes rpsPop{
+    0%{transform:scale(0.4) rotate(-15deg); opacity:0;}
+    60%{transform:scale(1.15) rotate(6deg); opacity:1;}
+    100%{transform:scale(1) rotate(0deg);}
+  }
+  .rps-vs{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size:13px;
+    color:var(--dim3);
+    flex-shrink:0;
+  }
+  .rps-choices{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .rps-choice-btn{
+    border:2.5px solid var(--line);
+    border-radius:14px;
+    padding:16px 6px;
+    background:var(--sunken);
+    cursor:pointer;
+    font-size:30px;
+    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+    transition:transform .16s cubic-bezier(.16,1,.3,1);
+  }
+  .rps-choice-btn:hover{border-color:var(--cyan); transform:translate(-1px,-1px);}
+  .rps-choice-btn:active{transform:translate(1px,1px);}
+  .rps-score-row{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    border:2.5px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .rps-score-row .stat-cell{padding:12px 8px;}
+
+  /* ---- memory match ---- */
+  .memory-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:9px;
+    margin-bottom:16px;
+  }
+  .memory-card{
+    position:relative;
+    aspect-ratio:1/1;
+    cursor:pointer;
+    perspective:600px;
+  }
+  .memory-card-inner{
+    position:relative;
+    width:100%; height:100%;
+    transform-style:preserve-3d;
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+  }
+  .memory-card.flipped .memory-card-inner,
+  .memory-card.matched .memory-card-inner{transform:rotateY(180deg);}
+  .memory-face{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2.5px solid var(--line);
+    border-radius:12px;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+  }
+  .memory-face.front{
+    background:linear-gradient(135deg, var(--cyan), #3a8fc7);
+    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+  }
+  .memory-face.front::after{
+    content:'?';
+    color:#fff;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size:20px;
+  }
+  .memory-face.back{
+    background:var(--sunken);
+    transform:rotateY(180deg);
+    font-size:clamp(18px, 6vw, 28px);
+  }
+  .memory-card.matched .memory-face.back{background:rgba(87,194,106,0.25); border-color:var(--green);}
+
+  /* ================= WIN CELEBRATION OVERLAY ================= */
+  .win-celebration{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(11,15,22,0.62);
+    backdrop-filter:blur(3px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+    overflow:hidden;
+  }
+  .win-celebration.show{opacity:1; pointer-events:auto;}
+  .win-confetti-piece{
+    position:absolute;
+    top:-12px;
+    width:9px; height:14px;
+    opacity:0.95;
+    animation-name:winConfettiFall;
+    animation-timing-function:cubic-bezier(.4,0,.6,1);
+    animation-iteration-count:1;
+    animation-fill-mode:forwards;
+  }
+  @keyframes winConfettiFall{
+    0%{transform:translateY(-40px) rotate(0deg); opacity:1;}
+    100%{transform:translateY(115vh) rotate(560deg); opacity:0.9;}
+  }
+  .win-card{
+    position:relative;
+    background:var(--panel);
+    border:3px solid var(--line);
+    border-radius:22px;
+    padding:34px 28px 28px;
+    text-align:center;
+    max-width:320px;
+    width:88%;
+    box-shadow:6px 6px 0px rgba(0,0,0,0.85);
+    transform:scale(0.6) translateY(20px);
+    opacity:0;
+    transition:transform .38s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+  }
+  .win-celebration.show .win-card{transform:scale(1) translateY(0); opacity:1;}
+  .win-trophy{
+    font-size:56px;
+    display:inline-block;
+    margin-bottom:10px;
+    animation:winTrophyBounce 1s ease-in-out infinite;
+  }
+  @keyframes winTrophyBounce{
+    0%,100%{transform:translateY(0) rotate(-4deg);}
+    50%{transform:translateY(-9px) rotate(4deg);}
+  }
+  .win-title{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800;
+    font-size:20px;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    color:var(--green);
+    margin:0 0 8px;
+  }
+  .win-subtitle{
+    font-size:13.5px;
+    color:var(--dim);
+    margin:0 0 20px;
+    line-height:1.5;
+  }
+  .win-close-btn{
+    border:2.5px solid var(--line);
+    border-radius:12px;
+    padding:11px 22px;
+    background:var(--green);
+    color:#fff;
+    font-weight:700;
+    font-family:'Space Grotesk', sans-serif;
+    text-transform:uppercase;
+    font-size:12.5px;
+    cursor:pointer;
+    box-shadow:3px 3px 0px rgba(0,0,0,0.85);
+  }
+  .win-close-btn:active{transform:translate(1px,1px); box-shadow:1px 1px 0px rgba(0,0,0,0.85);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 </head>
 <body class="intro-active">
 
@@ -3104,6 +3621,16 @@
   </video>
 </div>
 <div class="site-bg-overlay"></div>
+
+<!-- ================= WIN CELEBRATION OVERLAY ================= -->
+<div class="win-celebration" id="winCelebration">
+  <div class="win-card">
+    <div class="win-trophy">&#127942;</div>
+    <h3 class="win-title" id="winCelebrationTitle">Kamu Menang!</h3>
+    <p class="win-subtitle" id="winCelebrationSubtitle">Kerja bagus!</p>
+    <button type="button" class="win-close-btn" id="winCelebrationClose">Lanjut</button>
+  </div>
+</div>
 
 <!-- ================= INTRO OVERLAY ================= -->
 <div id="introOverlay">
@@ -3157,6 +3684,7 @@
       <button class="nav-link" data-target="tools">Tools</button>
       <button class="nav-link" data-target="store">Store</button>
       <button class="nav-link" data-target="maker">Ai Smart Assistant</button>
+      <button class="nav-link" data-target="games">Game &amp; Fun</button>
     </nav>
 
     <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
@@ -3202,6 +3730,10 @@
     <button class="menu-item" data-target="maker">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
       Ai Smart Assistant
+    </button>
+    <button class="menu-item" data-target="games">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="13" r="1" fill="currentColor" stroke="none"/></svg>
+      Game &amp; Fun
     </button>
     <button class="menu-item support" data-action="support">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -3363,6 +3895,261 @@
     </div>
     <div class="section-card dz-tools-suite">
       <div class="store-grid" id="aiModelGrid"></div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME & FUN (HUB) ================= -->
+  <div id="games" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="beranda" aria-label="Kembali ke beranda">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Game &amp; Fun</h1>
+        <p>Santai dulu, main game seru langsung di browser &mdash; tanpa install apa-apa</p>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-card-head">
+        <div>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><circle cx="16" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="13" r="1" fill="currentColor" stroke="none"/></svg>Pilih Game</h2>
+          <p>Semua game langsung main di browser, skor tersimpan otomatis</p>
+        </div>
+      </div>
+      <div class="games-hub-grid">
+        <div class="game-card" data-target="game-chess">
+          <div class="gicon">&#9819;</div>
+          <span class="game-tag">Vs Bot</span>
+          <h3 style="margin-top:10px;">Catur</h3>
+          <p>Main catur klasik lawan bot AI. Pilih tingkat kesulitan: Santai, Normal, atau Susah.</p>
+        </div>
+        <div class="game-card" data-target="game-math">
+          <div class="gicon">&#128290;</div>
+          <span class="game-tag pink">Skor &amp; Nyawa</span>
+          <h3 style="margin-top:10px;">Matematika Cepat</h3>
+          <p>Jawab soal tambah, kurang, kali secepat mungkin sebelum nyawa habis. Cocok buat asah otak.</p>
+        </div>
+        <div class="game-card" data-target="game-ttt">
+          <div class="gicon">&#10060;</div>
+          <span class="game-tag gold">Vs Bot</span>
+          <h3 style="margin-top:10px;">Tic-Tac-Toe</h3>
+          <p>Main X-O klasik lawan bot. Coba kalahkan bot di level Susah kalau berani!</p>
+        </div>
+        <div class="game-card" data-target="game-guess">
+          <div class="gicon">&#127919;</div>
+          <span class="game-tag green">Puzzle</span>
+          <h3 style="margin-top:10px;">Tebak Angka</h3>
+          <p>Bot menyimpan satu angka rahasia 1&ndash;100. Tebak dengan percobaan sesedikit mungkin.</p>
+        </div>
+        <div class="game-card" data-target="game-rps">
+          <div class="gicon">&#9994;</div>
+          <span class="game-tag pink">Vs Bot</span>
+          <h3 style="margin-top:10px;">Batu Gunting Kertas</h3>
+          <p>Adu cepat lawan bot. Kumpulkan kemenangan sebanyak-banyaknya secara beruntun.</p>
+        </div>
+        <div class="game-card" data-target="game-memory">
+          <div class="gicon">&#127183;</div>
+          <span class="game-tag green">Puzzle</span>
+          <h3 style="margin-top:10px;">Cocokkan Kartu</h3>
+          <p>Buka dua kartu, ingat posisinya, dan cocokkan semua pasangan dengan langkah sesedikit mungkin.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME CATUR VS BOT ================= -->
+  <div id="game-chess" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Catur vs Bot</h1>
+        <p>Kamu putih (cyan), bot hitam (pink)</p>
+      </div>
+    </div>
+    <div class="game-shell">
+      <div class="game-status-card">
+        <div class="game-status-text" id="chessStatusText"><span class="think-dot" style="display:none;" id="chessThinkDot"></span><span id="chessStatusLabel">Giliran kamu</span></div>
+        <div class="game-diff-row" id="chessDiffRow">
+          <button class="game-diff-pill active" data-depth="1">Santai</button>
+          <button class="game-diff-pill" data-depth="2">Normal</button>
+          <button class="game-diff-pill" data-depth="3">Susah</button>
+        </div>
+      </div>
+      <div class="chess-board-wrap">
+        <div class="chess-board" id="chessBoard"></div>
+      </div>
+      <div class="chess-controls">
+        <button type="button" id="chessNewGameBtn">Game Baru</button>
+        <button type="button" id="chessUndoBtn">Undo</button>
+        <button type="button" id="chessFlipBtn">Putar Papan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME MATEMATIKA CEPAT ================= -->
+  <div id="game-math" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Matematika Cepat</h1>
+        <p>Jawab sebelum nyawa habis, makin lama makin susah</p>
+      </div>
+    </div>
+    <div class="game-shell">
+      <div class="math-stats-row">
+        <div class="stat-cell">
+          <div class="stat-num" id="mathScoreNum">0</div>
+          <div class="stat-label">Skor</div>
+        </div>
+        <div class="stat-cell online">
+          <div class="stat-num" id="mathLivesNum">3</div>
+          <div class="stat-label">Nyawa</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" id="mathBestNum">0</div>
+          <div class="stat-label">Rekor</div>
+        </div>
+      </div>
+      <div class="math-card" id="mathCard">
+        <div class="math-equation" id="mathEquation">Tekan mulai</div>
+        <div class="math-options" id="mathOptions"></div>
+      </div>
+      <div class="chess-controls">
+        <button type="button" id="mathStartBtn">Mulai / Ulang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME TIC-TAC-TOE VS BOT ================= -->
+  <div id="game-ttt" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Tic-Tac-Toe vs Bot</h1>
+        <p>Kamu X (cyan), bot O (pink)</p>
+      </div>
+    </div>
+    <div class="game-shell">
+      <div class="game-status-card">
+        <div class="game-status-text" id="tttStatusText">Giliran kamu</div>
+        <div class="game-diff-row" id="tttDiffRow">
+          <button class="game-diff-pill" data-level="easy">Santai</button>
+          <button class="game-diff-pill active" data-level="hard">Susah</button>
+        </div>
+      </div>
+      <div class="ttt-board" id="tttBoard"></div>
+      <div class="chess-controls">
+        <button type="button" id="tttResetBtn">Main Lagi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME TEBAK ANGKA ================= -->
+  <div id="game-guess" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Tebak Angka</h1>
+        <p>Angka rahasia antara 1 &ndash; 100</p>
+      </div>
+    </div>
+    <div class="game-shell">
+      <div class="game-status-card">
+        <div class="game-status-text" id="guessStatusText">Coba tebak angkanya!</div>
+        <div class="game-status-text" style="color:var(--dim2);">Percobaan: <span id="guessAttemptsNum">0</span> &middot; Rekor: <span id="guessBestNum">-</span></div>
+      </div>
+      <div class="math-card">
+        <div class="guess-input-row">
+          <input type="number" id="guessInput" min="1" max="100" placeholder="Masukkan angka 1-100">
+          <button type="button" id="guessSubmitBtn">Tebak</button>
+        </div>
+        <div class="guess-chips" id="guessChips"></div>
+      </div>
+      <div class="chess-controls">
+        <button type="button" id="guessResetBtn">Acak Ulang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME BATU GUNTING KERTAS ================= -->
+  <div id="game-rps" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Batu Gunting Kertas</h1>
+        <p>Pilih salah satu, bot akan menjawab secara acak</p>
+      </div>
+    </div>
+    <div class="game-shell">
+      <div class="rps-score-row">
+        <div class="stat-cell">
+          <div class="stat-num" id="rpsWinNum">0</div>
+          <div class="stat-label">Menang</div>
+        </div>
+        <div class="stat-cell online">
+          <div class="stat-num" id="rpsLoseNum">0</div>
+          <div class="stat-label">Kalah</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num" id="rpsDrawNum">0</div>
+          <div class="stat-label">Seri</div>
+        </div>
+      </div>
+      <div class="rps-arena">
+        <div class="rps-side">
+          <div class="rps-label">Kamu</div>
+          <span class="rps-emoji" id="rpsPlayerEmoji">&#10067;</span>
+        </div>
+        <div class="rps-vs">VS</div>
+        <div class="rps-side">
+          <div class="rps-label">Bot</div>
+          <span class="rps-emoji" id="rpsBotEmoji">&#10067;</span>
+        </div>
+      </div>
+      <div class="game-status-card">
+        <div class="game-status-text" id="rpsStatusText">Pilih senjatamu!</div>
+      </div>
+      <div class="rps-choices">
+        <button type="button" class="rps-choice-btn" data-choice="batu">&#9994;</button>
+        <button type="button" class="rps-choice-btn" data-choice="kertas">&#128203;</button>
+        <button type="button" class="rps-choice-btn" data-choice="gunting">&#9986;</button>
+      </div>
+      <div class="chess-controls">
+        <button type="button" id="rpsResetBtn">Reset Skor</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HALAMAN: GAME COCOKKAN KARTU (MEMORY) ================= -->
+  <div id="game-memory" class="page">
+    <div class="page-head">
+      <button class="back-btn" data-target="games" aria-label="Kembali ke Game &amp; Fun">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>Cocokkan Kartu</h1>
+        <p>Temukan semua 8 pasangan dengan langkah sesedikit mungkin</p>
+      </div>
+    </div>
+    <div class="game-shell">
+      <div class="game-status-card">
+        <div class="game-status-text" id="memoryStatusText">Langkah: <span id="memoryMovesNum">0</span></div>
+        <div class="game-status-text" style="color:var(--dim2);">Rekor: <span id="memoryBestNum">-</span></div>
+      </div>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <div class="chess-controls">
+        <button type="button" id="memoryResetBtn">Acak Ulang</button>
+      </div>
     </div>
   </div>
 
@@ -6411,6 +7198,855 @@ function initGlobalLiveAnimations(){
 }
 
 /* ============================================================
+   GAME & FUN — CATUR VS BOT, MATEMATIKA CEPAT, TIC-TAC-TOE, TEBAK ANGKA,
+   BATU GUNTING KERTAS, COCOKKAN KARTU
+============================================================ */
+function initGamesHub(){
+  initChessGame();
+  initMathGame();
+  initTttGame();
+  initGuessGame();
+  initRpsGame();
+  initMemoryGame();
+  initWinCelebration();
+}
+
+/* ---------------- WIN CELEBRATION (dipakai semua game) ---------------- */
+function initWinCelebration(){
+  const overlay = document.getElementById('winCelebration');
+  if(!overlay || overlay.dataset.ready) return;
+  overlay.dataset.ready = '1';
+
+  const titleEl = document.getElementById('winCelebrationTitle');
+  const subtitleEl = document.getElementById('winCelebrationSubtitle');
+  const closeBtn = document.getElementById('winCelebrationClose');
+  const CONFETTI_COLORS = ['#ffd23f','#4baee8','#ee5f5f','#57c26a','#ffb300','#ffffff'];
+  let hideTimer = null;
+
+  function spawnConfetti(){
+    overlay.querySelectorAll('.win-confetti-piece').forEach(el => el.remove());
+    const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 46;
+    for(let i = 0; i < count; i++){
+      const piece = document.createElement('span');
+      piece.className = 'win-confetti-piece';
+      const color = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      piece.style.left = (Math.random() * 100) + '%';
+      piece.style.background = color;
+      piece.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+      piece.style.animationDelay = (Math.random() * 0.5) + 's';
+      piece.style.borderRadius = Math.random() < 0.5 ? '50%' : '2px';
+      overlay.appendChild(piece);
+    }
+  }
+
+  window.closeWinCelebration = function(){
+    overlay.classList.remove('show');
+    if(hideTimer) clearTimeout(hideTimer);
+  };
+
+  window.showWinCelebration = function(title, subtitle){
+    titleEl.textContent = title || 'Kamu Menang!';
+    subtitleEl.textContent = subtitle || 'Kerja bagus, main lagi yuk!';
+    spawnConfetti();
+    overlay.classList.add('show');
+    if(hideTimer) clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => overlay.classList.remove('show'), 4200);
+  };
+
+  closeBtn.addEventListener('click', window.closeWinCelebration);
+  overlay.addEventListener('click', (e) => {
+    if(e.target === overlay) window.closeWinCelebration();
+  });
+}
+
+/* ---------------- CATUR VS BOT (pakai chess.js) ---------------- */
+function initChessGame(){
+  const boardEl = document.getElementById('chessBoard');
+  if(!boardEl || typeof Chess === 'undefined') return;
+
+  const PIECE_GLYPH = { p:'\u265F', n:'\u265E', b:'\u265D', r:'\u265C', q:'\u265B', k:'\u265A' };
+  const FILES = ['a','b','c','d','e','f','g','h'];
+
+  let game = new Chess();
+  let selectedSq = null;
+  let legalTargets = [];
+  let lastMove = null;
+  let flipped = false;
+  let botDepth = 1;
+  let botThinking = false;
+
+  const statusLabel = document.getElementById('chessStatusLabel');
+  const statusWrap = document.getElementById('chessStatusText');
+  const thinkDot = document.getElementById('chessThinkDot');
+  const diffRow = document.getElementById('chessDiffRow');
+
+  const PIECE_VALUES = { p:1, n:3.1, b:3.3, r:5, q:9, k:0 };
+
+  function evaluateBoard(g){
+    let total = 0;
+    g.board().forEach(row => row.forEach(sq => {
+      if(!sq) return;
+      const val = PIECE_VALUES[sq.type];
+      total += sq.color === 'w' ? val : -val;
+    }));
+    return total;
+  }
+
+  function minimax(g, depth, alpha, beta, isMax){
+    if(depth === 0 || g.game_over()) return evaluateBoard(g);
+    const moves = g.moves();
+    if(isMax){
+      let best = -Infinity;
+      for(const m of moves){
+        g.move(m);
+        best = Math.max(best, minimax(g, depth - 1, alpha, beta, false));
+        g.undo();
+        alpha = Math.max(alpha, best);
+        if(beta <= alpha) break;
+      }
+      return best;
+    } else {
+      let best = Infinity;
+      for(const m of moves){
+        g.move(m);
+        best = Math.min(best, minimax(g, depth - 1, alpha, beta, true));
+        g.undo();
+        beta = Math.min(beta, best);
+        if(beta <= alpha) break;
+      }
+      return best;
+    }
+  }
+
+  function pickBotMove(){
+    const moves = game.moves().sort(() => Math.random() - 0.5);
+    let bestMove = moves[0];
+    let bestVal = Infinity;
+    for(const m of moves){
+      game.move(m);
+      const val = minimax(game, Math.max(botDepth - 1, 0), -Infinity, Infinity, true);
+      game.undo();
+      if(val < bestVal){ bestVal = val; bestMove = m; }
+    }
+    return bestMove;
+  }
+
+  function squareName(rowIdx, colIdx){
+    const file = flipped ? FILES[7 - colIdx] : FILES[colIdx];
+    const rank = flipped ? rowIdx + 1 : 8 - rowIdx;
+    return file + rank;
+  }
+
+  function renderBoard(){
+    boardEl.innerHTML = '';
+    const board = game.board();
+    for(let r = 0; r < 8; r++){
+      for(let c = 0; c < 8; c++){
+        const rowIdx = flipped ? 7 - r : r;
+        const colIdx = flipped ? 7 - c : c;
+        const sq = squareName(rowIdx, colIdx);
+        const piece = board[rowIdx][colIdx];
+        const isLight = (rowIdx + colIdx) % 2 === 0;
+
+        const el = document.createElement('div');
+        el.className = 'chess-sq ' + (isLight ? 'light' : 'dark');
+        el.dataset.square = sq;
+
+        if(lastMove && (sq === lastMove.from || sq === lastMove.to)) el.classList.add('last-move');
+        if(selectedSq === sq) el.classList.add('selected');
+        if(game.in_check()){
+          const kingSq = findKingSquare(game.turn());
+          if(kingSq === sq) el.classList.add('in-check');
+        }
+
+        if(piece){
+          const pieceEl = document.createElement('span');
+          pieceEl.className = 'chess-piece ' + (piece.color === 'w' ? 'white-p' : 'black-p');
+          pieceEl.textContent = PIECE_GLYPH[piece.type];
+          el.appendChild(pieceEl);
+        }
+
+        if(legalTargets.some(t => t.to === sq)){
+          const dot = document.createElement('span');
+          dot.className = 'move-dot' + (piece ? ' capture' : '');
+          el.appendChild(dot);
+        }
+
+        el.addEventListener('click', () => onSquareClick(sq));
+        boardEl.appendChild(el);
+      }
+    }
+  }
+
+  function findKingSquare(color){
+    const board = game.board();
+    for(let r = 0; r < 8; r++){
+      for(let c = 0; c < 8; c++){
+        const p = board[r][c];
+        if(p && p.type === 'k' && p.color === color) return FILES[c] + (8 - r);
+      }
+    }
+    return null;
+  }
+
+  function setStatus(text, mode){
+    statusLabel.textContent = text;
+    statusWrap.classList.remove('thinking','win','lose');
+    thinkDot.style.display = 'none';
+    if(mode === 'thinking'){ statusWrap.classList.add('thinking'); thinkDot.style.display = 'inline-block'; }
+    else if(mode === 'win') statusWrap.classList.add('win');
+    else if(mode === 'lose') statusWrap.classList.add('lose');
+  }
+
+  function updateStatusAfterMove(){
+    if(game.in_checkmate()){
+      const playerWins = game.turn() !== 'w';
+      setStatus(playerWins ? 'Skakmat! Kamu menang' : 'Skakmat! Bot menang', playerWins ? 'win' : 'lose');
+      if(playerWins && typeof window.showWinCelebration === 'function'){
+        window.showWinCelebration('Skakmat!', 'Kamu berhasil mengalahkan bot catur \ud83c\udfc6');
+      }
+      return true;
+    }
+    if(game.in_draw() || game.in_stalemate() || game.in_threefold_repetition()){
+      setStatus('Seri / Remis', null);
+      return true;
+    }
+    if(game.turn() === 'w'){
+      setStatus(game.in_check() ? 'Skak! Giliran kamu' : 'Giliran kamu', null);
+    } else {
+      setStatus('Bot sedang berpikir...', 'thinking');
+    }
+    return false;
+  }
+
+  function doBotMove(){
+    if(game.game_over()) return;
+    botThinking = true;
+    setTimeout(() => {
+      const move = pickBotMove();
+      const result = game.move(move);
+      lastMove = result ? { from: result.from, to: result.to } : null;
+      botThinking = false;
+      renderBoard();
+      updateStatusAfterMove();
+    }, 380 + Math.random() * 380);
+  }
+
+  function onSquareClick(sq){
+    if(botThinking || game.game_over()) return;
+    const piece = game.get(sq);
+
+    if(selectedSq){
+      const target = legalTargets.find(t => t.to === sq);
+      if(target){
+        const moveOpts = { from: selectedSq, to: sq };
+        const movingPiece = game.get(selectedSq);
+        if(movingPiece && movingPiece.type === 'p' && (sq[1] === '8' || sq[1] === '1')){
+          moveOpts.promotion = 'q';
+        }
+        const result = game.move(moveOpts);
+        selectedSq = null;
+        legalTargets = [];
+        if(result){
+          lastMove = { from: result.from, to: result.to };
+          renderBoard();
+          const over = updateStatusAfterMove();
+          if(!over && game.turn() === 'b') doBotMove();
+          return;
+        }
+      }
+      if(piece && piece.color === game.turn()){
+        selectedSq = sq;
+        legalTargets = game.moves({ square: sq, verbose: true });
+      } else {
+        selectedSq = null;
+        legalTargets = [];
+      }
+      renderBoard();
+      return;
+    }
+
+    if(piece && piece.color === game.turn() && game.turn() === 'w'){
+      selectedSq = sq;
+      legalTargets = game.moves({ square: sq, verbose: true });
+      renderBoard();
+    }
+  }
+
+  function newGame(){
+    game = new Chess();
+    selectedSq = null;
+    legalTargets = [];
+    lastMove = null;
+    botThinking = false;
+    setStatus('Giliran kamu', null);
+    renderBoard();
+  }
+
+  document.getElementById('chessNewGameBtn').addEventListener('click', newGame);
+  document.getElementById('chessUndoBtn').addEventListener('click', () => {
+    if(botThinking) return;
+    game.undo();
+    if(game.turn() === 'b') game.undo();
+    selectedSq = null;
+    legalTargets = [];
+    lastMove = null;
+    renderBoard();
+    updateStatusAfterMove();
+  });
+  document.getElementById('chessFlipBtn').addEventListener('click', () => {
+    flipped = !flipped;
+    renderBoard();
+  });
+  diffRow.querySelectorAll('.game-diff-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      diffRow.querySelectorAll('.game-diff-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      botDepth = parseInt(btn.dataset.depth, 10);
+    });
+  });
+
+  renderBoard();
+}
+
+/* ---------------- MATEMATIKA CEPAT ---------------- */
+function initMathGame(){
+  const startBtn = document.getElementById('mathStartBtn');
+  if(!startBtn) return;
+
+  const eqEl = document.getElementById('mathEquation');
+  const optsEl = document.getElementById('mathOptions');
+  const scoreEl = document.getElementById('mathScoreNum');
+  const livesEl = document.getElementById('mathLivesNum');
+  const bestEl = document.getElementById('mathBestNum');
+
+  let score = 0;
+  let lives = 3;
+  let running = false;
+  let currentAnswer = null;
+  let locked = false;
+
+  function getBest(){
+    try{ return parseInt(localStorage.getItem('dinz_math_best') || '0', 10); }catch(e){ return 0; }
+  }
+  function setBest(v){
+    try{ localStorage.setItem('dinz_math_best', String(v)); }catch(e){}
+  }
+  bestEl.textContent = getBest();
+
+  function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  function makeQuestion(){
+    const level = Math.min(Math.floor(score / 5), 4);
+    const ops = ['+', '-', '\u00d7'];
+    const op = ops[randInt(0, ops.length - 1)];
+    let a, b, answer;
+    if(op === '+'){
+      a = randInt(2 + level * 4, 12 + level * 8);
+      b = randInt(2 + level * 4, 12 + level * 8);
+      answer = a + b;
+    } else if(op === '-'){
+      a = randInt(5 + level * 5, 20 + level * 10);
+      b = randInt(1, a);
+      answer = a - b;
+    } else {
+      a = randInt(2, 6 + level * 2);
+      b = randInt(2, 6 + level * 2);
+      answer = a * b;
+    }
+    currentAnswer = answer;
+    eqEl.textContent = `${a} ${op} ${b} = ?`;
+
+    const choices = new Set([answer]);
+    while(choices.size < 4){
+      const delta = randInt(-6 - level * 2, 6 + level * 2);
+      const fake = answer + delta;
+      if(delta !== 0 && !choices.has(fake)) choices.add(fake);
+    }
+    const arr = Array.from(choices).sort(() => Math.random() - 0.5);
+    optsEl.innerHTML = '';
+    arr.forEach(val => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'math-opt';
+      btn.textContent = val;
+      btn.addEventListener('click', () => onAnswer(val, btn));
+      optsEl.appendChild(btn);
+    });
+    locked = false;
+  }
+
+  function onAnswer(val, btnEl){
+    if(!running || locked) return;
+    locked = true;
+    const isCorrect = val === currentAnswer;
+    optsEl.querySelectorAll('.math-opt').forEach(b => {
+      if(parseInt(b.textContent, 10) === currentAnswer) b.classList.add('correct');
+      else if(b === btnEl) b.classList.add('wrong');
+    });
+    if(isCorrect){
+      score += 10;
+      scoreEl.textContent = score;
+    } else {
+      lives -= 1;
+      livesEl.textContent = lives;
+    }
+    setTimeout(() => {
+      if(lives <= 0){
+        endGame();
+      } else {
+        makeQuestion();
+      }
+    }, 550);
+  }
+
+  function endGame(){
+    running = false;
+    const best = getBest();
+    const isNewBest = score > best && score > 0;
+    if(isNewBest) setBest(score);
+    bestEl.textContent = getBest();
+    eqEl.textContent = 'Game selesai! Skor: ' + score;
+    optsEl.innerHTML = '';
+    if(isNewBest && typeof window.showWinCelebration === 'function'){
+      window.showWinCelebration('Rekor Baru!', `Skor tertinggi baru: ${score} poin \ud83d\udd25`);
+    }
+  }
+
+  function startGame(){
+    score = 0;
+    lives = 3;
+    running = true;
+    scoreEl.textContent = '0';
+    livesEl.textContent = '3';
+    makeQuestion();
+  }
+
+  startBtn.addEventListener('click', startGame);
+}
+
+/* ---------------- TIC-TAC-TOE VS BOT ---------------- */
+function initTttGame(){
+  const boardEl = document.getElementById('tttBoard');
+  if(!boardEl) return;
+
+  const statusEl = document.getElementById('tttStatusText');
+  const diffRow = document.getElementById('tttDiffRow');
+  const resetBtn = document.getElementById('tttResetBtn');
+
+  const WIN_LINES = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  let cells = Array(9).fill(null);
+  let over = false;
+  let level = 'hard';
+
+  function checkWinner(bd){
+    for(const line of WIN_LINES){
+      const [a,b,c] = line;
+      if(bd[a] && bd[a] === bd[b] && bd[a] === bd[c]) return { winner: bd[a], line };
+    }
+    if(bd.every(v => v)) return { winner: 'draw', line: [] };
+    return null;
+  }
+
+  function minimaxTtt(bd, isBot){
+    const result = checkWinner(bd);
+    if(result){
+      if(result.winner === 'O') return { score: 1 };
+      if(result.winner === 'X') return { score: -1 };
+      return { score: 0 };
+    }
+    const moves = [];
+    for(let i = 0; i < 9; i++){
+      if(bd[i]) continue;
+      bd[i] = isBot ? 'O' : 'X';
+      const outcome = minimaxTtt(bd, !isBot);
+      moves.push({ index: i, score: outcome.score });
+      bd[i] = null;
+    }
+    if(isBot){
+      let best = moves[0];
+      moves.forEach(m => { if(m.score > best.score) best = m; });
+      return best;
+    } else {
+      let best = moves[0];
+      moves.forEach(m => { if(m.score < best.score) best = m; });
+      return best;
+    }
+  }
+
+  function botMoveIndex(){
+    const empties = cells.map((v,i)=>v?null:i).filter(v=>v!==null);
+    if(level === 'easy' && Math.random() < 0.6){
+      return empties[Math.floor(Math.random()*empties.length)];
+    }
+    const best = minimaxTtt(cells.slice(), true);
+    return best.index;
+  }
+
+  function render(winnerInfo){
+    boardEl.innerHTML = '';
+    cells.forEach((val, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'ttt-cell' + (val === 'X' ? ' x' : val === 'O' ? ' o' : '');
+      if(winnerInfo && winnerInfo.line.includes(i)) cell.classList.add('win');
+      cell.textContent = val || '';
+      cell.addEventListener('click', () => onCellClick(i));
+      boardEl.appendChild(cell);
+    });
+  }
+
+  function onCellClick(i){
+    if(over || cells[i]) return;
+    cells[i] = 'X';
+    let result = checkWinner(cells);
+    if(result){
+      finish(result);
+      return;
+    }
+    render();
+    statusEl.textContent = 'Bot sedang berpikir...';
+    setTimeout(() => {
+      const idx = botMoveIndex();
+      if(idx !== undefined && idx !== null) cells[idx] = 'O';
+      result = checkWinner(cells);
+      if(result){ finish(result); return; }
+      render();
+      statusEl.textContent = 'Giliran kamu';
+    }, 350);
+  }
+
+  function finish(result){
+    over = true;
+    render(result);
+    if(result.winner === 'X'){
+      statusEl.textContent = 'Kamu menang! \ud83c\udf89';
+      if(typeof window.showWinCelebration === 'function'){
+        window.showWinCelebration('Kamu Menang!', 'Bot berhasil kamu kalahkan di Tic-Tac-Toe \ud83c\udf89');
+      }
+    }
+    else if(result.winner === 'O') statusEl.textContent = 'Bot menang, coba lagi!';
+    else statusEl.textContent = 'Seri!';
+  }
+
+  function reset(){
+    cells = Array(9).fill(null);
+    over = false;
+    statusEl.textContent = 'Giliran kamu';
+    render();
+  }
+
+  diffRow.querySelectorAll('.game-diff-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      diffRow.querySelectorAll('.game-diff-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      level = btn.dataset.level;
+      reset();
+    });
+  });
+  resetBtn.addEventListener('click', reset);
+
+  render();
+}
+
+/* ---------------- TEBAK ANGKA ---------------- */
+function initGuessGame(){
+  const submitBtn = document.getElementById('guessSubmitBtn');
+  if(!submitBtn) return;
+
+  const inputEl = document.getElementById('guessInput');
+  const statusEl = document.getElementById('guessStatusText');
+  const attemptsEl = document.getElementById('guessAttemptsNum');
+  const bestEl = document.getElementById('guessBestNum');
+  const chipsEl = document.getElementById('guessChips');
+  const resetBtn = document.getElementById('guessResetBtn');
+
+  let secret = 0;
+  let attempts = 0;
+  let over = false;
+
+  function getBest(){
+    try{ const v = localStorage.getItem('dinz_guess_best'); return v ? parseInt(v,10) : null; }catch(e){ return null; }
+  }
+  function setBest(v){
+    try{ localStorage.setItem('dinz_guess_best', String(v)); }catch(e){}
+  }
+  const best = getBest();
+  bestEl.textContent = best !== null ? best : '-';
+
+  function newSecret(){
+    secret = Math.floor(Math.random() * 100) + 1;
+    attempts = 0;
+    over = false;
+    attemptsEl.textContent = '0';
+    statusEl.textContent = 'Coba tebak angkanya!';
+    chipsEl.innerHTML = '';
+    inputEl.value = '';
+    inputEl.disabled = false;
+    submitBtn.disabled = false;
+  }
+
+  function submitGuess(){
+    if(over) return;
+    const val = parseInt(inputEl.value, 10);
+    if(isNaN(val) || val < 1 || val > 100) return;
+    attempts += 1;
+    attemptsEl.textContent = attempts;
+
+    const chip = document.createElement('span');
+    chip.textContent = val;
+
+    if(val === secret){
+      chip.className = 'guess-chip';
+      chip.style.color = 'var(--green)';
+      chip.style.borderColor = 'var(--green)';
+      chipsEl.appendChild(chip);
+      statusEl.textContent = `Tepat! Angkanya ${secret}, ketebak dalam ${attempts} percobaan \ud83c\udf89`;
+      over = true;
+      inputEl.disabled = true;
+      submitBtn.disabled = true;
+      const curBest = getBest();
+      let isNewBest = false;
+      if(curBest === null || attempts < curBest){
+        setBest(attempts);
+        bestEl.textContent = attempts;
+        isNewBest = true;
+      }
+      if(typeof window.showWinCelebration === 'function'){
+        window.showWinCelebration(
+          isNewBest ? 'Rekor Baru!' : 'Ketebak!',
+          `Angka ${secret} ketebak dalam ${attempts} percobaan \ud83c\udfaf`
+        );
+      }
+    } else if(val < secret){
+      chip.className = 'guess-chip lo';
+      chipsEl.appendChild(chip);
+      statusEl.textContent = 'Lebih besar lagi!';
+    } else {
+      chip.className = 'guess-chip hi';
+      chipsEl.appendChild(chip);
+      statusEl.textContent = 'Lebih kecil lagi!';
+    }
+    inputEl.value = '';
+    inputEl.focus();
+  }
+
+  submitBtn.addEventListener('click', submitGuess);
+  inputEl.addEventListener('keydown', e => { if(e.key === 'Enter') submitGuess(); });
+  resetBtn.addEventListener('click', newSecret);
+
+  newSecret();
+}
+
+/* ---------------- BATU GUNTING KERTAS VS BOT ---------------- */
+function initRpsGame(){
+  const choicesWrap = document.querySelector('#game-rps .rps-choices');
+  if(!choicesWrap) return;
+
+  const statusEl = document.getElementById('rpsStatusText');
+  const playerEmojiEl = document.getElementById('rpsPlayerEmoji');
+  const botEmojiEl = document.getElementById('rpsBotEmoji');
+  const winEl = document.getElementById('rpsWinNum');
+  const loseEl = document.getElementById('rpsLoseNum');
+  const drawEl = document.getElementById('rpsDrawNum');
+  const resetBtn = document.getElementById('rpsResetBtn');
+
+  const OPTS = {
+    batu:    { emoji: '\u270a', beats: 'gunting' },
+    kertas:  { emoji: '\ud83d\udcc4', beats: 'batu' },
+    gunting: { emoji: '\u2702\ufe0f', beats: 'kertas' }
+  };
+  const LABELS = { batu: 'Batu', kertas: 'Kertas', gunting: 'Gunting' };
+
+  let wins = 0, loses = 0, draws = 0, streak = 0, locked = false;
+
+  function loadScore(){
+    try{
+      const raw = JSON.parse(localStorage.getItem('dinz_rps_score') || 'null');
+      if(raw){ wins = raw.w || 0; loses = raw.l || 0; draws = raw.d || 0; }
+    }catch(e){}
+  }
+  function saveScore(){
+    try{ localStorage.setItem('dinz_rps_score', JSON.stringify({ w: wins, l: loses, d: draws })); }catch(e){}
+  }
+  function renderScore(){
+    winEl.textContent = wins;
+    loseEl.textContent = loses;
+    drawEl.textContent = draws;
+  }
+
+  function playRound(choice){
+    if(locked) return;
+    locked = true;
+    const keys = Object.keys(OPTS);
+    const botChoice = keys[Math.floor(Math.random() * keys.length)];
+
+    playerEmojiEl.textContent = OPTS[choice].emoji;
+    botEmojiEl.textContent = OPTS[botChoice].emoji;
+    playerEmojiEl.classList.remove('animate');
+    botEmojiEl.classList.remove('animate');
+    void playerEmojiEl.offsetWidth;
+    void botEmojiEl.offsetWidth;
+    playerEmojiEl.classList.add('animate');
+    botEmojiEl.classList.add('animate');
+
+    let result;
+    if(choice === botChoice) result = 'draw';
+    else if(OPTS[choice].beats === botChoice) result = 'win';
+    else result = 'lose';
+
+    setTimeout(() => {
+      if(result === 'win'){
+        wins += 1; streak += 1;
+        statusEl.textContent = `Kamu menang! ${LABELS[choice]} vs ${LABELS[botChoice]} \ud83c\udf89`;
+        statusEl.parentElement.className = 'game-status-card';
+        if(streak > 0 && streak % 3 === 0 && typeof window.showWinCelebration === 'function'){
+          window.showWinCelebration('Menang Beruntun!', `${streak}x kemenangan beruntun lawan bot \ud83d\udd25`);
+        } else if(typeof window.showWinCelebration === 'function' && streak === 1){
+          window.showWinCelebration('Kamu Menang!', `${LABELS[choice]} mengalahkan ${LABELS[botChoice]} \ud83c\udf89`);
+        }
+      } else if(result === 'lose'){
+        loses += 1; streak = 0;
+        statusEl.textContent = `Bot menang. ${LABELS[botChoice]} vs ${LABELS[choice]}, coba lagi!`;
+      } else {
+        draws += 1; streak = 0;
+        statusEl.textContent = `Seri! Sama-sama pilih ${LABELS[choice]}`;
+      }
+      renderScore();
+      saveScore();
+      locked = false;
+    }, 480);
+  }
+
+  choicesWrap.querySelectorAll('.rps-choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => playRound(btn.dataset.choice));
+  });
+
+  resetBtn.addEventListener('click', () => {
+    wins = 0; loses = 0; draws = 0; streak = 0;
+    renderScore();
+    saveScore();
+    statusEl.textContent = 'Pilih senjatamu!';
+    playerEmojiEl.textContent = '\u2753';
+    botEmojiEl.textContent = '\u2753';
+  });
+
+  loadScore();
+  renderScore();
+}
+
+/* ---------------- COCOKKAN KARTU (MEMORY MATCH) ---------------- */
+function initMemoryGame(){
+  const gridEl = document.getElementById('memoryGrid');
+  if(!gridEl) return;
+
+  const movesEl = document.getElementById('memoryMovesNum');
+  const bestEl = document.getElementById('memoryBestNum');
+  const resetBtn = document.getElementById('memoryResetBtn');
+
+  const ICONS = ['\ud83c\udf55','\ud83c\udf6d','\ud83c\udfae','\u26bd','\ud83d\ude80','\ud83c\udf88','\ud83c\udfb8','\ud83d\udc19'];
+
+  let cards = [];
+  let flippedIdx = [];
+  let matchedCount = 0;
+  let moves = 0;
+  let locked = false;
+
+  function getBest(){
+    try{ const v = localStorage.getItem('dinz_memory_best'); return v ? parseInt(v,10) : null; }catch(e){ return null; }
+  }
+  function setBest(v){
+    try{ localStorage.setItem('dinz_memory_best', String(v)); }catch(e){}
+  }
+  bestEl.textContent = (getBest() !== null) ? getBest() : '-';
+
+  function shuffle(arr){
+    for(let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function render(){
+    gridEl.innerHTML = '';
+    cards.forEach((icon, i) => {
+      const card = document.createElement('div');
+      card.className = 'memory-card';
+      if(flippedIdx.includes(i)) card.classList.add('flipped');
+      card.innerHTML = `
+        <div class="memory-card-inner">
+          <div class="memory-face front"></div>
+          <div class="memory-face back">${icon}</div>
+        </div>`;
+      card.addEventListener('click', () => onCardClick(i));
+      gridEl.appendChild(card);
+    });
+  }
+
+  function onCardClick(i){
+    if(locked || flippedIdx.includes(i) || cards[i] === null) return;
+    if(flippedIdx.length >= 2) return;
+    flippedIdx.push(i);
+    render();
+
+    if(flippedIdx.length === 2){
+      moves += 1;
+      movesEl.textContent = moves;
+      const [a, b] = flippedIdx;
+      if(cards[a] === cards[b]){
+        locked = true;
+        setTimeout(() => {
+          const cardsEls = gridEl.querySelectorAll('.memory-card');
+          cardsEls[a].classList.add('matched');
+          cardsEls[b].classList.add('matched');
+          matchedCount += 1;
+          flippedIdx = [];
+          locked = false;
+          if(matchedCount === ICONS.length){
+            const best = getBest();
+            const isNewBest = best === null || moves < best;
+            if(isNewBest) setBest(moves);
+            bestEl.textContent = getBest();
+            if(typeof window.showWinCelebration === 'function'){
+              window.showWinCelebration(
+                isNewBest ? 'Rekor Baru!' : 'Semua Cocok!',
+                `Semua pasangan ditemukan dalam ${moves} langkah \ud83c\udfb4`
+              );
+            }
+          }
+        }, 420);
+      } else {
+        locked = true;
+        setTimeout(() => {
+          flippedIdx = [];
+          locked = false;
+          render();
+        }, 750);
+      }
+    }
+  }
+
+  function newGame(){
+    const pairs = shuffle([...ICONS, ...ICONS]);
+    cards = pairs;
+    flippedIdx = [];
+    matchedCount = 0;
+    moves = 0;
+    locked = false;
+    movesEl.textContent = '0';
+    render();
+  }
+
+  resetBtn.addEventListener('click', newGame);
+  newGame();
+}
+
+/* ============================================================
    INIT ON DOM READY
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -6422,6 +8058,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMediaPlayers();
   renderStoreProducts();
   initAiSmartAssistant();
+  initGamesHub();
   initIntroAndMusic();
   initGlobalLiveAnimations();
 });
