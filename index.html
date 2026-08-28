@@ -1104,7 +1104,7 @@
   .nav-logo-mark{
     width:34px;height:34px;
     border-radius:9px;
-    background:var(--cyan);
+    background:#fff;
     border:2.5px solid var(--line);
     display:flex;align-items:center;justify-content:center;
     color:#0b0b0b;
@@ -1113,6 +1113,13 @@
     font-size:15px;
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
     flex-shrink:0;
+    overflow:hidden;
+  }
+  .nav-logo-mark img{
+    width:118%;height:118%;
+    object-fit:cover;
+    object-position:center;
+    border-radius:0;
   }
   .nav-logo-text{line-height:1.15;}
   .nav-logo-text b{
@@ -2184,7 +2191,7 @@
     width:52px;height:52px;
     border-radius:14px;
     border:2.5px solid var(--line);
-    background:linear-gradient(120deg, #ffd23f 0%, #ffeb70 55%, #ffc107 100%);
+    background:#fff;
     display:flex;align-items:center;justify-content:center;
     font-family:'JetBrains Mono', monospace;
     font-weight:800;
@@ -2193,6 +2200,13 @@
     box-shadow:3px 3px 0px rgba(0,0,0,0.85);
     animation:introLogoWiggle 1.3s ease-in-out infinite .3s;
     transform-origin:60% 70%;
+    overflow:hidden;
+  }
+  .intro-logo-mark img{
+    width:118%;height:118%;
+    object-fit:cover;
+    object-position:center;
+    border-radius:0;
   }
   @keyframes introLogoWiggle{
     0%,100%{transform:rotate(0deg) scale(1);}
@@ -2200,6 +2214,13 @@
     20%{transform:rotate(12deg) scale(1.1);}
     30%{transform:rotate(-8deg) scale(1.04);}
     40%{transform:rotate(0deg) scale(1);}
+  }
+  .intro-logo-mark-big{
+    width:200px;height:200px;
+    border-radius:24px;
+  }
+  @media (max-width:480px){
+    .intro-logo-mark-big{width:150px;height:150px;border-radius:20px;}
   }
   .intro-logo-text{
     font-family:'JetBrains Mono', monospace;
@@ -4088,6 +4109,8 @@
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="manifest" id="dzManifestLink">
+<link rel="icon" type="image/jpeg" href="https://n.uguu.se/pofgrGYb.jpg">
+<link rel="apple-touch-icon" href="https://n.uguu.se/pofgrGYb.jpg">
 <meta name="theme-color" content="#0b0f16">
 </head>
 <body class="intro-active">
@@ -4130,12 +4153,7 @@
   <span class="intro-particle" style="left:36%; bottom:36%; width:5px; height:5px; background:var(--pink); animation-delay:.9s;"></span>
   <span class="intro-particle" style="left:76%; bottom:34%; width:7px; height:7px; background:var(--green); animation-delay:1.1s;"></span>
   <div class="intro-card">
-    <div class="intro-logo">
-      <div class="intro-logo-mark">D</div>
-      <div class="intro-logo-text">DINZ<span>.</span>STORE</div>
-    </div>
-    <div class="intro-bar-track"><div class="intro-bar-fill" id="introBarFill"></div></div>
-    <div class="intro-status" id="introStatus">Menyiapkan tampilan...</div>
+    <div class="intro-logo-mark intro-logo-mark-big"><img src="https://n.uguu.se/pofgrGYb.jpg" alt="Dinz Store"></div>
     <button class="intro-enter" id="introEnterBtn">
       Ketuk untuk Masuk
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
@@ -4145,14 +4163,14 @@
 
 <!-- ================= BACKGROUND MUSIC ================= -->
 <audio id="bgMusic" loop preload="auto">
-  <source src="https://cdn.jsdelivr.net/gh/julzkeceabiez/github-storage@main/uploads/kelvin-evernight-1787651312068.aac" type="audio/aac">
+  <source src="https://h.uguu.se/TXONvzUe.mp3" type="audio/mpeg">
 </audio>
 
 <!-- ================= NAVBAR ================= -->
 <div class="navbar">
   <div class="navbar-inner">
     <div class="nav-logo" data-target="beranda">
-      <div class="nav-logo-mark">D</div>
+      <div class="nav-logo-mark"><img src="https://n.uguu.se/pofgrGYb.jpg" alt="Dinz Store"></div>
       <div class="nav-logo-text"><b>DINZ</b><span>Store</span></div>
     </div>
 
@@ -4257,7 +4275,7 @@
     <!-- ===== BANNER VIDEO (atas) ===== -->
     <div class="hero-banner" id="heroBanner">
       <video id="heroBannerVideo" autoplay loop muted playsinline preload="auto">
-        <source src="https://cdn.jsdelivr.net/gh/julzkeceabiez/file-storage@main/uploads/kelvin-evernight-1787651244538.mp4" type="video/mp4">
+        <source src="https://h.uguu.se/kYolHxsi.mp4" type="video/mp4">
       </video>
       <div class="hero-banner-fallback" id="heroBannerFallback">Video gagal dimuat</div>
     </div>
@@ -5435,7 +5453,7 @@
     <footer class="footer-v2">
     <div class="footer-grid">
       <div class="footer-brand-block">
-        <b><span class="nav-logo-mark" style="width:26px;height:26px;font-size:12px;border-radius:7px;">D</span>Dinz Store</b>
+        <b><span class="nav-logo-mark" style="width:26px;height:26px;font-size:12px;border-radius:7px;"><img src="https://n.uguu.se/pofgrGYb.jpg" alt="Dinz Store"></span>Dinz Store</b>
         <p>Downloader, tools, dan store dalam satu website &mdash; semua kebutuhanmu ada di sini, gratis dan mudah dipakai.</p>
         <div class="footer-social">
           <a href="#" id="footerSupportLink" data-action="support" aria-label="Bantuan via WhatsApp">
@@ -10087,7 +10105,10 @@ function initPwaSupport(){
     const manifest = {
       name: 'Dinz Store', short_name: 'Dinz Store', start_url: '.', display: 'standalone',
       background_color: '#0b0f16', theme_color: '#0b0f16',
-      icons: [{ src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="32" fill="#0b0f16"/><text x="96" y="128" font-size="110" font-family="sans-serif" font-weight="700" fill="#ffd23f" text-anchor="middle">D</text></svg>'), sizes: '192x192', type: 'image/svg+xml' }]
+      icons: [
+        { src: 'https://n.uguu.se/pofgrGYb.jpg', sizes: '192x192', type: 'image/jpeg' },
+        { src: 'https://n.uguu.se/pofgrGYb.jpg', sizes: '512x512', type: 'image/jpeg' }
+      ]
     };
     const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
     const link = document.getElementById('dzManifestLink');
