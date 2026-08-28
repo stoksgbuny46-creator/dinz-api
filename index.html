@@ -33,7 +33,7 @@
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  html{background:transparent; scroll-behavior:smooth;}
+  html{background:transparent; scroll-behavior:smooth; overflow-x:hidden; max-width:100%;}
   body{
     background:#0b0f16;
     color:var(--ink);
@@ -41,6 +41,13 @@
     min-height:100vh;
     position:relative;
     z-index:0;
+    overflow-x:hidden;
+    max-width:100%;
+  }
+  body.menu-lock{
+    overflow:hidden;
+    position:fixed;
+    width:100%;
   }
 
   /* ================= FULL-SITE BACKGROUND VIDEO ================= */
@@ -4072,6 +4079,8 @@
 
   @media (max-width:839px){
     #globalSearchWrap{display:none;}
+    #themeToggleBtn{display:none;}
+    #pwaInstallBtn{display:none !important;}
   }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
@@ -5952,17 +5961,35 @@ function initNavigation(){
   const overlay = document.getElementById('menuOverlay');
   const closeBtn = document.getElementById('menuCloseBtn');
 
+  let scrollYBeforeMenu = 0;
+  function openMenuOverlay(){
+    scrollYBeforeMenu = window.scrollY || window.pageYOffset || 0;
+    document.body.classList.add('menu-lock');
+    document.body.style.top = `-${scrollYBeforeMenu}px`;
+    overlay.classList.add('open');
+  }
+  function closeMenuOverlay(){
+    overlay.classList.remove('open');
+    document.body.classList.remove('menu-lock');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollYBeforeMenu);
+  }
+
   if(burger && overlay){
-    burger.addEventListener('click', () => overlay.classList.add('open'));
+    burger.addEventListener('click', openMenuOverlay);
   }
   if(closeBtn && overlay){
-    closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
+    closeBtn.addEventListener('click', closeMenuOverlay);
   }
 }
 
 function closeMenu(){
   const overlay = document.getElementById('menuOverlay');
-  if(overlay) overlay.classList.remove('open');
+  if(overlay){
+    overlay.classList.remove('open');
+    document.body.classList.remove('menu-lock');
+    document.body.style.top = '';
+  }
 }
 
 /* ============================================================
