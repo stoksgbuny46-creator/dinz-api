@@ -35,7 +35,7 @@
   html,body{margin:0;padding:0;}
   html{background:transparent; scroll-behavior:smooth; overflow-x:hidden; max-width:100%;}
   body{
-    background:#0b0f16;
+    background:var(--bg);
     color:var(--ink);
     font-family:'Space Grotesk', sans-serif;
     min-height:100vh;
@@ -2078,9 +2078,11 @@
     padding:20px;
     overflow:hidden;
     background:
-      radial-gradient(900px 560px at 15% -10%, rgba(75,163,227,0.16), transparent 60%),
-      radial-gradient(760px 520px at 100% 110%, rgba(255,210,63,0.10), transparent 55%),
-      linear-gradient(150deg, #0b0f16 0%, #10141f 55%, #0b0f16 100%);
+      radial-gradient(700px 460px at 12% -8%, rgba(75,163,227,0.16), transparent 60%),
+      radial-gradient(620px 420px at 100% 108%, rgba(255,210,63,0.18), transparent 55%),
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/26px 26px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/26px 26px,
+      var(--bg);
     transition:opacity .5s ease, visibility .5s ease;
   }
   #introOverlay.intro-hide{
@@ -2101,14 +2103,14 @@
   .intro-glow-a{
     width:380px;height:380px;
     top:-100px; left:-80px;
-    background:radial-gradient(circle, rgba(75,163,227,0.5), transparent 70%);
-    opacity:.55;
+    background:radial-gradient(circle, rgba(75,163,227,0.45), transparent 70%);
+    opacity:.4;
   }
   .intro-glow-b{
     width:340px;height:340px;
     bottom:-110px; right:-90px;
     background:radial-gradient(circle, rgba(255,210,63,0.4), transparent 70%);
-    opacity:.5;
+    opacity:.4;
     animation-delay:1.2s;
   }
   @keyframes introGlowDrift{
@@ -2116,13 +2118,35 @@
     100%{transform:translate(28px,-22px) scale(1.12);}
   }
 
+  /* scattered dots, meniru referensi desain intro */
+  .intro-dot{
+    position:absolute;
+    border-radius:50%;
+    z-index:0;
+    pointer-events:none;
+  }
+  .intro-dot-1{width:9px;height:9px;top:13%;left:9%;background:#ee5f5f;opacity:.8;}
+  .intro-dot-2{width:6px;height:6px;top:9%;right:15%;background:#ffd23f;opacity:.9;}
+  .intro-dot-3{width:6px;height:6px;top:50%;left:6%;background:#4baee8;opacity:.8;}
+  .intro-dot-4{width:8px;height:8px;bottom:18%;right:8%;background:#57c26a;opacity:.8;}
+  .intro-dot-5{width:6px;height:6px;bottom:26%;left:15%;background:#ffb300;opacity:.85;}
+  .intro-dot-6{width:7px;height:7px;bottom:9%;right:24%;background:#4baee8;opacity:.75;}
+  .intro-dot-7{width:5px;height:5px;top:30%;right:6%;background:#ee5f5f;opacity:.75;}
+
   .intro-card{
     position:relative;
     z-index:2;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:26px;
+    gap:24px;
+    width:100%;
+    max-width:320px;
+    background:#fff;
+    border:3px solid var(--line);
+    border-radius:26px;
+    padding:32px 26px;
+    box-shadow:8px 8px 0px rgba(0,0,0,0.85);
     opacity:0;
     transform:translate3d(0,24px,0) scale(.94);
     animation:introCardIn .6s cubic-bezier(.19,1,.22,1) forwards .05s;
@@ -2132,13 +2156,13 @@
   }
 
   .intro-logo-mark{
-    width:200px;height:200px;
-    border-radius:28px;
+    width:180px;height:180px;
+    border-radius:24px;
     border:3px solid var(--line);
-    background:#fff;
+    background:linear-gradient(180deg,#ffffff,#eef2f8);
     display:flex;align-items:center;justify-content:center;
     overflow:hidden;
-    box-shadow:0 18px 46px rgba(0,0,0,0.45), 6px 6px 0px rgba(0,0,0,0.85);
+    box-shadow:4px 4px 0px rgba(0,0,0,0.85);
     animation:introLogoBreathe 3.4s ease-in-out infinite .6s;
   }
   .intro-logo-mark img{
@@ -2155,10 +2179,12 @@
   }
 
   .intro-enter{
-    display:inline-flex;
+    display:flex;
     align-items:center;
+    justify-content:center;
     gap:10px;
-    padding:15px 30px;
+    width:100%;
+    padding:15px 24px;
     border-radius:999px;
     border:2.5px solid var(--line);
     background:var(--yellow);
@@ -2167,6 +2193,7 @@
     font-weight:700;
     font-size:14px;
     letter-spacing:0.02em;
+    text-transform:uppercase;
     cursor:pointer;
     opacity:0;
     pointer-events:none;
@@ -3825,7 +3852,7 @@
 <link rel="manifest" id="dzManifestLink">
 <link rel="icon" type="image/jpeg" href="https://n.uguu.se/pofgrGYb.jpg">
 <link rel="apple-touch-icon" href="https://n.uguu.se/pofgrGYb.jpg">
-<meta name="theme-color" content="#0b0f16">
+<meta name="theme-color" content="#dbe7ff">
 </head>
 <body class="intro-active">
 
@@ -3851,10 +3878,17 @@
 <div id="introOverlay">
   <div class="intro-glow intro-glow-a"></div>
   <div class="intro-glow intro-glow-b"></div>
+  <div class="intro-dot intro-dot-1"></div>
+  <div class="intro-dot intro-dot-2"></div>
+  <div class="intro-dot intro-dot-3"></div>
+  <div class="intro-dot intro-dot-4"></div>
+  <div class="intro-dot intro-dot-5"></div>
+  <div class="intro-dot intro-dot-6"></div>
+  <div class="intro-dot intro-dot-7"></div>
   <div class="intro-card">
     <div class="intro-logo-mark intro-logo-mark-big"><img src="https://n.uguu.se/pofgrGYb.jpg" alt="Dinz Store"></div>
     <button class="intro-enter" id="introEnterBtn">
-      Masuk ke Website
+      Ketuk untuk Masuk
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
     </button>
   </div>
@@ -9803,7 +9837,7 @@ function initPwaSupport(){
   try{
     const manifest = {
       name: 'Dinz Store', short_name: 'Dinz Store', start_url: '.', display: 'standalone',
-      background_color: '#0b0f16', theme_color: '#0b0f16',
+      background_color: '#dbe7ff', theme_color: '#dbe7ff',
       icons: [
         { src: 'https://n.uguu.se/pofgrGYb.jpg', sizes: '192x192', type: 'image/jpeg' },
         { src: 'https://n.uguu.se/pofgrGYb.jpg', sizes: '512x512', type: 'image/jpeg' }
