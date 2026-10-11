@@ -4383,6 +4383,44 @@ body .site-bg-overlay,body.dark-mode .site-bg-overlay{
 .rv{opacity:0; transform:translateY(26px); transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);}
 .rv.in{opacity:1; transform:none;}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1; transform:none; transition:none;}}
+/* ===================== INTRO v3: ring + kinetic title ===================== */
+#introOverlay{align-items:center !important; justify-content:center !important; padding:20px !important; text-align:center; background:radial-gradient(70% 60% at 50% 46%, transparent 20%, color-mix(in srgb, var(--bg0) 88%, transparent) 100%) !important;}
+#introOverlay.intro-exiting{opacity:0 !important; transition:opacity .5s ease .5s !important;}
+#introOverlay .i2-corner,#introOverlay .i2-top{transition:opacity .4s ease;}
+#introOverlay.intro-exiting .i2-corner,#introOverlay.intro-exiting .i2-top{opacity:0;}
+.i3-stage{display:flex; flex-direction:column; align-items:center; gap:0; width:100%; max-width:760px;}
+.i3-ring{position:relative; width:min(54vw,230px,30vh); aspect-ratio:1; margin-bottom:clamp(14px,3.2vh,30px); transition:transform .9s cubic-bezier(.7,0,.2,1), opacity .6s ease;}
+.i3-ring svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible;}
+.i3-track{fill:none; stroke:var(--line); stroke-width:1;}
+.i3-arc{fill:none; stroke:var(--cyan); stroke-width:2.5; stroke-linecap:butt; stroke-dasharray:527.8; stroke-dashoffset:527.8; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset .12s linear;}
+.i3-ticks{fill:none; stroke:var(--dim2); stroke-width:6; stroke-dasharray:1 8.3; opacity:.55; transform-origin:50% 50%; animation:i3Spin 26s linear infinite;}
+.i3-orbit{position:absolute; inset:-14px; animation:i3Spin 7s linear infinite;}
+.i3-orbit::before{content:''; position:absolute; top:-3px; left:50%; width:6px; height:6px; margin-left:-3px; background:var(--cyan);}
+@keyframes i3Spin{to{transform:rotate(360deg);}}
+.i3-pct{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--disp); font-stretch:72%; font-weight:850; font-size:clamp(46px,min(13vw,9vh),84px); letter-spacing:-.04em; font-variant-numeric:tabular-nums; color:var(--ink);}
+.i3-pct em{font-style:normal; font-size:.32em; color:var(--cyan); margin:-.9em 0 0 .15em; letter-spacing:0;}
+.i3-title{margin:0; font-family:var(--disp); font-stretch:68%; font-weight:850; text-transform:uppercase; line-height:.84; letter-spacing:-.04em; font-size:clamp(60px,min(19vw,15vh),150px); color:var(--ink); display:flex; flex-wrap:wrap; justify-content:center; column-gap:.22em; transition:transform .8s cubic-bezier(.7,0,.2,1), opacity .5s ease, filter .6s ease;}
+.i3-title .w{display:inline-flex;}
+.i3-title .w:nth-child(2){color:transparent; -webkit-text-stroke:1.5px var(--ink); transition:color .8s ease .1s, -webkit-text-stroke-color .8s ease;}
+#introOverlay.intro-v3-loaded .i3-title .w:nth-child(2){color:var(--cyan); -webkit-text-stroke-color:var(--cyan);}
+.i3-title i{font-style:normal; display:inline-block; opacity:0; transform:translateY(40%) scale(.9); filter:blur(10px); animation:i3Letter .9s cubic-bezier(.16,1,.3,1) forwards; animation-delay:calc(.25s + var(--i)*.07s);}
+@keyframes i3Letter{to{opacity:1; transform:none; filter:blur(0);}}
+.i3-words{position:relative; height:1.5em; margin-top:clamp(12px,2.4vh,22px); width:100%; font:500 11px 'JetBrains Mono',monospace; letter-spacing:.28em; text-transform:uppercase; color:var(--dim);}
+.i3-words span{position:absolute; left:0; right:0; opacity:0; animation:i3Word 6.4s ease-in-out infinite; animation-delay:calc(var(--k)*1.6s + .9s);}
+@keyframes i3Word{0%{opacity:0; transform:translateY(8px);}6%,22%{opacity:1; transform:none;}28%,100%{opacity:0; transform:translateY(-8px);}}
+.i3-foot{display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:clamp(22px,5vh,46px); opacity:0; animation:i2Fade .8s ease 1.2s forwards; transition:transform .5s ease, opacity .4s ease;}
+.i3-status{display:flex; align-items:center; gap:10px; font:500 10.5px 'JetBrains Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan);}
+.i3-status i{width:7px; height:7px; background:var(--cyan); animation:hudBlink 1s steps(2) infinite;}
+#introOverlay .i2-enter{min-width:170px; justify-content:center;}
+#introBarFill{display:none !important;}
+.i3-flash{position:absolute; left:0; right:0; top:50%; height:1px; background:var(--cyan); transform:scaleX(0); opacity:0; pointer-events:none;}
+#introOverlay.intro-exiting .i3-flash{animation:i3Flash .7s cubic-bezier(.7,0,.2,1) forwards;}
+@keyframes i3Flash{0%{transform:scaleX(0); opacity:1;} 60%{transform:scaleX(1); opacity:1;} 100%{transform:scaleX(1); opacity:0;}}
+#introOverlay.intro-exiting .i3-ring{transform:scale(1.7); opacity:0;}
+#introOverlay.intro-exiting .i3-title{transform:translateY(-26px) scale(1.04); opacity:0; filter:blur(10px);}
+#introOverlay.intro-exiting .i3-foot,#introOverlay.intro-exiting .i3-words{opacity:0 !important; transform:translateY(16px);}
+@media (prefers-reduced-motion:reduce){.i3-ticks,.i3-orbit{animation:none;} .i3-title i{animation:none; opacity:1; transform:none; filter:none;} .i3-words span:first-child{animation:none; opacity:1;}}
+#introOverlay .i2-top{position:absolute; top:max(18px,env(safe-area-inset-top)); left:20px; right:20px; padding:12px 14px 0;}
 </style>
 </head>
 <body class="intro-active">
@@ -4406,18 +4444,23 @@ body .site-bg-overlay,body.dark-mode .site-bg-overlay{
 <div id="introOverlay">
   <span class="i2-corner a"></span><span class="i2-corner b"></span><span class="i2-corner c"></span><span class="i2-corner d"></span>
   <div class="i2-top"><b>DINZ<em>/</em>STORE</b><span id="introClock">--:--:-- WIB</span></div>
-  <div class="i2-mid">
-    <p class="i2-eyebrow"><i></i><span id="introStatus">Menyiapkan tampilan...</span></p>
-    <h1 class="i2-title"><span><b>Dinz</b></span><span><b>Store</b></span></h1>
-    <p class="i2-sub">Downloader, tools, toko digital, dan asisten AI &mdash; semuanya dalam satu tempat.</p>
+  <div class="i3-flash"></div>
+  <div class="i3-stage">
+    <div class="i3-ring" aria-hidden="true">
+      <svg viewBox="0 0 200 200"><circle class="i3-track" cx="100" cy="100" r="84"/><circle class="i3-ticks" cx="100" cy="100" r="96"/><circle class="i3-arc" id="introArc" cx="100" cy="100" r="84"/></svg>
+      <div class="i3-orbit"></div>
+      <div class="i3-pct"><b id="introPct">000</b><em>%</em></div>
+    </div>
+    <h1 class="i3-title" aria-label="Dinz Store"><span class="w"><i style="--i:0">D</i><i style="--i:1">I</i><i style="--i:2">N</i><i style="--i:3">Z</i></span><span class="w"><i style="--i:4">S</i><i style="--i:5">T</i><i style="--i:6">O</i><i style="--i:7">R</i><i style="--i:8">E</i></span></h1>
+    <div class="i3-words" aria-hidden="true"><span style="--k:0">Downloader</span><span style="--k:1">Tools</span><span style="--k:2">Toko Digital</span><span style="--k:3">AI Assistant</span></div>
+    <div class="i3-foot">
+      <p class="i3-status"><i></i><span id="introStatus">Menyiapkan tampilan...</span></p>
+      <button class="i2-enter" id="introEnterBtn">Masuk
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
   </div>
-  <div class="i2-bottom">
-    <div class="i2-pct"><b id="introPct">000</b><em>%</em></div>
-    <div class="i2-track"><div id="introBarFill"></div></div>
-    <button class="i2-enter" id="introEnterBtn">Masuk
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
-    </button>
-  </div>
+  <div id="introBarFill"></div>
 </div>
 
 <!-- ================= HUD ================= -->
@@ -8835,7 +8878,7 @@ function initIntroAndMusic(){
 
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const steps = ['Menyiapkan tampilan...', 'Memuat aset...', 'Menata komponen...', 'Hampir siap...', 'Siap!'];
-  const DURATION = reduced ? 250 : 2200;
+  const DURATION = reduced ? 250 : 3000;
   let start = null;
   let entered = false;
 
@@ -8919,12 +8962,12 @@ function initIntroAndMusic(){
     /* Reveal the real website slightly after the exit motion begins. */
     setTimeout(()=>{
       document.body.classList.remove('intro-active');
-    },120);
+    },520);
 
     setTimeout(()=>{
       overlay.style.display='none';
       overlay.classList.remove('intro-exiting');
-    },760);
+    },1100);
   }
 
   enterBtn.addEventListener('click', enterSite);
@@ -12369,6 +12412,10 @@ document.addEventListener('DOMContentLoaded', () => {
   scan(); setTimeout(scan,1200);
   document.addEventListener('click',function(){ setTimeout(function(){ document.querySelectorAll('.rv:not(.in)').forEach(function(el){ var r=el.getBoundingClientRect(); if(r.top<innerHeight) el.classList.add('in'); }); },350); });
 }catch(e){} })();
+</script>
+<script>
+(function(){ var bar=document.getElementById('introBarFill'), arc=document.getElementById('introArc'); if(!bar||!arc) return;
+  new MutationObserver(function(){ var w=parseFloat(bar.style.width)||0; arc.style.strokeDashoffset=(527.8*(1-w/100)).toFixed(1); }).observe(bar,{attributes:true,attributeFilter:['style']}); })();
 </script>
 </body>
 </html>
