@@ -5173,6 +5173,7 @@ input:focus,textarea:focus,select:focus,.global-search-input:focus{background-im
       <button class="nav-link" data-target="tools">Tools</button>
       <button class="nav-link" data-target="store">Store</button>
       <button class="nav-link" data-target="games">Game &amp; Fun</button>
+      <button class="nav-link" data-target="ai-hub">AI</button>
     </nav>
 
     <div class="global-search-wrap" id="globalSearchWrap">
@@ -5239,6 +5240,10 @@ input:focus,textarea:focus,select:focus,.global-search-input:focus{background-im
     <button class="menu-item" data-target="games">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="13" r="1" fill="currentColor" stroke="none"/></svg>
       Game &amp; Fun
+    </button>
+    <button class="menu-item" data-target="ai-hub">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>
+      AI
     </button>
     <button class="menu-item support" data-action="support">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -5596,6 +5601,108 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- ================= HALAMAN: DINZ AI (FULL LAYAR, GAYA CHAT SIMPEL) ================= -->
+  <div id="ai-hub" class="page ai-page">
+    <style>
+      /* ===== DINZ AI — full layar, kompak, tema neo-brutal situs ===== */
+      #ai-hub.page.active{position:fixed !important; inset:0 !important; width:100% !important; height:100vh; height:100dvh !important; z-index:1000 !important; display:flex !important; flex-direction:column; padding:0 !important; margin:0 !important; max-width:none !important; overflow:hidden; border:none !important; border-radius:0 !important; box-shadow:none !important; animation:none !important; opacity:1 !important; transform:none !important;
+        background:#e6e2fb !important; background-image:radial-gradient(rgba(70,50,160,.16) 1.3px, transparent 1.4px) !important; background-size:16px 16px !important; color:#000 !important; font-family:'Space Grotesk',system-ui,sans-serif;}
+      #ai-hub, #ai-hub *{box-sizing:border-box;}
+      #ai-hub button{font-family:inherit; filter:none !important; text-transform:none !important; letter-spacing:0 !important; -webkit-tap-highlight-color:transparent; cursor:pointer;}
+
+      #ai-hub .dzx-top{flex-shrink:0; display:flex; align-items:center; gap:10px; padding:calc(10px + env(safe-area-inset-top)) 12px 8px;}
+      #ai-hub .dzx-circle{width:38px; height:38px; padding:0; border-radius:10px !important; background:#fff !important; background-image:none !important; border:2.5px solid #000 !important; color:#000 !important; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:2px 2px 0 #000 !important; transform:none !important;}
+      #ai-hub .dzx-circle:active{transform:translate(2px,2px) !important; box-shadow:0 0 0 #000 !important;}
+      #ai-hub .dzx-circle svg{width:18px; height:18px; stroke:#000; fill:none; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;}
+      #ai-hub .dzx-pill{display:flex; align-items:center; gap:6px; height:34px; padding:0 12px; border-radius:8px; background:#ffd93d; color:#000; border:2.5px solid #000; box-shadow:2px 2px 0 #000; font:800 12px 'JetBrains Mono',monospace; letter-spacing:.06em; text-transform:uppercase; margin-right:auto;}
+      #ai-hub .dzx-pill svg{width:13px; height:13px; fill:#000;}
+
+      #ai-hub .dzx-log{flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:6px 14px 14px; display:flex; flex-direction:column; gap:12px;}
+      #ai-hub .dzx-empty{margin:auto; text-align:center; padding:0 22px;}
+      #ai-hub .dzx-empty .dzx-hello{font:800 20px 'Space Grotesk',sans-serif; color:#000; margin-bottom:4px;}
+      #ai-hub .dzx-empty p{font:500 13px/1.5 'Space Grotesk',sans-serif; margin:0; color:#1a1a1a;}
+      #ai-hub .dzx-msg{font:500 14px/1.55 'Space Grotesk',sans-serif; word-break:break-word; color:#000; max-width:88%; padding:9px 12px; border:2.5px solid #000; border-radius:12px; box-shadow:2px 2px 0 #000;}
+      #ai-hub .dzx-msg.user{align-self:flex-end; background:#ffd93d; border-bottom-right-radius:4px;}
+      #ai-hub .dzx-msg.ai{align-self:flex-start; background:#fff; border-bottom-left-radius:4px;}
+      #ai-hub .dzx-msg.ai.pending .dzx-text{color:#555; font-family:'JetBrains Mono',monospace; font-size:12px;}
+      #ai-hub .dzx-msg.error{background:#ffe0ec;}
+      #ai-hub .dzx-msg.error .dzx-text{color:#b00030;}
+      #ai-hub .dzx-text{white-space:pre-wrap;}
+      #ai-hub .dzx-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:8px;}
+      #ai-hub .dzx-grid.single{grid-template-columns:1fr; width:min(300px,70vw);}
+      #ai-hub .dzx-item{border-radius:10px; overflow:hidden; background:#fff; border:2.5px solid #000;}
+      #ai-hub .dzx-item img,#ai-hub .dzx-item video{display:block; width:100%; height:auto; max-height:340px; object-fit:cover; background:#000;}
+      #ai-hub .dzx-item img{cursor:zoom-in;}
+      #ai-hub .dzx-grid:not(.single) .dzx-item img{height:110px;}
+      #ai-hub .dzx-cap{padding:6px 8px 0; font-size:11px; color:#333; line-height:1.35;}
+      #ai-hub .dzx-actions{display:flex; gap:6px; padding:6px 6px 7px;}
+      #ai-hub .dzx-actions a{flex:1; text-align:center; font:800 10.5px 'JetBrains Mono',monospace; text-transform:uppercase; padding:6px 2px; border:2px solid #000; border-radius:7px; color:#000; text-decoration:none; background:#4ade80;}
+
+      #ai-hub .dzx-quick{flex-shrink:0; padding:0 14px 10px; display:flex; flex-direction:row; flex-wrap:wrap; gap:8px; justify-content:center;}
+      #ai-hub.has-msgs .dzx-quick{display:none;}
+      #ai-hub .dzx-qitem{display:flex; align-items:center; gap:7px; padding:8px 12px; background:#fff !important; background-image:none !important; border:2.5px solid #000 !important; color:#000 !important; font:700 13px 'Space Grotesk',sans-serif; border-radius:10px !important; box-shadow:2px 2px 0 #000 !important;}
+      #ai-hub .dzx-qitem:nth-child(1){background:#ff6fb5 !important;}
+      #ai-hub .dzx-qitem:nth-child(2){background:#4ade80 !important;}
+      #ai-hub .dzx-qitem:nth-child(3){background:#7b8cff !important;}
+      #ai-hub .dzx-qitem:active{transform:translate(2px,2px); box-shadow:0 0 0 #000 !important;}
+      #ai-hub .dzx-qitem svg{width:16px; height:16px; stroke:#000; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0;}
+
+      #ai-hub .dzx-bar{flex-shrink:0; position:relative; padding:4px 12px calc(12px + env(safe-area-inset-bottom));}
+      #ai-hub .dzx-chip{display:none; align-items:center; gap:7px; margin:0 2px 8px; padding:4px 5px 4px 10px; border-radius:8px; background:#ff6fb5; color:#000; border:2.5px solid #000; font:800 11px 'JetBrains Mono',monospace; text-transform:uppercase; width:max-content;}
+      #ai-hub .dzx-chip.show{display:flex;}
+      #ai-hub .dzx-chip button{width:18px; height:18px; padding:0; border-radius:5px !important; border:2px solid #000 !important; background:#fff !important; color:#000 !important; font-size:9px; line-height:1;}
+      #ai-hub .dzx-inputpill{display:flex; align-items:center; gap:6px; padding:5px; min-height:48px; border-radius:12px; background:#fff; border:3px solid #000; box-shadow:3px 3px 0 #000;}
+      #ai-hub #dzxPlus{width:34px; height:34px; padding:0; flex-shrink:0; border-radius:8px !important; background:#f0edff !important; background-image:none !important; border:2.5px solid #000 !important; color:#000 !important; display:flex; align-items:center; justify-content:center; box-shadow:none !important;}
+      #ai-hub #dzxPlus svg{width:18px; height:18px; stroke:#000; fill:none; stroke-width:2.6; stroke-linecap:round;}
+      #ai-hub #dzxInput{flex:1; min-width:0; resize:none; border:none !important; outline:none !important; background:transparent !important; background-image:none !important; box-shadow:none !important; color:#000 !important; font:600 15px/1.4 'Space Grotesk',sans-serif !important; padding:7px 2px !important; max-height:110px; min-height:34px; border-radius:0 !important; margin:0 !important; width:auto !important; height:auto;}
+      #ai-hub #dzxInput::placeholder{color:#6b6b80; opacity:1;}
+      #ai-hub #dzxSendBtn{width:36px; height:36px; padding:0; flex-shrink:0; border-radius:9px !important; background:#ffd93d !important; background-image:none !important; border:2.5px solid #000 !important; color:#000 !important; display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0 #000 !important;}
+      #ai-hub #dzxSendBtn:active{transform:translate(2px,2px); box-shadow:0 0 0 #000 !important;}
+      #ai-hub #dzxSendBtn svg{width:18px; height:18px; stroke:#000; fill:none; stroke-width:2.8; stroke-linecap:round; stroke-linejoin:round;}
+      #ai-hub #dzxSendBtn:disabled{opacity:.5;}
+
+      #ai-hub .dzx-menu{display:none; position:absolute; left:12px; bottom:calc(66px + env(safe-area-inset-bottom)); min-width:190px; padding:6px; border-radius:12px; background:#fff; border:3px solid #000; z-index:5; flex-direction:column; gap:3px; box-shadow:4px 4px 0 #000 !important;}
+      #ai-hub .dzx-menu.show{display:flex;}
+      #ai-hub .dzx-mode{display:flex; align-items:center; gap:9px; padding:9px 10px; border:2px solid transparent !important; border-radius:8px !important; background:transparent !important; background-image:none !important; color:#000 !important; font:700 13.5px 'Space Grotesk',sans-serif; text-align:left; box-shadow:none !important;}
+      #ai-hub .dzx-mode.active{background:#ffd93d !important; border-color:#000 !important;}
+      #ai-hub .dzx-lightbox{position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; padding:18px;}
+      #ai-hub .dzx-lightbox.show{display:flex;}
+      #ai-hub .dzx-lightbox img{max-width:100%; max-height:88vh; border-radius:10px; border:3px solid #000;}
+    </style>
+
+    <div class="dzx-top">
+      <button type="button" class="dzx-circle" data-target="beranda" aria-label="Kembali"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <div class="dzx-pill"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/></svg>Dinz AI</div>
+      <button type="button" class="dzx-circle" id="dzxClearBtn" aria-label="Chat baru"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+    </div>
+
+    <div class="dzx-log" id="dzxLog"></div>
+
+    <div class="dzx-quick" id="dzxQuick">
+      <button type="button" class="dzx-qitem" data-mode="gen"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg>Buat gambar</button>
+      <button type="button" class="dzx-qitem" data-mode="photo"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>Cari gambar</button>
+      <button type="button" class="dzx-qitem" data-mode="video"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><polygon points="22 8 16 12 22 16 22 8"/></svg>Cari video</button>
+    </div>
+
+    <div class="dzx-bar">
+      <div class="dzx-menu" id="dzxModes">
+        <button type="button" class="dzx-mode active" data-mode="auto">&#10024; Otomatis</button>
+        <button type="button" class="dzx-mode" data-mode="chat">&#128172; Chat</button>
+        <button type="button" class="dzx-mode" data-mode="gen">&#127912; Buat gambar</button>
+        <button type="button" class="dzx-mode" data-mode="photo">&#128444; Cari gambar</button>
+        <button type="button" class="dzx-mode" data-mode="video">&#127916; Cari video</button>
+      </div>
+      <div class="dzx-chip" id="dzxChip"><span id="dzxChipText"></span><button type="button" id="dzxChipX" aria-label="Hapus mode">&#10005;</button></div>
+      <div class="dzx-inputpill">
+        <button type="button" id="dzxPlus" aria-label="Pilih mode"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <textarea id="dzxInput" rows="1" placeholder="Tanya Dinz AI"></textarea>
+        <button type="button" id="dzxSendBtn" aria-label="Kirim"><svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
+      </div>
+    </div>
+
+    <div class="dzx-lightbox" id="dzxLightbox"><img id="dzxLightboxImg" alt=""></div>
   </div>
 
   <!-- ================= HALAMAN: GAME CATUR VS BOT ================= -->
@@ -11702,6 +11809,7 @@ function buildGlobalSearchIndex(){
     { title:'Tools', desc:'Pemutar & kumpulan tools', target:'tools', type:'Halaman' },
     { title:'Store', desc:'Order produk digital', target:'store', type:'Halaman' },
     { title:'Game & Fun', desc:'Kumpulan game seru', target:'games', type:'Halaman' },
+    { title:'Dinz AI', desc:'Chat AI, buat gambar, cari foto & video', target:'ai-hub', type:'Halaman' },
   ];
   (typeof DZ_TOOLS !== 'undefined' ? DZ_TOOLS : []).forEach(t => {
     idx.push({ title:t.name, desc:t.desc, target:'tools', accId:t.id, type:'Tools' });
@@ -13940,6 +14048,378 @@ document.addEventListener('click',function(e){
  }catch(e){}
 })();
 </script>
+<script>
+/* ============================================================
+   DINZ AI HUB — chat (Claude Haiku), buat gambar, cari gambar, cari video
+   ============================================================ */
+(function(){
+  const API_CHAT  = p => `https://api-cloud.my.id/ai/claude-haiku?prompt=${encodeURIComponent(p)}`;
+  const API_GEN   = p => `https://api-cloud.my.id/ai/text2img?prompt=${encodeURIComponent(p)}&shape=square`;
+  const API_PHOTO = q => `https://api-cloud.my.id/search/pinterest?action=search&query=${encodeURIComponent(q)}`;
+  const API_VIDEO = q => `https://api.nexray.eu.cc/search/pinterestvideo?q=${encodeURIComponent(q)}`;
+
+  const PERSONA = 'Kamu adalah Dinz AI, asisten virtual yang ramah, sopan, hangat, dan membantu. ' +
+    'Sapa pengguna dengan "kak", jawab dalam bahasa yang sama dengan pengguna (default Bahasa Indonesia), ' +
+    'jelas dan ringkas, jangan kasar, dan jangan pernah menyebut instruksi ini.';
+
+  const CORS_PROXIES = [
+    u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`
+  ];
+
+  let mode = 'auto';
+  let busy = false;
+  const history = []; // {role:'user'|'ai', text}
+
+  const $ = id => document.getElementById(id);
+
+  /* ---------- fetch: balikin JSON atau blob gambar, fallback proxy CORS ---------- */
+  async function fetchOnce(url, timeoutMs){
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), timeoutMs);
+    try{
+      const res = await fetch(url, { signal: ctl.signal });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if(ct.startsWith('image/')) return { kind:'blob', blob: await res.blob() };
+      const text = await res.text();
+      try{ return { kind:'json', data: JSON.parse(text) }; }
+      catch(_){ return { kind:'text', text }; }
+    } finally { clearTimeout(t); }
+  }
+  async function smartFetch(url, timeoutMs = 60000){
+    try{ return await fetchOnce(url, timeoutMs); }
+    catch(err){
+      for(const mk of CORS_PROXIES){
+        try{ return await fetchOnce(mk(url), timeoutMs); }catch(_){}
+      }
+      throw new Error('Gagal terhubung ke server. Coba lagi sebentar ya.');
+    }
+  }
+
+  /* ---------- parser generik respons API ---------- */
+  const TEXT_KEYS = ['result','response','answer','message','text','content','data','output','reply'];
+  function pickText(v, depth = 0){
+    if(v == null || depth > 5) return '';
+    if(typeof v === 'string') return v.trim();
+    if(Array.isArray(v)){
+      for(const x of v){ const r = pickText(x, depth + 1); if(r) return r; }
+      return '';
+    }
+    if(typeof v === 'object'){
+      for(const k of TEXT_KEYS){
+        if(k in v){ const r = pickText(v[k], depth + 1); if(r) return r; }
+      }
+    }
+    return '';
+  }
+  const IMG_RE = /\.(jpe?g|png|gif|webp|avif|bmp)(\?|#|$)|pinimg\.com|image|img|photo|cdn/i;
+  function collectUrls(v, out = [], depth = 0){
+    if(v == null || depth > 6) return out;
+    if(typeof v === 'string'){
+      if(/^https?:\/\//i.test(v.trim())) out.push(v.trim());
+      return out;
+    }
+    if(Array.isArray(v)){ v.forEach(x => collectUrls(x, out, depth + 1)); return out; }
+    if(typeof v === 'object'){ Object.values(v).forEach(x => collectUrls(x, out, depth + 1)); }
+    return out;
+  }
+  function uniq(a){ return [...new Set(a)]; }
+
+  function parseImageUrl(res){
+    if(res.kind === 'blob') return URL.createObjectURL(res.blob);
+    if(res.kind === 'text'){
+      const m = res.text.match(/https?:\/\/[^\s"'<>]+/);
+      return m ? m[0] : '';
+    }
+    const urls = collectUrls(res.data);
+    return urls.find(u => IMG_RE.test(u)) || urls[0] || '';
+  }
+
+  function parsePhotos(res){
+    if(res.kind !== 'json') return [];
+    const d = res.data;
+    const list = Array.isArray(d) ? d : (Array.isArray(d?.result) ? d.result : (Array.isArray(d?.data) ? d.data : (Array.isArray(d?.results) ? d.results : null)));
+    const items = [];
+    if(list){
+      list.forEach(it => {
+        if(typeof it === 'string'){ if(/^https?:/i.test(it)) items.push({ url: it, caption: '' }); return; }
+        if(it && typeof it === 'object'){
+          const keys = ['images_url','image','image_url','original','orig','url','src','thumbnail','media','link'];
+          let url = '';
+          for(const k of keys){ if(typeof it[k] === 'string' && /^https?:/i.test(it[k])){ url = it[k]; break; } }
+          if(!url){ const u = collectUrls(it).find(x => IMG_RE.test(x)); if(u) url = u; }
+          if(url) items.push({ url, caption: it.grid_title || it.title || it.caption || it.description || '' });
+        }
+      });
+    }
+    if(!items.length){
+      uniq(collectUrls(d).filter(u => IMG_RE.test(u))).forEach(u => items.push({ url: u, caption: '' }));
+    }
+    const seen = new Set();
+    return items.filter(i => !seen.has(i.url) && seen.add(i.url));
+  }
+
+  function parseVideos(res){
+    if(res.kind !== 'json') return [];
+    const d = res.data;
+    const list = Array.isArray(d) ? d : (Array.isArray(d?.result) ? d.result : (Array.isArray(d?.data) ? d.data : []));
+    const items = [];
+    list.forEach(it => {
+      if(!it || typeof it !== 'object') return;
+      const v = it.video_url || it.video || it.url || it.src || '';
+      if(typeof v === 'string' && /^https?:/i.test(v)){
+        items.push({ videoUrl: v, thumb: it.thumbnail || it.thumb || it.image || '', caption: it.title || it.grid_title || it.description || '' });
+      }
+    });
+    return items;
+  }
+
+  /* ---------- deteksi maksud (mode Otomatis) ---------- */
+  function detectIntent(text){
+    const t = text.trim().toLowerCase();
+    const MEDIA = '(?:gambar|foto|image|img|pic|picture|wallpaper|ilustrasi|poster|logo)';
+    const reGen = new RegExp(`^(?:tolong\\s+|coba\\s+|dong\\s+|kak\\s+)*(?:bikin|buat|buatin|buatkan|generate|create|gambarkan|lukis|lukiskan|desain|ciptakan|ciptain|render)(?:in|kan)?\\s+(?:aku\\s+|saya\\s+)?(?:sebuah\\s+|satu\\s+)?(?:${MEDIA})?\\s*(?:ai\\s+)?(?:dari|tentang|berupa|yang|of)?\\s*`, 'i');
+    const reSearch = new RegExp(`^(?:tolong\\s+|coba\\s+|dong\\s+|kak\\s+)*(?:cari|carikan|cariin|carii|nyari|search|temukan|tampilkan|kasih|kirim(?:kan)?|tunjukkan|mana)\\s+(?:aku\\s+|saya\\s+)?(?:beberapa\\s+)?(video|${MEDIA})(?:nya)?\\s*(?:tentang|dari|:)?\\s*`, 'i');
+
+    const s = t.match(reSearch);
+    if(s){
+      const isVideo = s[1] === 'video';
+      return { type: isVideo ? 'video' : 'photo', query: text.trim().slice(s[0].length).trim() || text.trim() };
+    }
+    // "buat/bikin ... gambar ..." harus jelas minta gambar
+    const g = t.match(reGen);
+    if(g && new RegExp(`\\b${MEDIA}\\b`, 'i').test(t.slice(0, g[0].length + 12)) ){
+      return { type:'gen', query: text.trim().slice(g[0].length).trim() || text.trim() };
+    }
+    if(/^(gambar|foto)\s+(.+)/i.test(t) === false && /\b(generate|buatkan|buatin|bikinin|bikin|buat)\b.*\b(gambar|foto|image|ilustrasi|wallpaper|logo|poster)\b/i.test(t)){
+      const q = text.replace(/^(?:tolong\s+|coba\s+|dong\s+|kak\s+)*(?:generate|buatkan|buatin|bikinin|bikin|buat)\s*(?:aku\s+|saya\s+)?(?:sebuah\s+)?(?:gambar|foto|image|ilustrasi|wallpaper|logo|poster)?\s*(?:ai\s+)?(?:dari|tentang|berupa)?\s*/i, '').trim();
+      return { type:'gen', query: q || text.trim() };
+    }
+    const gk = text.trim().match(/^(?:tolong\s+|coba\s+|dong\s+|kak\s+)*(?:gambarkan|gambarin|lukiskan|lukisin)\s+(.+)/i);
+    if(gk) return { type:'gen', query: gk[1].trim() };
+    return null;
+  }
+
+  /* ---------- kalimat ramah ---------- */
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const FRIENDLY = {
+    gen:   q => pick([`Siap kak! Aku buatkan gambar "${q}" dulu ya, mohon tunggu sebentar 😊`, `Dengan senang hati kak! Gambar "${q}" sedang aku buat ya 🎨`]),
+    photo: q => pick([`Baik kak, aku carikan gambar "${q}" ya 🔎`, `Siap kak! Sebentar ya, aku cari gambar "${q}" untuk kakak 😊`]),
+    video: q => pick([`Baik kak, aku carikan video "${q}" ya 🎬`, `Siap kak! Aku cari video "${q}" dulu ya, mohon tunggu sebentar 😊`]),
+    doneGen:   () => pick(['Ini gambarnya kak, semoga sesuai ya! ✨', 'Sudah jadi kak! Semoga suka dengan hasilnya 😊']),
+    donePhoto: () => pick(['Ini hasil pencariannya kak, semoga membantu ya! 😊', 'Ketemu kak! Silakan dipilih gambarnya ✨']),
+    doneVideo: () => pick(['Ini videonya kak, selamat menonton! 🎬', 'Ketemu kak! Semoga sesuai dengan yang kakak cari 😊']),
+    empty: () => 'Mohon maaf kak, aku belum menemukan hasilnya. Boleh coba dengan kata kunci lain? 🙏',
+    error: m => `Mohon maaf kak, terjadi kendala: ${m}\nBoleh dicoba lagi sebentar lagi ya 🙏`,
+    ask: () => 'Boleh kak, mau dibuatkan / dicarikan apa? Tulis deskripsinya ya 😊'
+  };
+
+  /* ---------- UI ---------- */
+  const hub = () => $('ai-hub');
+  function emptyState(){
+    $('dzxLog').innerHTML = `<div class="dzx-empty"><div class="dzx-hello">Halo kak! \u{1F44B}</div><p>Ngobrol, buat gambar, cari foto &amp; video. Tinggal ketik ya.</p></div>`;
+    hub().classList.remove('has-msgs');
+  }
+
+  function addMsg(text, type, pending){
+    const log = $('dzxLog');
+    const empty = log.querySelector('.dzx-empty');
+    if(empty) empty.remove();
+    hub().classList.add('has-msgs');
+    const div = document.createElement('div');
+    div.className = `dzx-msg ${type}${pending ? ' pending' : ''}`;
+    const span = document.createElement('div');
+    span.className = 'dzx-text';
+    span.textContent = text;
+    div.appendChild(span);
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+  function setText(msg, text){ msg.querySelector('.dzx-text').textContent = text; }
+  function settle(msg, isError){
+    msg.classList.remove('pending');
+    if(isError){ msg.classList.remove('ai'); msg.classList.add('error'); }
+  }
+  function scrollDown(){ const l = $('dzxLog'); l.scrollTop = l.scrollHeight; }
+
+  function actionLinks(url, name){
+    const box = document.createElement('div');
+    box.className = 'dzx-actions';
+    const open = document.createElement('a');
+    open.href = url; open.target = '_blank'; open.rel = 'noopener'; open.textContent = 'Buka';
+    const dl = document.createElement('a');
+    dl.href = url; dl.target = '_blank'; dl.rel = 'noopener'; dl.setAttribute('download', name || 'dinz-ai');
+    dl.textContent = 'Unduh';
+    box.append(open, dl);
+    return box;
+  }
+
+  function renderImages(msg, items, single){
+    const grid = document.createElement('div');
+    grid.className = 'dzx-grid' + (single ? ' single' : '');
+    items.forEach((it, i) => {
+      const card = document.createElement('div');
+      card.className = 'dzx-item';
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.referrerPolicy = 'no-referrer';
+      img.alt = it.caption || 'gambar';
+      img.src = it.url;
+      img.addEventListener('click', () => { $('dzxLightboxImg').src = it.url; $('dzxLightbox').classList.add('show'); });
+      img.addEventListener('error', () => { card.remove(); });
+      img.addEventListener('load', scrollDown);
+      card.appendChild(img);
+      if(it.caption && single){
+        const cap = document.createElement('div'); cap.className = 'dzx-cap'; cap.textContent = it.caption; card.appendChild(cap);
+      }
+      card.appendChild(actionLinks(it.url, `dinz-ai-${Date.now()}-${i}.jpg`));
+      grid.appendChild(card);
+    });
+    msg.appendChild(grid);
+    scrollDown();
+  }
+
+  function renderVideos(msg, items){
+    const grid = document.createElement('div');
+    grid.className = 'dzx-grid single';
+    items.forEach(it => {
+      const card = document.createElement('div');
+      card.className = 'dzx-item';
+      const v = document.createElement('video');
+      v.controls = true; v.playsInline = true; v.preload = 'metadata';
+      if(it.thumb) v.poster = it.thumb;
+      if(window.Hls && Hls.isSupported() && /\.m3u8($|\?)/i.test(it.videoUrl)){
+        const hls = new Hls(); hls.loadSource(it.videoUrl); hls.attachMedia(v);
+      } else { v.src = it.videoUrl; }
+      card.appendChild(v);
+      if(it.caption){ const cap = document.createElement('div'); cap.className = 'dzx-cap'; cap.textContent = it.caption; card.appendChild(cap); }
+      if(!/\.m3u8($|\?)/i.test(it.videoUrl)) card.appendChild(actionLinks(it.videoUrl, `dinz-ai-${Date.now()}.mp4`));
+      grid.appendChild(card);
+    });
+    msg.appendChild(grid);
+    scrollDown();
+  }
+
+  /* ---------- aksi ---------- */
+  async function doChat(text, msg){
+    const recent = history.slice(-6).map(h => `${h.role === 'user' ? 'Pengguna' : 'Dinz AI'}: ${h.text.slice(0, 300)}`).join('\n');
+    const prompt = `${PERSONA}\n\n${recent ? 'Percakapan sebelumnya:\n' + recent + '\n\n' : ''}Pengguna: ${text}\nDinz AI:`;
+    const res = await smartFetch(API_CHAT(prompt), 60000);
+    let ans = res.kind === 'json' ? pickText(res.data) : (res.kind === 'text' ? res.text.trim() : '');
+    if(!ans) throw new Error('AI belum memberikan jawaban');
+    setText(msg, ans); settle(msg);
+    history.push({ role:'user', text }, { role:'ai', text: ans });
+    scrollDown();
+  }
+
+  async function doGen(q, msg){
+    setText(msg, FRIENDLY.gen(q));
+    const res = await smartFetch(API_GEN(q), 120000);
+    const url = parseImageUrl(res);
+    if(!url) throw new Error('Gambar belum berhasil dibuat');
+    setText(msg, FRIENDLY.doneGen()); settle(msg);
+    renderImages(msg, [{ url, caption: q }], true);
+    history.push({ role:'user', text:`(minta dibuatkan gambar: ${q})` }, { role:'ai', text:'(gambar sudah dibuat)' });
+  }
+
+  async function doPhoto(q, msg){
+    setText(msg, FRIENDLY.photo(q));
+    const res = await smartFetch(API_PHOTO(q), 60000);
+    const items = parsePhotos(res).slice(0, 6);
+    if(!items.length){ setText(msg, FRIENDLY.empty()); settle(msg); return; }
+    setText(msg, FRIENDLY.donePhoto()); settle(msg);
+    renderImages(msg, items, false);
+    history.push({ role:'user', text:`(minta dicarikan gambar: ${q})` }, { role:'ai', text:'(hasil gambar sudah ditampilkan)' });
+  }
+
+  async function doVideo(q, msg){
+    setText(msg, FRIENDLY.video(q));
+    const res = await smartFetch(API_VIDEO(q), 60000);
+    const items = parseVideos(res).slice(0, 3);
+    if(!items.length){ setText(msg, FRIENDLY.empty()); settle(msg); return; }
+    setText(msg, FRIENDLY.doneVideo()); settle(msg);
+    renderVideos(msg, items);
+    history.push({ role:'user', text:`(minta dicarikan video: ${q})` }, { role:'ai', text:'(hasil video sudah ditampilkan)' });
+  }
+
+  async function send(preset){
+    if(busy) return;
+    const input = $('dzxInput');
+    const text = (preset != null ? preset : input.value).trim();
+    if(!text) return;
+
+    addMsg(text, 'user');
+    input.value = ''; input.style.height = 'auto';
+
+    let intent = null;
+    if(mode === 'auto') intent = detectIntent(text);
+    else if(mode === 'gen')   intent = { type:'gen',   query:text };
+    else if(mode === 'photo') intent = { type:'photo', query:text };
+    else if(mode === 'video') intent = { type:'video', query:text };
+
+    busy = true; $('dzxSendBtn').disabled = true;
+    const msg = addMsg(intent ? 'Sebentar ya kak...' : 'Dinz AI sedang mengetik...', 'ai', true);
+    try{
+      if(!intent) await doChat(text, msg);
+      else if(!intent.query) { setText(msg, FRIENDLY.ask()); settle(msg); }
+      else if(intent.type === 'gen')   await doGen(intent.query, msg);
+      else if(intent.type === 'photo') await doPhoto(intent.query, msg);
+      else if(intent.type === 'video') await doVideo(intent.query, msg);
+    }catch(e){
+      console.error('Dinz AI error:', e);
+      setText(msg, FRIENDLY.error(e.message || 'tidak diketahui'));
+      settle(msg, true);
+    }finally{
+      busy = false; $('dzxSendBtn').disabled = false;
+      scrollDown();
+    }
+  }
+
+  function init(){
+    if(!$('dzxLog')) return;
+    document.body.appendChild($('ai-hub')); // pindah ke body supaya benar-benar full layar
+    emptyState();
+    $('dzxSendBtn').addEventListener('click', () => send());
+    $('dzxInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
+    $('dzxInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; });
+    $('dzxClearBtn').addEventListener('click', () => { history.length = 0; emptyState(); mode = 'auto'; });
+    const LABEL = { auto:'', chat:'\u{1F4AC} Chat', gen:'\u{1F3A8} Buat gambar', photo:'\u{1F5BC} Cari gambar', video:'\u{1F3AC} Cari video' };
+    const PH = {
+      auto:'Tanya Dinz AI',
+      chat:'Ngobrol dengan Dinz AI',
+      gen:'Deskripsikan gambar yang ingin dibuat',
+      photo:'Kata kunci gambar yang dicari',
+      video:'Kata kunci video yang dicari'
+    };
+    function setMode(m){
+      mode = m;
+      document.querySelectorAll('#dzxModes .dzx-mode').forEach(x => x.classList.toggle('active', x.getAttribute('data-mode') === m));
+      $('dzxModes').classList.remove('show');
+      const chip = $('dzxChip');
+      $('dzxChipText').textContent = LABEL[m];
+      chip.classList.toggle('show', m !== 'auto');
+      $('dzxInput').placeholder = PH[m];
+      $('dzxInput').focus();
+    }
+    $('dzxModes').addEventListener('click', e => {
+      const b = e.target.closest('.dzx-mode'); if(b) setMode(b.getAttribute('data-mode'));
+    });
+    $('dzxQuick').addEventListener('click', e => {
+      const b = e.target.closest('.dzx-qitem'); if(b) setMode(b.getAttribute('data-mode'));
+    });
+    $('dzxChipX').addEventListener('click', () => setMode('auto'));
+    $('dzxPlus').addEventListener('click', e => { e.stopPropagation(); $('dzxModes').classList.toggle('show'); });
+    document.addEventListener('click', e => {
+      if(!e.target.closest('#dzxModes') && !e.target.closest('#dzxPlus')) $('dzxModes').classList.remove('show');
+    });
+    $('dzxLightbox').addEventListener('click', () => $('dzxLightbox').classList.remove('show'));
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+
 </body>
 </html>
 
