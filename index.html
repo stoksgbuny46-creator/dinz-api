@@ -4087,6 +4087,33 @@
     font-family:'JetBrains Mono',monospace;
   }
   .pwa-install-btn.show{display:flex;}
+
+  /* ---- Notif melayang: Install Aplikasi ---- */
+  .dz-install-toast{
+    position:fixed; left:50%; bottom:calc(18px + env(safe-area-inset-bottom, 0px));
+    transform:translate(-50%, 160%); opacity:0; pointer-events:none;
+    width:min(440px, calc(100vw - 28px)); z-index:100000;
+    display:flex; align-items:center; gap:12px; padding:12px 14px;
+    background:#fff; color:#14141a; border:2px solid #1a1a1a; border-radius:16px;
+    box-shadow:5px 5px 0 #1a1a1a;
+    transition:transform .5s cubic-bezier(.2,1.2,.3,1), opacity .3s ease;
+    font-family:'Space Grotesk',system-ui,sans-serif;
+  }
+  .dz-install-toast.show{transform:translate(-50%, 0); opacity:1; pointer-events:auto;}
+  .dz-install-toast img{width:46px; height:46px; border-radius:12px; border:2px solid #1a1a1a; flex-shrink:0;}
+  .dz-install-toast .dz-it-text{flex:1; min-width:0; line-height:1.25;}
+  .dz-install-toast .dz-it-text b{display:block; font-size:15px; font-weight:700;}
+  .dz-install-toast .dz-it-text span{display:block; font-size:12px; color:#555; margin-top:2px;}
+  .dz-install-toast .dz-it-go{
+    flex-shrink:0; padding:9px 14px; border:2px solid #1a1a1a; border-radius:10px;
+    background:var(--cyan, #4baee8); color:#14141a; font-weight:700; font-size:13px; cursor:pointer;
+    box-shadow:2px 2px 0 #1a1a1a; font-family:inherit;
+  }
+  .dz-install-toast .dz-it-go:active{transform:translate(2px,2px); box-shadow:none;}
+  .dz-install-toast .dz-it-x{
+    flex-shrink:0; width:28px; height:28px; border:0; background:transparent;
+    font-size:20px; line-height:1; cursor:pointer; color:#555; padding:0;
+  }
   .pwa-install-btn svg{width:14px;height:14px;}
 
   /* ---- Global Search ---- */
@@ -5227,10 +5254,6 @@ input:focus,textarea:focus,select:focus,.global-search-input:focus{background-im
     </div>
   </div>
   <div class="menu-list">
-    <button class="menu-item" id="menuItemInstallPwa" style="display:none;">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-      Install Aplikasi
-    </button>
     <button class="menu-item" id="menuItemBeranda" data-target="beranda">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
       Beranda
@@ -11061,6 +11084,8 @@ function initIntroAndMusic(){
     setTimeout(()=>{
       overlay.style.display='none';
       overlay.classList.remove('intro-exiting');
+      window.__dzIntroDone = true;
+      document.dispatchEvent(new Event('dz:intro-done'));
     },1700);
   }
 
@@ -12524,31 +12549,76 @@ function initPwaSupport(){
   }catch(err){ /* manifest opsional */ }
 
   const installBtn = document.getElementById('pwaInstallBtn');
-  const menuInstallBtn = document.getElementById('menuItemInstallPwa');
   let deferredPrompt = null;
+
+  const isStandalone = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const DISMISS_KEY = 'dz-install-dismissed';
+  const DISMISS_MS = 3 * 24 * 3600 * 1000;
+  const wasDismissed = () => { try{ const t = +localStorage.getItem(DISMISS_KEY) || 0; return Date.now() - t < DISMISS_MS; }catch(_){ return false; } };
+  const markDismissed = () => { try{ localStorage.setItem(DISMISS_KEY, String(Date.now())); }catch(_){} };
+
+  let toast = null;
+  function hideToast(){
+    if(!toast) return;
+    toast.classList.remove('show');
+    const t = toast; toast = null;
+    setTimeout(() => t.remove(), 600);
+  }
+
+  function showInstallToast(){
+    if(toast || isStandalone() || wasDismissed()) return;
+    if(!deferredPrompt && !isIOS) return;
+    const icon = (document.querySelector('link[rel="apple-touch-icon"]') || {}).href || '';
+    toast = document.createElement('div');
+    toast.className = 'dz-install-toast';
+    toast.setAttribute('role', 'status');
+    toast.innerHTML =
+      (icon ? '<img alt="" src="' + icon + '">' : '') +
+      '<div class="dz-it-text"><b>Install Dinz Store</b><span>' +
+        (deferredPrompt ? 'Pasang sebagai aplikasi, buka lebih cepat dari layar utama.'
+                        : 'Ketuk tombol Share, lalu pilih "Add to Home Screen".') +
+      '</span></div>' +
+      (deferredPrompt ? '<button type="button" class="dz-it-go">Install</button>' : '') +
+      '<button type="button" class="dz-it-x" aria-label="Tutup">\u00d7</button>';
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => requestAnimationFrame(() => { if(toast) toast.classList.add('show'); }));
+    const go = toast.querySelector('.dz-it-go');
+    if(go) go.onclick = doInstall;
+    toast.querySelector('.dz-it-x').onclick = () => { markDismissed(); hideToast(); };
+    // hilang sendiri setelah 12 detik (tidak dianggap ditolak)
+    const el = toast;
+    setTimeout(() => { if(toast === el) hideToast(); }, 12000);
+  }
+
+  // Tampil hanya setelah intro selesai
+  const tryShow = () => { if(window.__dzIntroDone) setTimeout(showInstallToast, 1200); };
+  document.addEventListener('dz:intro-done', tryShow);
 
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     if(installBtn) installBtn.classList.add('show');
-    if(menuInstallBtn) menuInstallBtn.style.display = 'flex';
+    tryShow();
   });
 
   const doInstall = async () => {
-    if(!deferredPrompt) return;
+    if(!deferredPrompt){ showInstallToast(); return; }
+    hideToast();
     deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
+    try{ await deferredPrompt.userChoice; }catch(_){}
     deferredPrompt = null;
     if(installBtn) installBtn.classList.remove('show');
-    if(menuInstallBtn) menuInstallBtn.style.display = 'none';
   };
   if(installBtn) installBtn.onclick = doInstall;
-  if(menuInstallBtn) menuInstallBtn.onclick = doInstall;
 
   window.addEventListener('appinstalled', () => {
+    hideToast();
     if(installBtn) installBtn.classList.remove('show');
-    if(menuInstallBtn) menuInstallBtn.style.display = 'none';
   });
+
+  // iPhone tidak punya beforeinstallprompt: tampilkan panduan setelah intro
+  if(isIOS) tryShow();
 }
 
 /* ============================================================
