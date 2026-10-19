@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<script>document.documentElement.classList.add('lite');</script>
 <meta charset="UTF-8">
 <script>document.documentElement.style.background="#f6f1e4";</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4642,6 +4643,29 @@ body .site-bg-overlay,body.dark-mode .site-bg-overlay{
 .i7-sub{opacity:1 !important; animation:none !important; min-height:1.6em;}
 .i4-meter > span:first-child{min-width:7ch;}
 </style>
+<style id="dzLiteCss">
+/* ===== MODE RINGAN: semua animasi tetap ada, tapi efek yang berat untuk GPU/CPU dikurangi ===== */
+html.lite *, html.lite *::before, html.lite *::after{
+  backdrop-filter:none !important;          /* kaca buram = paling berat */
+  -webkit-backdrop-filter:none !important;
+  filter:none !important;                   /* blur / glow */
+  will-change:auto !important;              /* hemat memori layer */
+  scroll-behavior:auto !important;
+}
+/* animasi yang menggambar ulang (box-shadow / background-position / border-color):
+   tetap jalan tapi bertahap (steps), jadi repaint jauh lebih jarang */
+html.lite .feature-card, html.lite .section-card, html.lite .status-card, html.lite .store-card, html.lite .page-head{animation-timing-function:steps(4,end) !important;}
+html.lite .hero-title{animation-timing-function:steps(16,end) !important;}
+html.lite body.motion-play .hero-title{animation-timing-function:ease-out, steps(16,end) !important;}
+html.lite .topbar::after{animation-timing-function:steps(12,end) !important;}
+html.lite .intro-logo-text{animation-timing-function:steps(10,end) !important;}
+html.lite #introOverlay.intro-v3-loaded .intro-enter{animation-timing-function:steps(5,end) !important;}
+html.lite #introOverlay.n9 .n9-enter{animation-timing-function:steps(5,end) !important;}
+html.lite #introOverlay.n9 .n9-enter::after{animation-timing-function:steps(10,end) !important;}
+html.lite #introOverlay #nbiCard:not(.done) .nbi-prog i{animation-timing-function:steps(4,end) !important;}
+html.lite #introOverlay.cta-in .n9-enter{animation-timing-function:cubic-bezier(.34,1.56,.64,1), steps(6,end) !important;}
+html.lite .i4-ph.on .i4-ring2{animation-timing-function:steps(6,end) !important;}
+</style>
 </head>
 <style id="intro-v9-css">
 /* ===================== INTRO v9 — galaxy → particle logo → lock → ready ===================== */
@@ -5304,8 +5328,8 @@ input:focus,textarea:focus,select:focus,.global-search-input:focus{background-im
 
     <!-- ===== BANNER VIDEO (atas) ===== -->
     <div class="hero-banner" id="heroBanner">
-      <video id="heroBannerVideo" autoplay loop muted playsinline preload="auto">
-        <source src="https://rahmad-elaina.my.id/file/7ac34dffad.mp4" type="video/mp4">
+      <video id="heroBannerVideo" loop muted playsinline preload="none">
+        <source data-src="https://rahmad-elaina.my.id/file/7ac34dffad.mp4" type="video/mp4">
       </video>
       <div class="hero-banner-fallback" id="heroBannerFallback">Video gagal dimuat</div>
     </div>
@@ -5316,8 +5340,22 @@ input:focus,textarea:focus,select:focus,.global-search-input:focus{background-im
         if(!v) return;
         v.addEventListener('error', function(){ fb.style.display = 'flex'; v.style.display = 'none'; });
         v.addEventListener('loadeddata', function(){ fb.style.display = 'none'; });
-        // Sebagian browser mobile menahan autoplay walau sudah muted; paksa play begitu data siap.
-        v.addEventListener('canplay', function(){ v.play().catch(function(){}); });
+        // Ringan: video baru diunduh saat banner terlihat, dijeda saat tidak terlihat / tab disembunyikan.
+        var started = false, visible = true;
+        function start(){
+          if(started) return; started = true;
+          var src = v.querySelector('source');
+          if(src){ src.setAttribute('src', src.getAttribute('data-src')); v.preload = 'metadata'; v.load(); }
+        }
+        function sync(){
+          if(visible && !document.hidden){ start(); var pr = v.play(); if(pr && pr.catch) pr.catch(function(){}); }
+          else { try{ v.pause(); }catch(e){} }
+        }
+        v.addEventListener('canplay', sync);
+        if('IntersectionObserver' in window){
+          new IntersectionObserver(function(es){ es.forEach(function(e){ visible = e.isIntersecting; sync(); }); }, { threshold: .2 }).observe(v);
+        } else { sync(); }
+        document.addEventListener('visibilitychange', sync);
       })();
     </script>
 
@@ -5718,6 +5756,7 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
       <button type="button" class="dzx-qitem" data-mode="gen"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg>Buat gambar</button>
       <button type="button" class="dzx-qitem" data-mode="photo"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>Cari gambar</button>
       <button type="button" class="dzx-qitem" data-mode="video"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><polygon points="22 8 16 12 22 16 22 8"/></svg>Cari video</button>
+      <button type="button" class="dzx-qitem" data-mode="music"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Cari lagu</button>
     </div>
 
     <div class="dzx-bar">
@@ -5727,6 +5766,7 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
         <button type="button" class="dzx-mode" data-mode="gen">&#127912; Buat gambar</button>
         <button type="button" class="dzx-mode" data-mode="photo">&#128444; Cari gambar</button>
         <button type="button" class="dzx-mode" data-mode="video">&#127916; Cari video</button>
+        <button type="button" class="dzx-mode" data-mode="music">&#127925; Cari lagu</button>
       </div>
       <div class="dzx-chip" id="dzxChip"><span id="dzxChipText"></span><button type="button" id="dzxChipX" aria-label="Hapus mode">&#10005;</button></div>
       <div class="dzx-inputpill">
@@ -11012,6 +11052,12 @@ function detectMediaIntent(pesanAsli){
     return { type:'generate', query: pesan.slice(genMatch[0].length).trim() || pesan };
   }
 
+  const musMatch = lower.match(/^(?:tolong\s+|coba\s+|dong\s+|kak\s+)*(?:putar|putarkan|putarin|mainkan|mainin|play|cari|carikan|cariin|nyari|search|download|unduh)(?:kan|in)?\s+(?:aku\s+|saya\s+)?(?:sebuah\s+)?(?:lagu|musik|music|song)(?:nya)?\s*(?:yang\s+berjudul|berjudul|judul|:)?\s*/i)
+    || lower.match(/^\/(?:play|lagu)\s+/i);
+  if(musMatch){
+    return { type:'music', query: pesan.slice(musMatch[0].length).trim() };
+  }
+
   const vidMatch = lower.match(/^(?:tolong\s+|coba\s+)?(cari|carikan|cariin|nyari|search)(?:kan)?\s+video(?:nya)?\s*(?:tentang|:)?\s*/i);
   if(vidMatch){
     return { type:'video', query: pesan.slice(vidMatch[0].length).trim() || pesan };
@@ -11041,6 +11087,95 @@ function generateAiImage(prompt){
    - Foto: dibungkus <a> biar bisa dipencet buka full-size + tombol unduh.
    - Video: diputar beneran pakai HLS.js (linknya format .m3u8/stream,
      browser nggak bisa muter itu langsung tanpa library ini). */
+/* ===== Cari lagu (api-cloud.my.id/downloader/play) dipakai di chat AI ===== */
+const DZ_PLAY_API = q => `https://api-cloud.my.id/downloader/play?query=${encodeURIComponent(q)}`;
+
+function dzCollectUrls(o, out, depth){
+  out = out || []; depth = depth || 0;
+  if(o == null || depth > 6) return out;
+  if(typeof o === 'string'){ if(/^https?:\/\/\S+$/i.test(o.trim())) out.push(o.trim()); return out; }
+  if(Array.isArray(o)){ o.forEach(x => dzCollectUrls(x, out, depth + 1)); return out; }
+  if(typeof o === 'object') Object.keys(o).forEach(k => dzCollectUrls(o[k], out, depth + 1));
+  return out;
+}
+
+function dzParseMusic(d){
+  if(!d || typeof d !== 'object') return null;
+  if(d.status === false || d.success === false) return null;
+  let r = d.result != null ? d.result : (d.data != null ? d.data : d);
+  if(Array.isArray(r)) r = r[0];
+  if(!r || typeof r !== 'object') return null;
+  const str = v => (typeof v === 'string' && /^https?:\/\//i.test(v)) ? v : (v && typeof v === 'object' && typeof v.url === 'string' && /^https?:\/\//i.test(v.url) ? v.url : '');
+  const IMG = /\.(jpe?g|png|webp|gif)(\?|$)|ytimg\.com|scdn\.co|googleusercontent/i;
+  let audio = '';
+  for(const k of ['download','download_url','downloadUrl','downloadLink','link_download','audio','audio_url','audioUrl','mp3','dl','media','file','stream']){
+    const u = str(r[k]); if(u && !IMG.test(u)){ audio = u; break; }
+  }
+  const all = dzCollectUrls(r).filter(u => !IMG.test(u));
+  if(!audio){
+    const nonYt = all.filter(u => !/youtube\.com|youtu\.be|open\.spotify\.com/i.test(u));
+    audio = nonYt.find(u => /\.(mp3|m4a|opus|ogg|wav|webm)(\?|$)/i.test(u)) || nonYt[0] || '';
+  }
+  const page = all.find(u => /youtube\.com|youtu\.be|open\.spotify\.com/i.test(u)) || str(r.url) || str(r.link) || '';
+  let thumb = '';
+  for(const k of ['thumbnail','thumb','image','cover','thumbnail_url','img','poster']){
+    const u = str(r[k]); if(u){ thumb = u; break; }
+  }
+  if(!thumb) thumb = dzCollectUrls(r).find(u => IMG.test(u)) || '';
+  const pickS = (...ks) => { for(const k of ks){ const v = r[k]; if(typeof v === 'string' && v.trim()) return v.trim(); if(v && typeof v === 'object' && typeof v.name === 'string') return v.name; } return ''; };
+  const title = pickS('title','name','judul') || 'Lagu';
+  const artist = pickS('artist','author','channel','uploader','singer');
+  const duration = pickS('duration','durasi','timestamp','length');
+  if(!audio && !page) return null;
+  return { title, artist, duration, thumb, audio, page };
+}
+
+function dzBuildMusicCard(it){
+  const card = document.createElement('div');
+  card.style.cssText = 'display:block; width:100%; max-width:340px;';
+  if(it.thumb){
+    const img = document.createElement('img');
+    img.src = it.thumb; img.alt = ''; img.referrerPolicy = 'no-referrer'; img.loading = 'lazy';
+    img.style.cssText = 'display:block; width:100%; max-height:200px; object-fit:cover; border-radius:9px; margin-bottom:8px;';
+    img.addEventListener('error', () => img.remove());
+    card.appendChild(img);
+  }
+  const t = document.createElement('div');
+  t.textContent = it.title;
+  t.style.cssText = 'font-weight:700; font-size:14px; line-height:1.3;';
+  card.appendChild(t);
+  const sub = [it.artist, it.duration].filter(Boolean).join(' \u2022 ');
+  if(sub){
+    const a = document.createElement('div');
+    a.textContent = sub; a.style.cssText = 'font-size:12px; opacity:.75; margin:2px 0 6px;';
+    card.appendChild(a);
+  }
+  const note = document.createElement('div');
+  note.style.cssText = 'font-size:12px; opacity:.8; margin-top:6px; display:none;';
+  if(it.audio){
+    const au = document.createElement('audio');
+    au.controls = true; au.preload = 'metadata'; au.src = it.audio;
+    au.style.cssText = 'display:block; width:100%; margin-top:6px;';
+    au.addEventListener('error', () => { note.textContent = 'Audio tidak bisa diputar di sini. Coba tombol Unduh atau Buka.'; note.style.display = 'block'; });
+    card.appendChild(au);
+  }
+  card.appendChild(note);
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex; gap:12px; margin-top:8px; font-size:13px; flex-wrap:wrap;';
+  const mk = (label, href, dl) => {
+    const a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = label;
+    if(dl) a.setAttribute('download', (it.title || 'lagu').replace(/[^\w\-]+/g, '_').slice(0, 50) + '.mp3');
+    a.style.cssText = 'color:#4da3ff; text-decoration:none; font-weight:600;';
+    row.appendChild(a);
+  };
+  if(it.audio) mk('\u2B07 Unduh', it.audio, true);
+  if(it.page) mk('Buka sumber', it.page, false);
+  if(!it.audio && it.page){ note.textContent = 'Link audio belum tersedia, buka lewat sumbernya.'; note.style.display = 'block'; }
+  card.appendChild(row);
+  return card;
+}
+
 let aiFsMediaCounter = 0;
 function openAiVideoModal(videoUrl, posterUrl){
   if(!videoUrl) return;
@@ -11310,7 +11445,7 @@ function openAiFullscreen(modelId){
   const log = document.getElementById('aiFsLog');
   if(title) title.textContent = model.name;
   if(sub) sub.textContent = 'Online';
-  if(log) log.innerHTML = `<div class="dz-chat-empty">Mulai chat dengan ${model.name}<br><small style="opacity:.7">Bisa juga: "cari foto ...", "cari video ...", atau "buatkan gambar ..."</small></div>`;
+  if(log) log.innerHTML = `<div class="dz-chat-empty">Mulai chat dengan ${model.name}<br><small style="opacity:.7">Bisa juga: "cari foto ...", "cari video ...", "putar lagu ...", atau "buatkan gambar ..."</small></div>`;
 
   /* Fitur kirim foto cuma buat model GPT-4o Mini Vision. Model lain nggak
      dukung gambar, jadi tombol lampirkan disembunyikan biar user nggak
@@ -11426,6 +11561,20 @@ async function aiFsHandleSend(){
           const imgUrl = res && res.result && res.result.url;
           if(!(res && res.status) || !imgUrl) throw new Error('Gagal membuat gambar, coba lagi');
           aiFsRenderMediaReply(pendingMsg, 'image', [{ url: imgUrl, caption: intent.query }]);
+          if(sendBtn) sendBtn.disabled = false;
+          return;
+        }
+        if(intent.type === 'music'){
+          if(!intent.query) throw new Error('Tulis judul lagunya, contoh: putar lagu ropang');
+          pendingMsg.textContent = 'Sedang mencari lagu...';
+          const res = await fetchJsonSafe(DZ_PLAY_API(intent.query), {}, 40000);
+          const item = dzParseMusic(res);
+          if(!item) throw new Error('Lagu tidak ditemukan, coba judul lain');
+          pendingMsg.classList.remove('ai-bubble-loading');
+          pendingMsg.classList.add('ai-bubble-bot');
+          pendingMsg.textContent = '';
+          pendingMsg.appendChild(dzBuildMusicCard(item));
+          const log = document.getElementById('aiFsLog'); if(log) log.scrollTop = log.scrollHeight;
           if(sendBtn) sendBtn.disabled = false;
           return;
         }
@@ -11735,7 +11884,7 @@ function initWinCelebration(){
 
   function spawnConfetti(){
     overlay.querySelectorAll('.win-confetti-piece').forEach(el => el.remove());
-    const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 46;
+    const count = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 18;
     for(let i = 0; i < count; i++){
       const piece = document.createElement('span');
       piece.className = 'win-confetti-piece';
@@ -12667,7 +12816,7 @@ function initAimTrainer(){
 
   function spawnParticles(x, y){
     if(reduceMotionMQ.matches) return;
-    const count = 6;
+    const count = 3;
     for(let i = 0; i < count; i++){
       const p = document.createElement('span');
       p.className = 'aim-particle';
@@ -12969,7 +13118,7 @@ function buildGlobalSearchIndex(){
     { title:'Tools', desc:'Pemutar & kumpulan tools', target:'tools', type:'Halaman' },
     { title:'Store', desc:'Order produk digital', target:'store', type:'Halaman' },
     { title:'Game & Fun', desc:'Kumpulan game seru', target:'games', type:'Halaman' },
-    { title:'Dinz AI', desc:'Chat AI, buat gambar, cari foto & video', target:'ai-hub', type:'Halaman' },
+    { title:'Dinz AI', desc:'Chat AI, buat gambar, cari foto, video & lagu', target:'ai-hub', type:'Halaman' },
   ];
   (typeof DZ_TOOLS !== 'undefined' ? DZ_TOOLS : []).forEach(t => {
     idx.push({ title:t.name, desc:t.desc, target:'tools', accId:t.id, type:'Tools' });
@@ -15000,10 +15149,11 @@ document.addEventListener('DOMContentLoaded', () => {
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   var PAL={dark:{n:[196,212,240],a:[92,140,255]}, light:{n:[22,38,80],a:[38,80,216]}};
   function col(a,al){return 'rgba('+a[0]+','+a[1]+','+a[2]+','+al+')';}
+  function isLite(){return document.documentElement.classList.contains('lite');}
   function resize(){
-    dpr=Math.min(window.devicePixelRatio||1,2); W=innerWidth; H=innerHeight;
+    dpr=isLite()?1:Math.min(window.devicePixelRatio||1,2); W=innerWidth; H=innerHeight;
     c.width=W*dpr; c.height=H*dpr; x.setTransform(dpr,0,0,dpr,0,0);
-    N=Math.max(36,Math.min(150,Math.round(W*H/8500))); P=[];
+    N=Math.max(30,Math.min(isLite()?55:150,Math.round(W*H/(isLite()?11000:8500)))); P=[];
     for(var i=0;i<N;i++){
       var z=.35+Math.random()*.65, a=Math.random()*6.2832, sp=(.12+Math.random()*.28)*z;
       P.push({x:Math.random()*W,y:Math.random()*H,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,z:z,r:(Math.random()<.12?2.2:1.2)*z,ph:Math.random()*6.28});
@@ -15014,7 +15164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var dark=document.body.classList.contains('dark-mode'), pal=dark?PAL.dark:PAL.light; var dp=window.__dzPal&&window.__dzPal(); if(dp) pal=dp;
     var intro=document.body.classList.contains('intro-active');
     mode+=((intro?2.2:1)-mode)*.04; sm+=((window.scrollY||0)-sm)*.08;
-    var link=Math.min(W,H)<520?125:175, link2=link*link, mr=190, mr2=mr*mr;
+    var lt=isLite(), link=Math.min(W,H)<520?(lt?95:125):(lt?130:175), link2=link*link, mr=190, mr2=mr*mr;
     x.clearRect(0,0,W,H);
     var oy=-sm*.12; var hb=document.getElementById('beranda'); var onHome=!hb||hb.classList.contains('active'); c.style.opacity=intro?.38:(onHome?Math.max(.32,1-sm/620):.36).toFixed(2);
     for(var i=0;i<N;i++){
@@ -15043,7 +15193,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(q.r>2){ x.strokeStyle=col(pal.a,.3*tw); x.beginPath(); x.arc(q.x,q.dy,q.r+5+3*tw,0,6.2832); x.stroke(); }
     }
     /* denyut data di sepanjang garis */
-    if(!reduce){
+    if(!reduce && !lt){
       if(pulses.length<6 && Math.random()<.04*mode){
         var s=P[Math.floor(Math.random()*N)], best=null, bd=link2;
         for(var k=0;k<N;k++){ var o=P[k]; if(o===s)continue; var ddx=s.x-o.x,ddy=s.dy-o.dy,dd=ddx*ddx+ddy*ddy; if(dd<bd&&Math.random()<.5){bd=dd;best=o;} }
@@ -15058,9 +15208,16 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
-  function frame(t){ requestAnimationFrame(frame); if(document.hidden) return; try{draw(t);}catch(e){} }
+  var lastDraw=0;
+  function frame(t){
+    requestAnimationFrame(frame);
+    if(document.hidden) return;
+    if(isLite() && t-lastDraw<42) return;   // ringan: maksimal ~24 fps
+    lastDraw=t;
+    try{draw(t);}catch(e){}
+  }
   addEventListener('resize',resize);
-  addEventListener('pointermove',function(e){mx=e.clientX;my=e.clientY;mOn=true;},{passive:true});
+  addEventListener('pointermove',function(e){mx=e.clientX;my=e.clientY;mOn=!isLite();},{passive:true});
   addEventListener('pointerleave',function(){mOn=false;});
   addEventListener('touchend',function(){mOn=false;},{passive:true});
   resize(); requestAnimationFrame(frame);
@@ -15254,6 +15411,7 @@ document.addEventListener('click',function(e){
   const API_GEN   = p => `https://api-cloud.my.id/ai/text2img?prompt=${encodeURIComponent(p)}&shape=square`;
   const API_PHOTO = q => `https://api-cloud.my.id/search/pinterest?action=search&query=${encodeURIComponent(q)}`;
   const API_VIDEO = q => `https://api.nexray.eu.cc/search/pinterestvideo?q=${encodeURIComponent(q)}`;
+  const API_MUSIC = q => `https://api-cloud.my.id/downloader/play?query=${encodeURIComponent(q)}`;
 
   const PERSONA = 'Kamu adalah Dinz AI, asisten virtual yang ramah, sopan, hangat, dan membantu. ' +
     'Sapa pengguna dengan "kak", jawab dalam bahasa yang sama dengan pengguna (default Bahasa Indonesia), ' +
@@ -15427,6 +15585,9 @@ document.addEventListener('click',function(e){
   /* ---------- deteksi maksud (mode Otomatis) ---------- */
   function detectIntent(text){
     const t = text.trim().toLowerCase();
+    const mus = t.match(/^(?:tolong\s+|coba\s+|dong\s+|kak\s+)*(?:putar|putarkan|putarin|mainkan|mainin|play|cari|carikan|cariin|carii|nyari|search|download|unduh|kirim(?:kan)?)(?:kan|in)?\s+(?:aku\s+|saya\s+)?(?:sebuah\s+)?(?:lagu|musik|music|song)(?:nya)?\s*(?:yang\s+berjudul|berjudul|judul|:)?\s*/i)
+      || t.match(/^\/(?:play|lagu)\s+/i);
+    if(mus) return { type:'music', query: text.trim().slice(mus[0].length).trim() };
     const MEDIA = '(?:gambar|foto|image|img|pic|picture|wallpaper|ilustrasi|poster|logo)';
     const reGen = new RegExp(`^(?:tolong\\s+|coba\\s+|dong\\s+|kak\\s+)*(?:bikin|buat|buatin|buatkan|generate|create|gambarkan|lukis|lukiskan|desain|ciptakan|ciptain|render)(?:in|kan)?\\s+(?:aku\\s+|saya\\s+)?(?:sebuah\\s+|satu\\s+)?(?:${MEDIA})?\\s*(?:ai\\s+)?(?:dari|tentang|berupa|yang|of)?\\s*`, 'i');
     const reSearch = new RegExp(`^(?:tolong\\s+|coba\\s+|dong\\s+|kak\\s+)*(?:cari|carikan|cariin|carii|nyari|search|temukan|tampilkan|kasih|kirim(?:kan)?|tunjukkan|mana)\\s+(?:aku\\s+|saya\\s+)?(?:beberapa\\s+)?(video|${MEDIA})(?:nya)?\\s*(?:tentang|dari|:)?\\s*`, 'i');
@@ -15455,6 +15616,8 @@ document.addEventListener('click',function(e){
   const FRIENDLY = {
     gen:   q => pick([`Siap kak! Aku buatkan gambar "${q}" dulu ya, mohon tunggu sebentar 😊`, `Dengan senang hati kak! Gambar "${q}" sedang aku buat ya 🎨`]),
     photo: q => pick([`Baik kak, aku carikan gambar "${q}" ya 🔎`, `Siap kak! Sebentar ya, aku cari gambar "${q}" untuk kakak 😊`]),
+    music: q => pick([`Siap kak! Aku cari lagu \"${q}\" dulu ya \u{1F3B5}`, `Baik kak, lagu \"${q}\" lagi aku cari ya, tunggu sebentar \u{1F3A7}`]),
+    doneMusic: () => pick(['Ketemu kak! Silakan diputar lagunya \u{1F3B6}', 'Ini lagunya kak, selamat mendengarkan! \u{1F3A7}']),
     video: q => pick([`Baik kak, aku carikan video "${q}" ya 🎬`, `Siap kak! Aku cari video "${q}" dulu ya, mohon tunggu sebentar 😊`]),
     doneGen:   () => pick(['Ini gambarnya kak, semoga sesuai ya! ✨', 'Sudah jadi kak! Semoga suka dengan hasilnya 😊']),
     donePhoto: () => pick(['Ini hasil pencariannya kak, semoga membantu ya! 😊', 'Ketemu kak! Silakan dipilih gambarnya ✨']),
@@ -15467,7 +15630,7 @@ document.addEventListener('click',function(e){
   /* ---------- UI ---------- */
   const hub = () => $('ai-hub');
   function emptyState(){
-    $('dzxLog').innerHTML = `<div class="dzx-empty"><div class="dzx-hello">Halo kak! \u{1F44B}</div><p>Ngobrol, buat gambar, cari foto &amp; video. Tinggal ketik ya.</p></div>`;
+    $('dzxLog').innerHTML = `<div class="dzx-empty"><div class="dzx-hello">Halo kak! \u{1F44B}</div><p>Ngobrol, buat gambar, cari foto, video &amp; lagu. Tinggal ketik ya.</p></div>`;
     hub().classList.remove('has-msgs');
   }
 
@@ -15601,6 +15764,20 @@ document.addEventListener('click',function(e){
     history.push({ role:'user', text:`(minta dicarikan gambar: ${q})` }, { role:'ai', text:'(hasil gambar sudah ditampilkan)' });
   }
 
+  async function doMusic(q, msg){
+    setText(msg, FRIENDLY.music(q));
+    const res = await smartFetch(API_MUSIC(q), 60000);
+    const item = res.kind === 'json' ? dzParseMusic(res.data) : null;
+    if(!item){ setText(msg, FRIENDLY.empty()); settle(msg); return; }
+    setText(msg, FRIENDLY.doneMusic()); settle(msg);
+    const holder = document.createElement('div');
+    holder.style.cssText = 'margin-top:8px;';
+    holder.appendChild(dzBuildMusicCard(item));
+    msg.appendChild(holder);
+    history.push({ role:'user', text:`(minta dicarikan lagu: ${q})` }, { role:'ai', text:`(lagu "${item.title}" sudah ditampilkan)` });
+    scrollDown();
+  }
+
   async function doVideo(q, msg){
     setText(msg, FRIENDLY.video(q));
     const res = await smartFetch(API_VIDEO(q), 60000);
@@ -15625,6 +15802,7 @@ document.addEventListener('click',function(e){
     else if(mode === 'gen')   intent = { type:'gen',   query:text };
     else if(mode === 'photo') intent = { type:'photo', query:text };
     else if(mode === 'video') intent = { type:'video', query:text };
+    else if(mode === 'music') intent = { type:'music', query:text };
 
     const EXPLICIT = /\b(bokep|porn|porno|pornografi|xxx|bugil|telanjang|ngentot|sex|seks|hentai|nsfw|memek|kontol|bispak|jav)\b/i;
     if(intent && intent.query && EXPLICIT.test(intent.query)){
@@ -15640,6 +15818,7 @@ document.addEventListener('click',function(e){
       else if(intent.type === 'gen')   await doGen(intent.query, msg);
       else if(intent.type === 'photo') await doPhoto(intent.query, msg);
       else if(intent.type === 'video') await doVideo(intent.query, msg);
+      else if(intent.type === 'music') await doMusic(intent.query, msg);
     }catch(e){
       console.error('Dinz AI error:', e);
       let why = e.message || 'tidak diketahui';
@@ -15677,13 +15856,14 @@ document.addEventListener('click',function(e){
     $('dzxInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
     $('dzxInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; });
     $('dzxClearBtn').addEventListener('click', () => { history.length = 0; emptyState(); mode = 'auto'; });
-    const LABEL = { auto:'', chat:'\u{1F4AC} Chat', gen:'\u{1F3A8} Buat gambar', photo:'\u{1F5BC} Cari gambar', video:'\u{1F3AC} Cari video' };
+    const LABEL = { auto:'', chat:'\u{1F4AC} Chat', gen:'\u{1F3A8} Buat gambar', photo:'\u{1F5BC} Cari gambar', video:'\u{1F3AC} Cari video', music:'\u{1F3B5} Cari lagu' };
     const PH = {
       auto:'Tanya Dinz AI',
       chat:'Ngobrol dengan Dinz AI',
       gen:'Deskripsikan gambar yang ingin dibuat',
       photo:'Kata kunci gambar yang dicari',
-      video:'Kata kunci video yang dicari'
+      video:'Kata kunci video yang dicari',
+      music:'Judul lagu yang dicari'
     };
     function setMode(m){
       mode = m;
@@ -15711,6 +15891,7 @@ document.addEventListener('click',function(e){
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 </script>
+
 
 </body>
 </html>
