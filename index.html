@@ -5717,6 +5717,7 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
       #ai-hub .dzx-qitem:nth-child(1){background:#ff6fb5 !important;}
       #ai-hub .dzx-qitem:nth-child(2){background:#4ade80 !important;}
       #ai-hub .dzx-qitem:nth-child(3){background:#7b8cff !important;}
+      #ai-hub .dzx-qitem:nth-child(5){background:#ff9d5c !important;}
       #ai-hub .dzx-qitem:active{transform:translate(2px,2px); box-shadow:0 0 0 #000 !important;}
       #ai-hub .dzx-qitem svg{width:16px; height:16px; stroke:#000; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0;}
 
@@ -5757,6 +5758,8 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
       <button type="button" class="dzx-qitem" data-mode="photo"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>Cari gambar</button>
       <button type="button" class="dzx-qitem" data-mode="video"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><polygon points="22 8 16 12 22 16 22 8"/></svg>Cari video</button>
       <button type="button" class="dzx-qitem" data-mode="music"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Cari lagu</button>
+      <button type="button" class="dzx-qitem" data-mode="genvideo"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><polygon points="10 9 16 12 10 15 10 9"/></svg>Buat video</button>
+      <button type="button" class="dzx-qitem" data-mode="gensong"><svg viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>Buat lagu</button>
     </div>
 
     <div class="dzx-bar">
@@ -5764,6 +5767,8 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
         <button type="button" class="dzx-mode active" data-mode="auto">&#10024; Otomatis</button>
         <button type="button" class="dzx-mode" data-mode="chat">&#128172; Chat</button>
         <button type="button" class="dzx-mode" data-mode="gen">&#127912; Buat gambar</button>
+        <button type="button" class="dzx-mode" data-mode="genvideo">&#127902; Buat video</button>
+        <button type="button" class="dzx-mode" data-mode="gensong">&#127932; Buat lagu</button>
         <button type="button" class="dzx-mode" data-mode="photo">&#128444; Cari gambar</button>
         <button type="button" class="dzx-mode" data-mode="video">&#127916; Cari video</button>
         <button type="button" class="dzx-mode" data-mode="music">&#127925; Cari lagu</button>
@@ -6625,6 +6630,8 @@ const ICONS = {
   'dz-balogo': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 4v16\"/><path d=\"M4 12h16\"/></svg>`,
   'dz-codesnap': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M10 13l-2 2 2 2\"/><path d=\"M14 13l2 2-2 2\"/></svg>`,
   'dz-removebg': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/><circle cx="12" cy="10" r="3"/><path d="M6 20c1-3 3-5 6-5s5 2 6 5"/></svg>`,
+  'ai-img-prompt': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="M21 15l-5-5L5 21"/><circle cx="17" cy="17" r="3.5" fill="#fff"/><line x1="21" y1="21" x2="19.5" y2="19.5"/></svg>`,
+  'dz-ttchat': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/><path d="M11 14.5v-5l4-.8"/><circle cx="9.8" cy="14.6" r="1.2"/><circle cx="13.8" cy="13.8" r="1.2"/></svg>`,
 };
 
 /* ============================================================
@@ -8615,6 +8622,7 @@ const DZ_TOOLS = [
   { id:'ai-translator', name:'AI Translator', desc:'Terjemahkan teks ke Bahasa Indonesia dengan mudah', category:'ai', badge:'AI' },
   { id:'ai-caption', name:'AI Caption', desc:'Buat 5 ide caption menarik untuk konten sosial media', category:'ai', badge:'AI' },
   { id:'prompt-generator', name:'Prompt Generator', desc:'Generate prompt AI berkualitas untuk image generation', category:'ai', badge:'AI' },
+  { id:'ai-img-prompt', name:'AI Img Prompt', desc:'Cari contoh prompt gambar AI lengkap dengan preview, tinggal salin dan pakai', category:'ai', badge:'AI' },
   { id:'dz-enc-dec', name:'Text Encoder & Decoder', desc:'Encode / decode Base64, URL, Hex, HTML Entities, Binary', category:'utility', badge:'UTILITY' },
   { id:'dz-hash-gen', name:'Hash Generator', desc:'Buat checksum / hash MD5, SHA-1, SHA-256, SHA-512 instan', category:'developer', badge:'DEV' },
   { id:'dz-json-fmt', name:'JSON Formatter & Validator', desc:'Rapikan, format indentasi, dan cek validitas sintaks JSON', category:'developer', badge:'DEV' },
@@ -8633,6 +8641,7 @@ const DZ_TOOLS = [
   { id:'dz-balogo', name:'BA Logo Maker', desc:'Buat logo teks gaya Blue Archive dari tulisan kamu, lalu simpan ke galeri', category:'image', badge:'MAKER' },
   { id:'dz-codesnap', name:'Code Snap', desc:'Ubah potongan kode jadi gambar keren gaya jendela editor, siap dibagikan', category:'image', badge:'MAKER' },
   { id:'dz-fakedev', name:'Fake Dev Maker', desc:'Buat kartu profil developer palsu dengan foto, nama, dan bio, lalu simpan ke galeri', category:'image', badge:'MAKER' },
+  { id:'dz-ttchat', name:'TikTok Chat Maker', desc:'Buat gambar komentar chat TikTok dari username, teks, dan foto profil, lalu simpan ke galeri', category:'image', badge:'MAKER' },
   { id:'dz-removebg', name:'Remove Background', desc:'Hapus background foto langsung di HP tanpa upload, hasil PNG transparan siap simpan', category:'image', badge:'FOTO' },
 ];
 
@@ -8773,6 +8782,27 @@ function getDzToolUIHTML(id){
           <button type="button" id="dzGo">Generate Prompt</button>
         </div>
         <textarea id="dzOut" class="dz-field" style="margin-top:10px" readonly placeholder="Prompt AI yang dihasilkan..."></textarea>
+      `;
+    case 'ai-img-prompt':
+      return `
+        <div>
+          <label class="quick-label">Kata kunci prompt:</label>
+          <input type="text" id="dzIpQuery" class="dz-field" autocomplete="off" placeholder="Contoh: cyberpunk city, anime girl, portrait">
+        </div>
+        <div style="margin-top:10px;">
+          <label class="quick-label">Jumlah hasil:</label>
+          <select id="dzIpLimit" class="dz-field">
+            <option value="6">6</option>
+            <option value="12" selected>12</option>
+            <option value="24">24</option>
+            <option value="48">48</option>
+          </select>
+        </div>
+        <div class="dz-actions">
+          <button type="button" id="dzIpGo">Cari Prompt</button>
+        </div>
+        <div id="dzIpMsg" class="dz-result-note">Ketik kata kunci lalu tekan "Cari Prompt".</div>
+        <div id="dzIpList" style="margin-top:12px;display:grid;gap:12px;"></div>
       `;
     case 'dz-enc-dec':
       return `
@@ -9212,6 +9242,28 @@ function getDzToolUIHTML(id){
         <div id="dzRmMsg" class="dz-result-note">Pilih foto dari galeri, lalu tekan "Hapus Background".</div>
         <div id="dzRmWrap" class="dz-img-wrap"><span class="dz-ph">(Hasil akan muncul di sini)</span></div>
       `;
+    case 'dz-ttchat':
+      return `
+        <div>
+          <label class="quick-label">Username:</label>
+          <input type="text" id="dzTtUser" class="dz-field" maxlength="30" autocomplete="off" placeholder="Contoh: dinz">
+        </div>
+        <div>
+          <label class="quick-label">Teks chat:</label>
+          <textarea id="dzTtText" class="dz-field" maxlength="200" style="min-height:80px;" placeholder="Contoh: halo semuanya"></textarea>
+        </div>
+        <div>
+          <label class="quick-label">Foto profil (opsional):</label>
+          <div class="dz-drop" id="dzTtDrop"><b id="dzTtDropLabel">Ketuk di sini untuk Pilih Foto dari Galeri</b><input type="file" id="dzTtFile" accept="image/*" class="dz-hidden"></div>
+          <input type="url" id="dzTtUrl" class="dz-field" autocomplete="off" placeholder="atau tempel link foto (https://...)" style="margin-top:8px;">
+        </div>
+        <div class="dz-actions">
+          <button type="button" id="dzTtGoBtn">Buat Gambar</button>
+          <button type="button" id="dzTtSaveBtn" class="dz-secondary" disabled>Simpan ke Galeri</button>
+        </div>
+        <div id="dzTtMsg" class="dz-result-note">Isi username dan teks, lalu tekan "Buat Gambar".</div>
+        <div id="dzTtWrap" class="dz-img-wrap"><span class="dz-ph">(Gambar akan muncul di sini)</span></div>
+      `;
     default: return `<div>Tool belum dikonfigurasi.</div>`;
   }
 }
@@ -9225,6 +9277,7 @@ function bindDzToolEvents(id){
       case 'ai-translator': initAiTranslator(); break;
       case 'ai-caption': initAiCaption(); break;
       case 'prompt-generator': initPromptGenerator(); break;
+      case 'ai-img-prompt': initAiImgPrompt(); break;
       case 'dz-enc-dec': initDzEncDec(); break;
       case 'dz-hash-gen': initDzHashGen(); break;
       case 'dz-json-fmt': initDzJsonFmt(); break;
@@ -9250,6 +9303,7 @@ function bindDzToolEvents(id){
       case 'dz-balogo': initDzBaLogo(); break;
       case 'dz-codesnap': initDzCodeSnap(); break;
       case 'dz-removebg': initDzRemoveBg(); break;
+      case 'dz-ttchat': initDzTtChat(); break;
     }
   }, 50);
 }
@@ -9361,6 +9415,163 @@ function initPromptGenerator(){
     const prompt = `Create a ${style.toLowerCase()} result about: ${goal}. Include clear subject, composition, lighting, environment, details, mood, quality, and avoid unwanted artifacts.`;
     dzOut.value = prompt;
   };
+}
+
+/* ---------- AI Img Prompt (cari prompt gambar via Snowping) ---------- */
+async function dzIpFetchJson(url, timeoutMs){
+  const once = async (u) => {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), timeoutMs);
+    try{
+      const res = await fetch(u, { signal: ctl.signal });
+      const text = await res.text();
+      let data = null;
+      try{ data = JSON.parse(text); }catch(_){}
+      if(!res.ok){ const e = new Error('server membalas error ' + res.status); e.http = true; throw e; }
+      if(data === null) throw new Error('respons bukan JSON');
+      return data;
+    } finally { clearTimeout(t); }
+  };
+  try{ return await once(url); }
+  catch(err){
+    if(err.http) throw err;
+    // kemungkinan diblokir CORS -> coba lewat proxy (semua bersamaan)
+    const proxies = [
+      u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+      u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+      u => 'https://corsproxy.io/?url=' + encodeURIComponent(u)
+    ];
+    try{ return await Promise.any(proxies.map(mk => once(mk(url)))); }
+    catch(_){ throw new Error('Tidak bisa terhubung ke server.'); }
+  }
+}
+
+function dzIpParse(d){
+  const okUrl = u => typeof u === 'string' && /^https?:\/\//i.test(u.trim());
+  const IMG = /\.(jpe?g|png|gif|webp|avif|bmp)(\?|#|$)|pinimg|image|img|photo|cdn|cloudinary|imgur/i;
+  const g = d || {};
+  const list = [g, g.result, g.results, g.data, g.prompts,
+    g.result && g.result.results, g.result && g.result.data, g.result && g.result.prompts,
+    g.data && g.data.results, g.data && g.data.data, g.data && g.data.prompts].find(Array.isArray);
+  if(!list) return [];
+  const items = [];
+  list.forEach(it => {
+    if(typeof it === 'string'){ if(it.trim()) items.push({ prompt: it.trim(), title:'', image:'' }); return; }
+    if(!it || typeof it !== 'object') return;
+    const pick = (...ks) => { for(const k of ks){ const v = it[k]; if(typeof v === 'string' && v.trim()) return v.trim(); } return ''; };
+    let image = '';
+    for(const k of ['image','image_url','imageUrl','img','thumbnail','thumb','preview','images_url','cover','photo','url','src']){
+      const v = it[k];
+      const u = okUrl(v) ? v : (v && typeof v === 'object' && okUrl(v.url) ? v.url : '');
+      if(u){ image = u.trim(); break; }
+    }
+    if(!image && Array.isArray(it.images)) image = it.images.find(okUrl) || '';
+    if(!image){
+      const found = [];
+      (function walk(v, dp){
+        if(v == null || dp > 4) return;
+        if(typeof v === 'string'){ if(okUrl(v) && IMG.test(v)) found.push(v); }
+        else if(typeof v === 'object') Object.values(v).forEach(x => walk(x, dp + 1));
+      })(it, 0);
+      image = found[0] || '';
+    }
+    const prompt = pick('prompt','positive_prompt','text','caption','description','desc','content','title');
+    const title = pick('title','name');
+    if(prompt || image) items.push({ prompt, title: (title && title !== prompt) ? title : '', image });
+  });
+  const seen = new Set();
+  return items.filter(i => { const k = i.image + '|' + i.prompt; if(seen.has(k)) return false; seen.add(k); return true; });
+}
+
+function dzIpCopy(text, btn){
+  const done = () => { const old = btn.textContent; btn.textContent = 'Tersalin!'; setTimeout(() => { btn.textContent = old; }, 1400); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(() => fallback());
+  } else fallback();
+  function fallback(){
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(_){ alert('Gagal menyalin, salin manual ya.'); }
+    ta.remove();
+  }
+}
+
+function initAiImgPrompt(){
+  const qEl = document.getElementById('dzIpQuery');
+  const limEl = document.getElementById('dzIpLimit');
+  const goBtn = document.getElementById('dzIpGo');
+  const msg = document.getElementById('dzIpMsg');
+  const list = document.getElementById('dzIpList');
+  if(!qEl || !limEl || !goBtn || !msg || !list) return;
+  let busy = false;
+
+  const renderItem = (it) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'border:2.5px solid #000;border-radius:12px;padding:10px;background:var(--panel);';
+    if(it.image){
+      const img = document.createElement('img');
+      img.src = it.image; img.alt = it.title || 'preview prompt'; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer';
+      img.style.cssText = 'display:block;width:100%;max-height:320px;object-fit:cover;border-radius:9px;border:2px solid #000;margin-bottom:8px;';
+      img.addEventListener('error', () => img.remove());
+      card.appendChild(img);
+    }
+    if(it.title){
+      const t = document.createElement('div');
+      t.textContent = it.title; t.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:4px;';
+      card.appendChild(t);
+    }
+    if(it.prompt){
+      const p = document.createElement('div');
+      p.textContent = it.prompt;
+      p.style.cssText = "font:12px/1.5 'JetBrains Mono',monospace;white-space:pre-wrap;word-break:break-word;";
+      card.appendChild(p);
+    }
+    const row = document.createElement('div');
+    row.className = 'dz-actions';
+    if(it.prompt){
+      const c = document.createElement('button');
+      c.type = 'button'; c.textContent = 'Salin Prompt';
+      c.addEventListener('click', () => dzIpCopy(it.prompt, c));
+      row.appendChild(c);
+    }
+    if(it.image){
+      const o = document.createElement('button');
+      o.type = 'button'; o.className = 'dz-secondary'; o.textContent = 'Buka Gambar';
+      o.addEventListener('click', () => window.open(it.image, '_blank', 'noopener'));
+      row.appendChild(o);
+    }
+    card.appendChild(row);
+    return card;
+  };
+
+  const run = async () => {
+    if(busy) return;
+    const q = qEl.value.trim();
+    if(!q){ msg.textContent = 'Isi kata kunci dulu ya.'; return; }
+    const limit = parseInt(limEl.value, 10) || 12;
+    busy = true; goBtn.disabled = true;
+    list.innerHTML = '';
+    msg.textContent = 'Mencari prompt...';
+    try{
+      const url = 'https://api.snowping.cfd/api/search/prompt-search?query=' + encodeURIComponent(q) + '&limit=' + limit;
+      const data = await dzIpFetchJson(url, 30000);
+      const items = dzIpParse(data).slice(0, limit);
+      if(!items.length){
+        console.log('AI Img Prompt: respons tak terbaca / kosong', data);
+        msg.textContent = 'Belum ada hasil untuk "' + q + '". Coba kata kunci lain.';
+      } else {
+        msg.textContent = 'Ditemukan ' + items.length + ' prompt untuk "' + q + '".';
+        items.forEach(it => list.appendChild(renderItem(it)));
+      }
+    }catch(err){
+      msg.textContent = 'Gagal: ' + (err.name === 'AbortError' ? 'koneksi terlalu lambat' : (err.message || 'tidak diketahui')) + '. Coba lagi ya.';
+    }finally{
+      busy = false; goBtn.disabled = false;
+    }
+  };
+  goBtn.addEventListener('click', run);
+  qEl.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); run(); } });
 }
 
 function initDzEncDec(){
@@ -10333,6 +10544,24 @@ function initDzFakeDev(){
       const avs = await pk.resolveUrl(setMsg);
       if(!avs.length) return null;
       return avs.map(av => `${DZ_API_AZBRY}/api/maker/fakedev?img=${encodeURIComponent(av)}&name=${encodeURIComponent(name)}&bio=${encodeURIComponent(v('dzDvBio') || '-')}`);
+    }
+  });
+}
+
+function initDzTtChat(){
+  const v = id => (document.getElementById(id).value || '').trim();
+  const pk = dzInitAvatarPicker('Tt');
+  dzInitImgMaker({
+    goBtn:'dzTtGoBtn', saveBtn:'dzTtSaveBtn', wrap:'dzTtWrap', msg:'dzTtMsg', fileName:'ttchat',
+    timeout: 25000,
+    buildUrl: async (setMsg) => {
+      const user = v('dzTtUser'), text = v('dzTtText');
+      if(!user){ setMsg('Isi username dulu ya.'); return null; }
+      if(!text){ setMsg('Isi teks chat dulu ya.'); return null; }
+      const avs = (pk.file() || pk.url()) ? await pk.resolveUrl(setMsg) : [];
+      const base = `${DZ_API_SNOW}/api/maker/tiktokChat?username=${encodeURIComponent(user)}&text=${encodeURIComponent(text)}`;
+      if(!avs.length) return [`${base}&ppUrl=`];
+      return avs.map(av => `${base}&ppUrl=${encodeURIComponent(av)}`);
     }
   });
 }
@@ -13118,7 +13347,7 @@ function buildGlobalSearchIndex(){
     { title:'Tools', desc:'Pemutar & kumpulan tools', target:'tools', type:'Halaman' },
     { title:'Store', desc:'Order produk digital', target:'store', type:'Halaman' },
     { title:'Game & Fun', desc:'Kumpulan game seru', target:'games', type:'Halaman' },
-    { title:'Dinz AI', desc:'Chat AI, buat gambar, cari foto, video & lagu', target:'ai-hub', type:'Halaman' },
+    { title:'Dinz AI', desc:'Chat AI, buat gambar, video & lagu, cari foto, video & lagu', target:'ai-hub', type:'Halaman' },
   ];
   (typeof DZ_TOOLS !== 'undefined' ? DZ_TOOLS : []).forEach(t => {
     idx.push({ title:t.name, desc:t.desc, target:'tools', accId:t.id, type:'Tools' });
@@ -15412,6 +15641,15 @@ document.addEventListener('click',function(e){
   const API_PHOTO = q => `https://api-cloud.my.id/search/pinterest?action=search&query=${encodeURIComponent(q)}`;
   const API_VIDEO = q => `https://api.nexray.eu.cc/search/pinterestvideo?q=${encodeURIComponent(q)}`;
   const API_MUSIC = q => `https://api-cloud.my.id/downloader/play?query=${encodeURIComponent(q)}`;
+  // Buat video (text -> video). Nama parameter belum dipastikan, jadi dicoba berurutan
+  // kalau server membalas 400. Kalau sudah tahu pasti, cukup sisakan satu nama di T2V_PARAMS.
+  const API_T2V_BASE = 'https://api.snowping.cfd/api/aigenerate/text2video';
+  const T2V_PARAMS = ['prompt', 'text', 'q'];
+  const API_T2V = (p, key) => `${API_T2V_BASE}?${key}=${encodeURIComponent(p)}`;
+  // Buat lagu (AI song). Sama seperti text2video: nama parameter dicoba berurutan kalau server membalas 400.
+  const API_SONG_BASE = 'https://api.snowping.cfd/api/aigenerate/aisong';
+  const SONG_PARAMS = ['prompt', 'text', 'q'];
+  const API_SONG = (p, key) => `${API_SONG_BASE}?${key}=${encodeURIComponent(p)}`;
 
   const PERSONA = 'Kamu adalah Dinz AI, asisten virtual yang ramah, sopan, hangat, dan membantu. ' +
     'Sapa pengguna dengan "kak", jawab dalam bahasa yang sama dengan pengguna (default Bahasa Indonesia), ' +
@@ -15582,12 +15820,185 @@ document.addEventListener('click',function(e){
     return items;
   }
 
+  /* ---------- buat video (text2video) ---------- */
+  const VIDEO_URL_RE = /\.(mp4|webm|mov|m4v|m3u8)(\?|#|$)/i;
+  function pickVideoUrl(v){
+    const urls = typeof v === 'string'
+      ? (v.match(/https?:\/\/[^\s"'<>]+/g) || [])
+      : collectUrls(v);
+    return urls.find(u => VIDEO_URL_RE.test(u))
+        || urls.find(u => /video|vid|cdn|download/i.test(u) && !/\.(jpe?g|png|gif|webp)(\?|#|$)/i.test(u))
+        || '';
+  }
+
+  async function fetchVideoOnce(url, timeoutMs){
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), timeoutMs);
+    try{
+      const res = await fetch(url, { signal: ctl.signal });
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if(res.ok && ct.startsWith('video/')){
+        const blob = await res.blob();
+        if(!blob.size) throw new HttpErr('video kosong dari server', 502);
+        return { url: URL.createObjectURL(blob) };
+      }
+      const text = await res.text();
+      let data = null;
+      try{ data = JSON.parse(text); }catch(_){}
+      if(!res.ok){
+        const m = data && (data.message || data.error || data.msg);
+        throw new HttpErr(`server membalas error ${res.status}${m ? ' (' + String(m).slice(0, 80) + ')' : ''}`, res.status);
+      }
+      const u = pickVideoUrl(data !== null ? data : text);
+      if(!u){
+        const m = data && (data.message || data.error || data.msg);
+        throw new HttpErr(typeof m === 'string' && m ? m.slice(0, 100) : 'API tidak mengembalikan video', 502);
+      }
+      return { url: u };
+    } finally { clearTimeout(t); }
+  }
+
+  // Terakhir: kalau API membalas file video langsung, <video> bisa memutarnya tanpa CORS
+  function probeVideo(url, timeoutMs){
+    return new Promise((resolve, reject) => {
+      const v = document.createElement('video');
+      const t = setTimeout(() => { v.src = ''; reject(new Error('timeout')); }, timeoutMs);
+      v.preload = 'metadata';
+      v.onloadedmetadata = () => { clearTimeout(t); resolve({ url }); };
+      v.onerror = () => { clearTimeout(t); reject(new Error('bukan video')); };
+      v.src = url;
+    });
+  }
+
+  async function getGeneratedVideo(q){
+    const TIMEOUT = 240000;
+    let lastErr = new Error('Video belum berhasil dibuat');
+    for(const key of T2V_PARAMS){
+      const url = API_T2V(q, key);
+      try{
+        try{ return await fetchVideoOnce(url, TIMEOUT); }
+        catch(err){
+          if(err instanceof HttpErr || err.name === 'AbortError') throw err;
+          // kemungkinan CORS: coba lewat 2 proxy, lalu langsung lewat <video>
+          try{ return await Promise.any(PROXIES.slice(0, 2).map(mk => fetchVideoOnce(mk(url), TIMEOUT))); }
+          catch(_){
+            try{ return await probeVideo(url, TIMEOUT); }
+            catch(__){ const e = new Error('Tidak bisa terhubung ke server video.'); e.network = true; throw e; }
+          }
+        }
+      }catch(err){
+        lastErr = err;
+        // hanya coba nama parameter berikutnya kalau server menolak request (400)
+        if(!(err instanceof HttpErr && err.status === 400)) break;
+      }
+    }
+    if(lastErr && lastErr.name === 'AbortError') lastErr = new Error('Server terlalu lama membuat video. Coba lagi.');
+    throw lastErr;
+  }
+
+  /* ---------- buat lagu (AI song) ---------- */
+  const AUDIO_URL_RE = /\.(mp3|m4a|wav|ogg|opus|aac|flac|weba)(\?|#|$)/i;
+  function pickAudioUrl(v){
+    const urls = typeof v === 'string'
+      ? (v.match(/https?:\/\/[^\s"'<>]+/g) || [])
+      : collectUrls(v);
+    return urls.find(u => AUDIO_URL_RE.test(u))
+        || urls.find(u => /audio|song|music|mp3|download|cdn/i.test(u) && !/\.(jpe?g|png|gif|webp|mp4|webm)(\?|#|$)/i.test(u))
+        || '';
+  }
+  function pickSongMeta(data){
+    const meta = { title:'', lyrics:'', cover:'' };
+    if(!data || typeof data !== 'object') return meta;
+    const cands = [data, data.result, data.data];
+    [data.result, data.data].forEach(x => { if(Array.isArray(x)) cands.push(x[0]); });
+    const s = v => (typeof v === 'string' && v.trim()) ? v.trim() : '';
+    cands.forEach(o => {
+      if(!o || typeof o !== 'object' || Array.isArray(o)) return;
+      if(!meta.title)  meta.title  = s(o.title) || s(o.name) || s(o.judul);
+      if(!meta.lyrics) meta.lyrics = s(o.lyrics) || s(o.lyric) || s(o.lirik);
+      if(!meta.cover){
+        const c = s(o.cover) || s(o.image) || s(o.image_url) || s(o.thumbnail) || s(o.img) || s(o.cover_url);
+        if(/^https?:\/\//i.test(c)) meta.cover = c;
+      }
+    });
+    return meta;
+  }
+
+  async function fetchSongOnce(url, timeoutMs){
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), timeoutMs);
+    try{
+      const res = await fetch(url, { signal: ctl.signal });
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if(res.ok && (ct.startsWith('audio/') || ct.includes('octet-stream'))){
+        const blob = await res.blob();
+        if(!blob.size) throw new HttpErr('audio kosong dari server', 502);
+        return { url: URL.createObjectURL(blob), title:'', lyrics:'', cover:'' };
+      }
+      const text = await res.text();
+      let data = null;
+      try{ data = JSON.parse(text); }catch(_){}
+      if(!res.ok){
+        const m = data && (data.message || data.error || data.msg);
+        throw new HttpErr(`server membalas error ${res.status}${m ? ' (' + String(m).slice(0, 80) + ')' : ''}`, res.status);
+      }
+      const u = pickAudioUrl(data !== null ? data : text);
+      if(!u){
+        const m = data && (data.message || data.error || data.msg);
+        throw new HttpErr(typeof m === 'string' && m ? m.slice(0, 100) : 'API tidak mengembalikan lagu', 502);
+      }
+      return Object.assign({ url: u }, pickSongMeta(data));
+    } finally { clearTimeout(t); }
+  }
+
+  // Terakhir: kalau API membalas file audio langsung, <audio> bisa memutarnya tanpa CORS
+  function probeAudio(url, timeoutMs){
+    return new Promise((resolve, reject) => {
+      const a = document.createElement('audio');
+      const t = setTimeout(() => { a.src = ''; reject(new Error('timeout')); }, timeoutMs);
+      a.preload = 'metadata';
+      a.onloadedmetadata = () => { clearTimeout(t); resolve({ url, title:'', lyrics:'', cover:'' }); };
+      a.onerror = () => { clearTimeout(t); reject(new Error('bukan audio')); };
+      a.src = url;
+    });
+  }
+
+  async function getGeneratedSong(q){
+    const TIMEOUT = 240000;
+    let lastErr = new Error('Lagu belum berhasil dibuat');
+    for(const key of SONG_PARAMS){
+      const url = API_SONG(q, key);
+      try{
+        try{ return await fetchSongOnce(url, TIMEOUT); }
+        catch(err){
+          if(err instanceof HttpErr || err.name === 'AbortError') throw err;
+          // kemungkinan CORS: coba lewat 2 proxy, lalu langsung lewat <audio>
+          try{ return await Promise.any(PROXIES.slice(0, 2).map(mk => fetchSongOnce(mk(url), TIMEOUT))); }
+          catch(_){
+            try{ return await probeAudio(url, TIMEOUT); }
+            catch(__){ const e = new Error('Tidak bisa terhubung ke server lagu.'); e.network = true; throw e; }
+          }
+        }
+      }catch(err){
+        lastErr = err;
+        // hanya coba nama parameter berikutnya kalau server menolak request (400)
+        if(!(err instanceof HttpErr && err.status === 400)) break;
+      }
+    }
+    if(lastErr && lastErr.name === 'AbortError') lastErr = new Error('Server terlalu lama membuat lagu. Coba lagi.');
+    throw lastErr;
+  }
+
   /* ---------- deteksi maksud (mode Otomatis) ---------- */
   function detectIntent(text){
     const t = text.trim().toLowerCase();
     const mus = t.match(/^(?:tolong\s+|coba\s+|dong\s+|kak\s+)*(?:putar|putarkan|putarin|mainkan|mainin|play|cari|carikan|cariin|carii|nyari|search|download|unduh|kirim(?:kan)?)(?:kan|in)?\s+(?:aku\s+|saya\s+)?(?:sebuah\s+)?(?:lagu|musik|music|song)(?:nya)?\s*(?:yang\s+berjudul|berjudul|judul|:)?\s*/i)
       || t.match(/^\/(?:play|lagu)\s+/i);
     if(mus) return { type:'music', query: text.trim().slice(mus[0].length).trim() };
+    const gs = t.match(/^(?:tolong\s+|coba\s+|dong\s+|kak\s+)*(?:bikin|buat|buatin|buatkan|bikinin|generate|create|ciptakan|ciptain)(?:in|kan)?\s+(?:aku\s+|saya\s+)?(?:sebuah\s+|satu\s+)?(?:lagu|musik|song)(?:\s+ai)?\s*(?:dari|tentang|berupa|yang|of|:)?\s*/i);
+    if(gs) return { type:'gensong', query: text.trim().slice(gs[0].length).trim() };
+    const gv = t.match(/^(?:tolong\s+|coba\s+|dong\s+|kak\s+)*(?:bikin|buat|buatin|buatkan|bikinin|generate|create|render|ciptakan|ciptain)(?:in|kan)?\s+(?:aku\s+|saya\s+)?(?:sebuah\s+|satu\s+)?(?:video|vidio|klip)(?:\s+ai)?\s*(?:dari|tentang|berupa|yang|of|:)?\s*/i);
+    if(gv) return { type:'genvideo', query: text.trim().slice(gv[0].length).trim() };
     const MEDIA = '(?:gambar|foto|image|img|pic|picture|wallpaper|ilustrasi|poster|logo)';
     const reGen = new RegExp(`^(?:tolong\\s+|coba\\s+|dong\\s+|kak\\s+)*(?:bikin|buat|buatin|buatkan|generate|create|gambarkan|lukis|lukiskan|desain|ciptakan|ciptain|render)(?:in|kan)?\\s+(?:aku\\s+|saya\\s+)?(?:sebuah\\s+|satu\\s+)?(?:${MEDIA})?\\s*(?:ai\\s+)?(?:dari|tentang|berupa|yang|of)?\\s*`, 'i');
     const reSearch = new RegExp(`^(?:tolong\\s+|coba\\s+|dong\\s+|kak\\s+)*(?:cari|carikan|cariin|carii|nyari|search|temukan|tampilkan|kasih|kirim(?:kan)?|tunjukkan|mana)\\s+(?:aku\\s+|saya\\s+)?(?:beberapa\\s+)?(video|${MEDIA})(?:nya)?\\s*(?:tentang|dari|:)?\\s*`, 'i');
@@ -15622,6 +16033,10 @@ document.addEventListener('click',function(e){
     doneGen:   () => pick(['Ini gambarnya kak, semoga sesuai ya! ✨', 'Sudah jadi kak! Semoga suka dengan hasilnya 😊']),
     donePhoto: () => pick(['Ini hasil pencariannya kak, semoga membantu ya! 😊', 'Ketemu kak! Silakan dipilih gambarnya ✨']),
     doneVideo: () => pick(['Ini videonya kak, selamat menonton! 🎬', 'Ketemu kak! Semoga sesuai dengan yang kakak cari 😊']),
+    genvideo: q => pick([`Siap kak! Aku buatkan video \"${q}\" dulu ya. Prosesnya bisa 1-3 menit, mohon ditunggu 🎬`, `Dengan senang hati kak! Video \"${q}\" lagi aku buat, sabar sebentar ya ✨`]),
+    doneGenVideo: () => pick(['Videonya sudah jadi kak, selamat menonton! 🎬', 'Sudah jadi kak! Semoga sesuai dengan yang kakak bayangkan 😊']),
+    gensong: q => pick([`Siap kak! Aku buatkan lagu \"${q}\" dulu ya. Prosesnya bisa 1-3 menit, mohon ditunggu \u{1F3BC}`, `Dengan senang hati kak! Lagu \"${q}\" lagi aku buat, sabar sebentar ya \u{1F3A4}`]),
+    doneGenSong: () => pick(['Lagunya sudah jadi kak, selamat mendengarkan! \u{1F3A7}', 'Sudah jadi kak! Semoga sesuai dengan yang kakak bayangkan \u{1F3B6}']),
     empty: () => 'Mohon maaf kak, aku belum menemukan hasilnya. Boleh coba dengan kata kunci lain? 🙏',
     error: m => `Mohon maaf kak, terjadi kendala: ${m}\nBoleh dicoba lagi sebentar lagi ya 🙏`,
     ask: () => 'Boleh kak, mau dibuatkan / dicarikan apa? Tulis deskripsinya ya 😊'
@@ -15630,7 +16045,7 @@ document.addEventListener('click',function(e){
   /* ---------- UI ---------- */
   const hub = () => $('ai-hub');
   function emptyState(){
-    $('dzxLog').innerHTML = `<div class="dzx-empty"><div class="dzx-hello">Halo kak! \u{1F44B}</div><p>Ngobrol, buat gambar, cari foto, video &amp; lagu. Tinggal ketik ya.</p></div>`;
+    $('dzxLog').innerHTML = `<div class="dzx-empty"><div class="dzx-hello">Halo kak! \u{1F44B}</div><p>Ngobrol, buat gambar, video &amp; lagu, cari foto, video &amp; lagu. Tinggal ketik ya.</p></div>`;
     hub().classList.remove('has-msgs');
   }
 
@@ -15692,6 +16107,74 @@ document.addEventListener('click',function(e){
       card.appendChild(actionLinks(it.url, `dinz-ai-${Date.now()}-${i}.jpg`));
       grid.appendChild(card);
     });
+    msg.appendChild(grid);
+    scrollDown();
+  }
+
+  function renderGenVideo(msg, res, caption){
+    const grid = document.createElement('div');
+    grid.className = 'dzx-grid single';
+    const card = document.createElement('div');
+    card.className = 'dzx-item';
+    const v = document.createElement('video');
+    v.controls = true; v.playsInline = true; v.preload = 'metadata';
+    v.style.objectFit = 'contain';
+    const note = document.createElement('div'); note.className = 'dzx-cap'; note.style.display = 'none';
+    note.textContent = 'Video tidak bisa diputar di sini, silakan coba tombol Buka.';
+    v.addEventListener('error', () => { note.style.display = 'block'; });
+    v.addEventListener('loadeddata', scrollDown);
+    if(/\.m3u8($|\?)/i.test(res.url) && window.Hls && Hls.isSupported()){
+      const hls = new Hls();
+      hls.loadSource(res.url); hls.attachMedia(v);
+    } else { v.src = res.url; }
+    card.appendChild(v);
+    if(caption){ const cap = document.createElement('div'); cap.className = 'dzx-cap'; cap.textContent = caption; card.appendChild(cap); }
+    card.appendChild(note);
+    card.appendChild(actionLinks(res.url, `dinz-video-${Date.now()}.mp4`));
+    grid.appendChild(card);
+    msg.appendChild(grid);
+    scrollDown();
+  }
+
+  function renderGenSong(msg, res, caption){
+    const card = document.createElement('div');
+    card.className = 'dzx-item';
+    card.style.cssText = 'padding:10px;';
+    if(res.cover){
+      const img = document.createElement('img');
+      img.src = res.cover; img.alt = ''; img.referrerPolicy = 'no-referrer'; img.loading = 'lazy';
+      img.style.cssText = 'display:block; width:100%; max-height:220px; object-fit:cover; border-radius:9px; margin-bottom:8px;';
+      img.addEventListener('error', () => img.remove());
+      img.addEventListener('load', scrollDown);
+      card.appendChild(img);
+    }
+    const title = document.createElement('div');
+    title.textContent = res.title || caption || 'Lagu AI';
+    title.style.cssText = 'font-weight:700; font-size:14px; line-height:1.3; margin-bottom:6px;';
+    card.appendChild(title);
+    const au = document.createElement('audio');
+    au.controls = true; au.preload = 'metadata'; au.src = res.url;
+    au.style.cssText = 'display:block; width:100%;';
+    const note = document.createElement('div'); note.className = 'dzx-cap'; note.style.display = 'none';
+    note.textContent = 'Lagu tidak bisa diputar di sini, silakan coba tombol Buka.';
+    au.addEventListener('error', () => { note.style.display = 'block'; });
+    card.appendChild(au);
+    card.appendChild(note);
+    if(res.lyrics){
+      const det = document.createElement('details');
+      det.style.cssText = 'margin-top:8px; font-size:13px;';
+      const sum = document.createElement('summary');
+      sum.textContent = 'Lihat lirik'; sum.style.cssText = 'cursor:pointer; font-weight:700;';
+      const pre = document.createElement('div');
+      pre.textContent = res.lyrics; pre.style.cssText = 'white-space:pre-wrap; margin-top:6px; line-height:1.5;';
+      det.appendChild(sum); det.appendChild(pre);
+      det.addEventListener('toggle', scrollDown);
+      card.appendChild(det);
+    }
+    card.appendChild(actionLinks(res.url, `dinz-lagu-${Date.now()}.mp3`));
+    const grid = document.createElement('div');
+    grid.className = 'dzx-grid single';
+    grid.appendChild(card);
     msg.appendChild(grid);
     scrollDown();
   }
@@ -15778,6 +16261,22 @@ document.addEventListener('click',function(e){
     scrollDown();
   }
 
+  async function doGenVideo(q, msg){
+    setText(msg, FRIENDLY.genvideo(q));
+    const res = await getGeneratedVideo(q);
+    setText(msg, FRIENDLY.doneGenVideo()); settle(msg);
+    renderGenVideo(msg, res, q);
+    history.push({ role:'user', text:`(minta dibuatkan video: ${q})` }, { role:'ai', text:'(video sudah dibuat)' });
+  }
+
+  async function doGenSong(q, msg){
+    setText(msg, FRIENDLY.gensong(q));
+    const res = await getGeneratedSong(q);
+    setText(msg, FRIENDLY.doneGenSong()); settle(msg);
+    renderGenSong(msg, res, q);
+    history.push({ role:'user', text:`(minta dibuatkan lagu: ${q})` }, { role:'ai', text:'(lagu sudah dibuat)' });
+  }
+
   async function doVideo(q, msg){
     setText(msg, FRIENDLY.video(q));
     const res = await smartFetch(API_VIDEO(q), 60000);
@@ -15800,6 +16299,8 @@ document.addEventListener('click',function(e){
     let intent = null;
     if(mode === 'auto') intent = detectIntent(text);
     else if(mode === 'gen')   intent = { type:'gen',   query:text };
+    else if(mode === 'genvideo') intent = { type:'genvideo', query:text };
+    else if(mode === 'gensong') intent = { type:'gensong', query:text };
     else if(mode === 'photo') intent = { type:'photo', query:text };
     else if(mode === 'video') intent = { type:'video', query:text };
     else if(mode === 'music') intent = { type:'music', query:text };
@@ -15816,6 +16317,8 @@ document.addEventListener('click',function(e){
       if(!intent) await doChat(text, msg);
       else if(!intent.query) { setText(msg, FRIENDLY.ask()); settle(msg); }
       else if(intent.type === 'gen')   await doGen(intent.query, msg);
+      else if(intent.type === 'genvideo') await doGenVideo(intent.query, msg);
+      else if(intent.type === 'gensong') await doGenSong(intent.query, msg);
       else if(intent.type === 'photo') await doPhoto(intent.query, msg);
       else if(intent.type === 'video') await doVideo(intent.query, msg);
       else if(intent.type === 'music') await doMusic(intent.query, msg);
@@ -15856,12 +16359,14 @@ document.addEventListener('click',function(e){
     $('dzxInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
     $('dzxInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; });
     $('dzxClearBtn').addEventListener('click', () => { history.length = 0; emptyState(); mode = 'auto'; });
-    const LABEL = { auto:'', chat:'\u{1F4AC} Chat', gen:'\u{1F3A8} Buat gambar', photo:'\u{1F5BC} Cari gambar', video:'\u{1F3AC} Cari video', music:'\u{1F3B5} Cari lagu' };
+    const LABEL = { gensong:'\u{1F3BC} Buat lagu', auto:'', chat:'\u{1F4AC} Chat', gen:'\u{1F3A8} Buat gambar', photo:'\u{1F5BC} Cari gambar', genvideo:'\u{1F39E} Buat video', video:'\u{1F3AC} Cari video', music:'\u{1F3B5} Cari lagu' };
     const PH = {
+      gensong:'Deskripsikan lagu yang ingin dibuat (tema, genre, suasana)',
       auto:'Tanya Dinz AI',
       chat:'Ngobrol dengan Dinz AI',
       gen:'Deskripsikan gambar yang ingin dibuat',
       photo:'Kata kunci gambar yang dicari',
+      genvideo:'Deskripsikan video yang ingin dibuat',
       video:'Kata kunci video yang dicari',
       music:'Judul lagu yang dicari'
     };
