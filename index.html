@@ -15645,7 +15645,7 @@ document.addEventListener('click',function(e){
   const API_CHAT  = p => `https://api.azbry.com/api/ai/claude?q=${encodeURIComponent(p)}&messages=005`;
   const API_GEN   = p => `https://api-cloud.my.id/ai/text2img?prompt=${encodeURIComponent(p)}&shape=square`;
   const API_PHOTO = q => `https://api-cloud.my.id/search/pinterest?action=search&query=${encodeURIComponent(q)}`;
-  const API_VIDEO = q => `https://api.clutch.web.id/search/tiktok?apikey=alip-atsbey6qnzvxugly8g56&q=${encodeURIComponent(q)}`;
+  const API_VIDEO = q => `https://api.nexray.eu.cc/search/tiktok?q=${encodeURIComponent(q)}`;
   const API_MUSIC = q => `https://api-cloud.my.id/downloader/play?query=${encodeURIComponent(q)}`;
   // Buat video (text -> video). Nama parameter belum dipastikan, jadi dicoba berurutan
   // kalau server membalas 400. Kalau sudah tahu pasti, cukup sisakan satu nama di T2V_PARAMS.
@@ -15831,14 +15831,15 @@ document.addEventListener('click',function(e){
     const items = [];
     list.forEach(it => {
       if(!it || typeof it !== 'object') return;
-      let v = pickUrl(it, ['video_url','video','nowm','no_watermark','nowatermark','hdplay','play','download','wmplay','url','src']);
+      let v = pickUrl(it, ['video_url','video','nowm','no_watermark','nowatermark','hdplay','play','download','wmplay','data','url','src']);
       let pageUrl = '';
       if(v && PAGE_RE.test(v)){ pageUrl = v; v = ''; }
       if(!v) v = collectUrls(it).find(u => /\.(mp4|webm|mov|m4v|m3u8)(\?|#|$)/i.test(u)) || '';
       if(!v) return;
       if(!pageUrl) pageUrl = pickUrl(it, ['link','tiktok_url','url']);
+      if(!pageUrl && it.author && it.author.nickname && it.id) pageUrl = 'https://www.tiktok.com/@' + it.author.nickname + '/video/' + it.id;
       if(pageUrl && !PAGE_RE.test(pageUrl)) pageUrl = '';
-      const every = uniq(collectUrls(it));
+      const every = uniq(collectUrls(Object.assign({}, it, { music_info: null, author: null })));
       const alts = every.filter(u => u !== v && !PAGE_RE.test(u)
         && !/\.(jpe?g|png|gif|webp|avif|heic|mp3|m4a|aac|wav)(\?|#|$)/i.test(u)
         && !/cover|thumb|avatar|image|music/i.test(u.split('?')[0]) && !/mime_type=audio|\/music\//i.test(u));
@@ -16292,7 +16293,7 @@ document.addEventListener('click',function(e){
 
       let seeking = false, embedded = false;
       const paintTime = () => { tm.textContent = fmtTime(v.currentTime) + ' / ' + fmtTime(v.duration); };
-      const toggle = () => { if(v.paused){ const pr = v.play(); if(pr && pr.catch) pr.catch(() => {}); } else v.pause(); };
+      const toggle = () => { if(v.paused){ const pr = v.play(); if(pr && pr.catch) pr.catch(failPlay); } else v.pause(); };
       bPlay.addEventListener('click', toggle);
       v.addEventListener('click', toggle);
       v.addEventListener('play', () => { bPlay.innerHTML = IC.pause; });
@@ -16315,18 +16316,33 @@ document.addEventListener('click',function(e){
         if(embedded) return;
         embedded = true;
         try{ v.pause(); v.removeAttribute('src'); v.load(); }catch(_){}
-        if(it.thumb){
-          const im = document.createElement('img');
-          im.src = it.thumb; im.alt = ''; im.referrerPolicy = 'no-referrer';
-          im.style.cssText = 'display:block;width:100%;max-height:340px;object-fit:cover;background:#000;cursor:default;';
-          v.replaceWith(im);
-        }
+        // kotak tetap (tidak bisa jadi kosong): cover sebagai latar kalau berhasil dimuat, label di tengah
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:100%;height:200px;background:#000 center/cover no-repeat;display:flex;align-items:center;justify-content:center;';
+        if(it.thumb) ph.style.backgroundImage = 'url("' + it.thumb.replace(/"/g, '%22') + '")';
+        const lab = document.createElement('div');
+        lab.textContent = '\u26A0 Tidak bisa diputar di sini';
+        lab.style.cssText = "font:800 11px 'JetBrains Mono',monospace;color:#000;background:#ffd93d;border:2px solid #000;border-radius:7px;padding:6px 9px;box-shadow:2px 2px 0 #000;text-align:center;";
+        ph.appendChild(lab);
+        v.replaceWith(ph);
         bar.style.display = 'none';
         note.textContent = text; note.style.display = 'block';
       };
 
       const cands = [it.videoUrl].concat(it.alts || []);
       let ci = 0, triedProxy = false;
+      // Tombol putar ditolak browser: coba link video lain, kalau habis tampilkan alasannya
+      const failPlay = (err) => {
+        if(embedded) return;
+        if(err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
+        console.log('AI video: gagal memutar', err);
+        if(++ci < cands.length){
+          v.src = cands[ci]; v.load();
+          const pr = v.play(); if(pr && pr.catch) pr.catch(failPlay);
+          return;
+        }
+        showUnsupported('Gagal memutar video (' + ((err && err.name) || 'error') + '). Tekan "Buka di TikTok" untuk menontonnya.');
+      };
       // Ada suara tapi gambar hitam = codec video (mis. HEVC) tidak didukung perangkat -> coba link lain
       v.addEventListener('loadedmetadata', () => {
         if(embedded) return;
