@@ -5711,6 +5711,12 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
       #ai-hub .dzx-actions{display:flex; gap:6px; padding:6px 6px 7px;}
       #ai-hub .dzx-actions a{flex:1; text-align:center; font:800 10.5px 'JetBrains Mono',monospace; text-transform:uppercase; padding:6px 2px; border:2px solid #000; border-radius:7px; color:#000; text-decoration:none; background:#4ade80;}
 
+      #ai-hub .dzx-vc{display:flex; align-items:center; gap:6px; padding:6px; background:#ffd93d; border-top:2.5px solid #000;}
+      #ai-hub .dzx-vc button{flex-shrink:0; width:32px; height:28px; padding:0; display:flex; align-items:center; justify-content:center; background:#4ade80; border:2px solid #000; border-radius:7px; cursor:pointer; box-shadow:1px 1px 0 #000;}
+      #ai-hub .dzx-vc button:active{transform:translate(1px,1px); box-shadow:0 0 0 #000;}
+      #ai-hub .dzx-vc input[type=range]{flex:1; min-width:0; height:18px; margin:0; accent-color:#000;}
+      #ai-hub .dzx-vc .t{flex-shrink:0; font:700 10px 'JetBrains Mono',monospace; color:#000;}
+
       #ai-hub .dzx-quick{flex-shrink:0; padding:0 14px 10px; display:flex; flex-direction:row; flex-wrap:wrap; gap:8px; justify-content:center;}
       #ai-hub.has-msgs .dzx-quick{display:none;}
       #ai-hub .dzx-qitem{display:flex; align-items:center; gap:7px; padding:8px 12px; background:#fff !important; background-image:none !important; border:2.5px solid #000 !important; color:#000 !important; font:700 13px 'Space Grotesk',sans-serif; border-radius:10px !important; box-shadow:2px 2px 0 #000 !important;}
@@ -15639,7 +15645,7 @@ document.addEventListener('click',function(e){
   const API_CHAT  = p => `https://api.azbry.com/api/ai/claude?q=${encodeURIComponent(p)}&messages=005`;
   const API_GEN   = p => `https://api-cloud.my.id/ai/text2img?prompt=${encodeURIComponent(p)}&shape=square`;
   const API_PHOTO = q => `https://api-cloud.my.id/search/pinterest?action=search&query=${encodeURIComponent(q)}`;
-  const API_VIDEO = q => `https://api.nexray.eu.cc/search/pinterestvideo?q=${encodeURIComponent(q)}`;
+  const API_VIDEO = q => `https://api.clutch.web.id/search/tiktok?apikey=alip-atsbey6qnzvxugly8g56&q=${encodeURIComponent(q)}`;
   const API_MUSIC = q => `https://api-cloud.my.id/downloader/play?query=${encodeURIComponent(q)}`;
   // Buat video (text -> video). Nama parameter belum dipastikan, jadi dicoba berurutan
   // kalau server membalas 400. Kalau sudah tahu pasti, cukup sisakan satu nama di T2V_PARAMS.
@@ -15807,15 +15813,49 @@ document.addEventListener('click',function(e){
 
   function parseVideos(res){
     if(res.kind !== 'json') return [];
-    const d = res.data;
-    const list = Array.isArray(d) ? d : (Array.isArray(d?.result) ? d.result : (Array.isArray(d?.data) ? d.data : []));
+    const d = res.data || {};
+    const list = [d, d.result, d.data, d.result && d.result.data, d.result && d.result.videos, d.result && d.result.results,
+      d.data && d.data.videos, d.data && d.data.results, d.videos, d.results].find(Array.isArray) || [];
+    const okUrl = u => typeof u === 'string' && /^https?:\/\//i.test(u);
+    const pickUrl = (o, keys) => {
+      for(const k of keys){
+        const v = o[k];
+        if(okUrl(v)) return v;
+        if(v && typeof v === 'object' && !Array.isArray(v) && okUrl(v.url)) return v.url;
+        if(Array.isArray(v) && okUrl(v[0])) return v[0];
+      }
+      return '';
+    };
+    const PAGE_RE = /tiktok\.com\/(@|t\/|v\/)|vt\.tiktok\.com|vm\.tiktok\.com/i;
+    console.log('AI video: contoh item dari API', list[0]);
     const items = [];
     list.forEach(it => {
       if(!it || typeof it !== 'object') return;
-      const v = it.video_url || it.video || it.url || it.src || '';
-      if(typeof v === 'string' && /^https?:/i.test(v)){
-        items.push({ videoUrl: v, pinUrl: (typeof it.url === 'string' && it.url !== v) ? it.url : '', thumb: it.thumbnail || it.thumb || it.image || '', caption: (it.title || it.grid_title || it.description || '').trim() });
-      }
+      let v = pickUrl(it, ['video_url','video','nowm','no_watermark','nowatermark','hdplay','play','download','wmplay','url','src']);
+      let pageUrl = '';
+      if(v && PAGE_RE.test(v)){ pageUrl = v; v = ''; }
+      if(!v) v = collectUrls(it).find(u => /\.(mp4|webm|mov|m4v|m3u8)(\?|#|$)/i.test(u)) || '';
+      if(!v) return;
+      if(!pageUrl) pageUrl = pickUrl(it, ['link','tiktok_url','url']);
+      if(pageUrl && !PAGE_RE.test(pageUrl)) pageUrl = '';
+      const every = uniq(collectUrls(it));
+      const alts = every.filter(u => u !== v && !PAGE_RE.test(u)
+        && !/\.(jpe?g|png|gif|webp|avif|heic|mp3|m4a|aac|wav)(\?|#|$)/i.test(u)
+        && !/cover|thumb|avatar|image|music/i.test(u.split('?')[0]) && !/mime_type=audio|\/music\//i.test(u));
+      alts.sort((a, b) => (/\.mp4|video_mp4|mime_type=video/i.test(b) ? 1 : 0) - (/\.mp4|video_mp4|mime_type=video/i.test(a) ? 1 : 0));
+      const hd = v.replace('/media/play/', '/media/hdplay/');
+      if(hd !== v && !alts.includes(hd)) alts.unshift(hd);
+      const thumb = pickUrl(it, ['cover','origin_cover','dynamic_cover','thumbnail','thumb','image'])
+        || every.find(u => /cover|thumb|\.(jpe?g|webp|png|heic)(\?|#|$)/i.test(u) && !/avatar/i.test(u)) || '';
+      const idm = (pageUrl || '').match(/\/video\/(\d+)/);
+      items.push({
+        id: idm ? idm[1] : (/^\d{8,}$/.test(String(it.id)) ? String(it.id) : ''),
+        videoUrl: v,
+        alts: alts.slice(0, 4),
+        pinUrl: pageUrl,
+        thumb,
+        caption: String(it.title || it.desc || it.description || it.caption || '').trim()
+      });
     });
     return items;
   }
@@ -16079,9 +16119,9 @@ document.addEventListener('click',function(e){
     const box = document.createElement('div');
     box.className = 'dzx-actions';
     const open = document.createElement('a');
-    open.href = url; open.target = '_blank'; open.rel = 'noopener'; open.textContent = second === 'Pinterest' ? 'Buka di Pinterest' : 'Buka';
+    open.href = url; open.target = '_blank'; open.rel = 'noopener'; open.textContent = (second === 'Pinterest' || second === 'TikTok') ? 'Buka di ' + second : 'Buka';
     box.appendChild(open);
-    if(second !== 'Pinterest'){
+    if(second !== 'Pinterest' && second !== 'TikTok'){
       const dl = document.createElement('a');
       dl.href = url; dl.target = '_blank'; dl.rel = 'noopener'; dl.setAttribute('download', name || 'dinz-ai');
       dl.textContent = 'Unduh';
@@ -16183,29 +16223,143 @@ document.addEventListener('click',function(e){
     scrollDown();
   }
 
+  // Cadangan: ambil file video lewat proxy lalu putar dari blob (menembus blokir hotlink/CORS)
+  function videoViaProxy(url){
+    const one = async (u) => {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), 90000);
+      try{
+        const r = await fetch(u, { signal: ctl.signal });
+        if(!r.ok) throw new Error('http ' + r.status);
+        const b = await r.blob();
+        if(!b.size) throw new Error('kosong');
+        return URL.createObjectURL(b.type.startsWith('video/') ? b : new Blob([b], { type:'video/mp4' }));
+      } finally { clearTimeout(t); }
+    };
+    return Promise.any([one(url)].concat(PROXIES.slice(0, 3).map(mk => one(mk(url)))));
+  }
+
+  function fmtTime(t){
+    if(!isFinite(t) || t < 0) t = 0;
+    const m = Math.floor(t / 60), sec = Math.floor(t % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
   function renderVideos(msg, items){
+    const SVG = (inner, w) => `<svg viewBox="0 0 24 24" width="${w || 15}" height="${w || 15}" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+    const IC = {
+      play:  SVG('<polygon points="7,4 20,12 7,20" fill="#000"/>', 14),
+      pause: SVG('<rect x="5" y="4" width="5" height="16" fill="#000"/><rect x="14" y="4" width="5" height="16" fill="#000"/>', 14),
+      vol:   SVG('<polygon points="3,9 7,9 12,5 12,19 7,15 3,15" fill="#000"/><path d="M16 8.5a5 5 0 0 1 0 7"/>'),
+      mute:  SVG('<polygon points="3,9 7,9 12,5 12,19 7,15 3,15" fill="#000"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/>'),
+      full:  SVG('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>')
+    };
+    const mkBtn = (html, label) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.innerHTML = html; b.setAttribute('aria-label', label);
+      return b;
+    };
+    const mkA = (href, text, dl) => {
+      const a = document.createElement('a');
+      a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text;
+      if(dl) a.setAttribute('download', dl);
+      return a;
+    };
+
     const grid = document.createElement('div');
     grid.className = 'dzx-grid single';
     items.forEach(it => {
       const card = document.createElement('div');
       card.className = 'dzx-item';
+      card.style.maxWidth = '280px';
       const v = document.createElement('video');
-      v.controls = true; v.playsInline = true; v.preload = 'metadata';
+      v.playsInline = true; v.preload = 'metadata';
       if(it.thumb) v.poster = it.thumb;
+      v.style.cssText = 'display:block;width:100%;max-height:340px;background:#000;object-fit:contain;cursor:pointer;';
       const isHls = /\.m3u8($|\?)/i.test(it.videoUrl);
       const note = document.createElement('div'); note.className = 'dzx-cap'; note.style.display = 'none';
-      note.textContent = 'Video tidak bisa diputar di sini, silakan buka lewat Pinterest.';
-      v.addEventListener('error', () => { if(!isHls) note.style.display = 'block'; });
+      note.textContent = 'Video tidak bisa diputar di sini, silakan buka lewat TikTok.';
+
+      // kontrol pemutar (di bawah layar video, mengikuti tema)
+      const bar = document.createElement('div'); bar.className = 'dzx-vc';
+      const bPlay = mkBtn(IC.play, 'Putar');
+      const seek = document.createElement('input');
+      seek.type = 'range'; seek.min = 0; seek.max = 1000; seek.value = 0; seek.setAttribute('aria-label', 'Posisi video');
+      const tm = document.createElement('span'); tm.className = 't'; tm.textContent = '0:00';
+      const bVol = mkBtn(IC.vol, 'Suara');
+      const bFull = mkBtn(IC.full, 'Layar penuh');
+      [bPlay, seek, tm, bVol, bFull].forEach(x => bar.appendChild(x));
+
+      let seeking = false, embedded = false;
+      const paintTime = () => { tm.textContent = fmtTime(v.currentTime) + ' / ' + fmtTime(v.duration); };
+      const toggle = () => { if(v.paused){ const pr = v.play(); if(pr && pr.catch) pr.catch(() => {}); } else v.pause(); };
+      bPlay.addEventListener('click', toggle);
+      v.addEventListener('click', toggle);
+      v.addEventListener('play', () => { bPlay.innerHTML = IC.pause; });
+      v.addEventListener('pause', () => { bPlay.innerHTML = IC.play; });
+      v.addEventListener('ended', () => { bPlay.innerHTML = IC.play; });
+      v.addEventListener('timeupdate', () => {
+        if(!seeking && v.duration) seek.value = Math.round(v.currentTime / v.duration * 1000);
+        paintTime();
+      });
+      seek.addEventListener('input', () => { seeking = true; if(v.duration) v.currentTime = v.duration * seek.value / 1000; });
+      seek.addEventListener('change', () => { seeking = false; });
+      bVol.addEventListener('click', () => { v.muted = !v.muted; bVol.innerHTML = v.muted ? IC.mute : IC.vol; });
+      bFull.addEventListener('click', () => {
+        const f = v.requestFullscreen || v.webkitRequestFullscreen || v.webkitEnterFullscreen;
+        if(f) try{ f.call(v); }catch(_){}
+      });
+
+      // Kalau gambar video tidak bisa ditampilkan perangkat: tampilkan cover + catatan, tanpa kontrol
+      const showUnsupported = (text) => {
+        if(embedded) return;
+        embedded = true;
+        try{ v.pause(); v.removeAttribute('src'); v.load(); }catch(_){}
+        if(it.thumb){
+          const im = document.createElement('img');
+          im.src = it.thumb; im.alt = ''; im.referrerPolicy = 'no-referrer';
+          im.style.cssText = 'display:block;width:100%;max-height:340px;object-fit:cover;background:#000;cursor:default;';
+          v.replaceWith(im);
+        }
+        bar.style.display = 'none';
+        note.textContent = text; note.style.display = 'block';
+      };
+
+      const cands = [it.videoUrl].concat(it.alts || []);
+      let ci = 0, triedProxy = false;
+      // Ada suara tapi gambar hitam = codec video (mis. HEVC) tidak didukung perangkat -> coba link lain
+      v.addEventListener('loadedmetadata', () => {
+        if(embedded) return;
+        paintTime();
+        if(isHls || v.videoWidth > 0) return;
+        if(++ci < cands.length){ v.src = cands[ci]; return; }
+        showUnsupported('Perangkatmu belum bisa menampilkan gambar video ini. Tekan "Buka di TikTok" untuk menontonnya.');
+      });
+      v.addEventListener('error', () => {
+        if(isHls || embedded) return;
+        if(++ci < cands.length){ v.src = cands[ci]; return; }
+        if(!triedProxy){
+          triedProxy = true;
+          videoViaProxy(cands[0]).then(u => { if(!embedded){ v.src = u; v.load(); } }).catch(() => showUnsupported('Video tidak bisa diputar di sini. Tekan "Buka di TikTok" untuk menontonnya.'));
+          return;
+        }
+        showUnsupported('Video tidak bisa diputar di sini. Tekan "Buka di TikTok" untuk menontonnya.');
+      });
       if(isHls && window.Hls && Hls.isSupported()){
         const hls = new Hls();
         hls.on(Hls.Events.ERROR, (_e, d) => { if(d && d.fatal){ note.style.display = 'block'; try{ hls.destroy(); }catch(_){} } });
         hls.loadSource(it.videoUrl); hls.attachMedia(v);
       } else { v.src = it.videoUrl; }
+
       card.appendChild(v);
+      card.appendChild(bar);
       if(it.caption){ const cap = document.createElement('div'); cap.className = 'dzx-cap'; cap.textContent = it.caption; card.appendChild(cap); }
       card.appendChild(note);
-      const link = it.pinUrl || (!isHls ? it.videoUrl : '');
-      if(link) card.appendChild(actionLinks(link, `dinz-ai-${Date.now()}.mp4`, !isHls ? 'Unduh' : 'Pinterest'));
+      const box = document.createElement('div'); box.className = 'dzx-actions';
+      if(it.pinUrl) box.appendChild(mkA(it.pinUrl, 'Buka di TikTok'));
+      else if(!isHls) box.appendChild(mkA(it.videoUrl, 'Buka'));
+      if(!isHls) box.appendChild(mkA(it.videoUrl, 'Unduh', `dinz-ai-${Date.now()}.mp4`));
+      if(box.children.length) card.appendChild(box);
       grid.appendChild(card);
     });
     msg.appendChild(grid);
