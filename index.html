@@ -5759,7 +5759,7 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
       <button type="button" class="dzx-qitem" data-mode="video"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="3"/><polygon points="22 8 16 12 22 16 22 8"/></svg>Cari video</button>
       <button type="button" class="dzx-qitem" data-mode="music"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Cari lagu</button>
       <button type="button" class="dzx-qitem" data-mode="genvideo"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><polygon points="10 9 16 12 10 15 10 9"/></svg>Buat video</button>
-      <button type="button" class="dzx-qitem" data-mode="gensong"><svg viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>Buat lagu</button>
+      <button type="button" class="dzx-qitem" data-mode="gensong"><svg viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>Cari lirik lagu</button>
     </div>
 
     <div class="dzx-bar">
@@ -5768,7 +5768,7 @@ pilih produk &rarr; order &rarr; <u>chat admin terbuka otomatis</u></pre>
         <button type="button" class="dzx-mode" data-mode="chat">&#128172; Chat</button>
         <button type="button" class="dzx-mode" data-mode="gen">&#127912; Buat gambar</button>
         <button type="button" class="dzx-mode" data-mode="genvideo">&#127902; Buat video</button>
-        <button type="button" class="dzx-mode" data-mode="gensong">&#127932; Buat lagu</button>
+        <button type="button" class="dzx-mode" data-mode="gensong">&#127932; Cari lirik lagu</button>
         <button type="button" class="dzx-mode" data-mode="photo">&#128444; Cari gambar</button>
         <button type="button" class="dzx-mode" data-mode="video">&#127916; Cari video</button>
         <button type="button" class="dzx-mode" data-mode="music">&#127925; Cari lagu</button>
@@ -13347,7 +13347,7 @@ function buildGlobalSearchIndex(){
     { title:'Tools', desc:'Pemutar & kumpulan tools', target:'tools', type:'Halaman' },
     { title:'Store', desc:'Order produk digital', target:'store', type:'Halaman' },
     { title:'Game & Fun', desc:'Kumpulan game seru', target:'games', type:'Halaman' },
-    { title:'Dinz AI', desc:'Chat AI, buat gambar, video & lagu, cari foto, video & lagu', target:'ai-hub', type:'Halaman' },
+    { title:'Dinz AI', desc:'Chat AI, buat gambar & video, cari foto, video, lagu & lirik lagu', target:'ai-hub', type:'Halaman' },
   ];
   (typeof DZ_TOOLS !== 'undefined' ? DZ_TOOLS : []).forEach(t => {
     idx.push({ title:t.name, desc:t.desc, target:'tools', accId:t.id, type:'Tools' });
@@ -15904,6 +15904,7 @@ document.addEventListener('click',function(e){
       : collectUrls(v);
     return urls.find(u => AUDIO_URL_RE.test(u))
         || urls.find(u => /audio|song|music|mp3|download|cdn/i.test(u) && !/\.(jpe?g|png|gif|webp|mp4|webm)(\?|#|$)/i.test(u))
+        || urls.find(u => !/\.(jpe?g|png|gif|webp|svg|ico|mp4|webm)(\?|#|$)/i.test(u))
         || '';
   }
   function pickSongMeta(data){
@@ -15944,8 +15945,11 @@ document.addEventListener('click',function(e){
       }
       const u = pickAudioUrl(data !== null ? data : text);
       if(!u){
-        const m = data && (data.message || data.error || data.msg);
-        throw new HttpErr(typeof m === 'string' && m ? m.slice(0, 100) : 'API tidak mengembalikan lagu', 502);
+        const lyr = data && typeof data.result === 'string' ? data.result.trim() : '';
+        if(lyr) return { url:'', title:'', lyrics: lyr, cover:'' };
+        const raw = (data !== null ? JSON.stringify(data) : String(text)).slice(0, 300);
+        console.log('AI song: respons tanpa link audio', data !== null ? data : text);
+        throw new HttpErr('API membalas OK tapi tidak ada link audio di responsnya. Isi respons: ' + raw, 422);
       }
       return Object.assign({ url: u }, pickSongMeta(data));
     } finally { clearTimeout(t); }
@@ -15976,7 +15980,7 @@ document.addEventListener('click',function(e){
           try{ return await Promise.any(PROXIES.slice(0, 2).map(mk => fetchSongOnce(mk(url), TIMEOUT))); }
           catch(_){
             try{ return await probeAudio(url, TIMEOUT); }
-            catch(__){ const e = new Error('Tidak bisa terhubung ke server lagu.'); e.network = true; throw e; }
+            catch(__){ const e = new Error('Tidak bisa terhubung ke server lirik lagu.'); e.network = true; throw e; }
           }
         }
       }catch(err){
@@ -15985,7 +15989,7 @@ document.addEventListener('click',function(e){
         if(!(err instanceof HttpErr && err.status === 400)) break;
       }
     }
-    if(lastErr && lastErr.name === 'AbortError') lastErr = new Error('Server terlalu lama membuat lagu. Coba lagi.');
+    if(lastErr && lastErr.name === 'AbortError') lastErr = new Error('Server terlalu lama mencari lirik. Coba lagi.');
     throw lastErr;
   }
 
@@ -16035,8 +16039,8 @@ document.addEventListener('click',function(e){
     doneVideo: () => pick(['Ini videonya kak, selamat menonton! 🎬', 'Ketemu kak! Semoga sesuai dengan yang kakak cari 😊']),
     genvideo: q => pick([`Siap kak! Aku buatkan video \"${q}\" dulu ya. Prosesnya bisa 1-3 menit, mohon ditunggu 🎬`, `Dengan senang hati kak! Video \"${q}\" lagi aku buat, sabar sebentar ya ✨`]),
     doneGenVideo: () => pick(['Videonya sudah jadi kak, selamat menonton! 🎬', 'Sudah jadi kak! Semoga sesuai dengan yang kakak bayangkan 😊']),
-    gensong: q => pick([`Siap kak! Aku buatkan lagu \"${q}\" dulu ya. Prosesnya bisa 1-3 menit, mohon ditunggu \u{1F3BC}`, `Dengan senang hati kak! Lagu \"${q}\" lagi aku buat, sabar sebentar ya \u{1F3A4}`]),
-    doneGenSong: () => pick(['Lagunya sudah jadi kak, selamat mendengarkan! \u{1F3A7}', 'Sudah jadi kak! Semoga sesuai dengan yang kakak bayangkan \u{1F3B6}']),
+    gensong: q => pick([`Siap kak! Aku carikan lirik lagu \"${q}\" dulu ya, mohon ditunggu \u{1F3BC}`, `Dengan senang hati kak! Lirik lagu \"${q}\" lagi aku carikan, sabar sebentar ya \u{1F3A4}`]),
+    doneGenSong: () => pick(['Liriknya sudah ketemu kak, selamat membaca! \u{1F3A7}', 'Ini dia kak liriknya! Semoga sesuai dengan yang kakak cari \u{1F3B6}']),
     empty: () => 'Mohon maaf kak, aku belum menemukan hasilnya. Boleh coba dengan kata kunci lain? 🙏',
     error: m => `Mohon maaf kak, terjadi kendala: ${m}\nBoleh dicoba lagi sebentar lagi ya 🙏`,
     ask: () => 'Boleh kak, mau dibuatkan / dicarikan apa? Tulis deskripsinya ya 😊'
@@ -16045,7 +16049,7 @@ document.addEventListener('click',function(e){
   /* ---------- UI ---------- */
   const hub = () => $('ai-hub');
   function emptyState(){
-    $('dzxLog').innerHTML = `<div class="dzx-empty"><div class="dzx-hello">Halo kak! \u{1F44B}</div><p>Ngobrol, buat gambar, video &amp; lagu, cari foto, video &amp; lagu. Tinggal ketik ya.</p></div>`;
+    $('dzxLog').innerHTML = `<div class="dzx-empty"><div class="dzx-hello">Halo kak! \u{1F44B}</div><p>Ngobrol, buat gambar &amp; video, cari foto, video, lagu &amp; lirik lagu. Tinggal ketik ya.</p></div>`;
     hub().classList.remove('has-msgs');
   }
 
@@ -16149,7 +16153,7 @@ document.addEventListener('click',function(e){
       card.appendChild(img);
     }
     const title = document.createElement('div');
-    title.textContent = res.title || caption || 'Lagu AI';
+    title.textContent = res.title || caption || 'Lirik lagu';
     title.style.cssText = 'font-weight:700; font-size:14px; line-height:1.3; margin-bottom:6px;';
     card.appendChild(title);
     const au = document.createElement('audio');
@@ -16158,10 +16162,10 @@ document.addEventListener('click',function(e){
     const note = document.createElement('div'); note.className = 'dzx-cap'; note.style.display = 'none';
     note.textContent = 'Lagu tidak bisa diputar di sini, silakan coba tombol Buka.';
     au.addEventListener('error', () => { note.style.display = 'block'; });
-    card.appendChild(au);
-    card.appendChild(note);
+    if(res.url){ card.appendChild(au); card.appendChild(note); }
     if(res.lyrics){
       const det = document.createElement('details');
+      det.open = !res.url;
       det.style.cssText = 'margin-top:8px; font-size:13px;';
       const sum = document.createElement('summary');
       sum.textContent = 'Lihat lirik'; sum.style.cssText = 'cursor:pointer; font-weight:700;';
@@ -16171,7 +16175,7 @@ document.addEventListener('click',function(e){
       det.addEventListener('toggle', scrollDown);
       card.appendChild(det);
     }
-    card.appendChild(actionLinks(res.url, `dinz-lagu-${Date.now()}.mp3`));
+    if(res.url) card.appendChild(actionLinks(res.url, `dinz-lagu-${Date.now()}.mp3`));
     const grid = document.createElement('div');
     grid.className = 'dzx-grid single';
     grid.appendChild(card);
@@ -16274,7 +16278,7 @@ document.addEventListener('click',function(e){
     const res = await getGeneratedSong(q);
     setText(msg, FRIENDLY.doneGenSong()); settle(msg);
     renderGenSong(msg, res, q);
-    history.push({ role:'user', text:`(minta dibuatkan lagu: ${q})` }, { role:'ai', text:'(lagu sudah dibuat)' });
+    history.push({ role:'user', text:`(minta dicarikan lirik lagu: ${q})` }, { role:'ai', text:'(lirik lagu sudah dicarikan)' });
   }
 
   async function doVideo(q, msg){
@@ -16359,9 +16363,9 @@ document.addEventListener('click',function(e){
     $('dzxInput').addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); } });
     $('dzxInput').addEventListener('input', e => { e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; });
     $('dzxClearBtn').addEventListener('click', () => { history.length = 0; emptyState(); mode = 'auto'; });
-    const LABEL = { gensong:'\u{1F3BC} Buat lagu', auto:'', chat:'\u{1F4AC} Chat', gen:'\u{1F3A8} Buat gambar', photo:'\u{1F5BC} Cari gambar', genvideo:'\u{1F39E} Buat video', video:'\u{1F3AC} Cari video', music:'\u{1F3B5} Cari lagu' };
+    const LABEL = { gensong:'\u{1F3BC} Cari lirik lagu', auto:'', chat:'\u{1F4AC} Chat', gen:'\u{1F3A8} Buat gambar', photo:'\u{1F5BC} Cari gambar', genvideo:'\u{1F39E} Buat video', video:'\u{1F3AC} Cari video', music:'\u{1F3B5} Cari lagu' };
     const PH = {
-      gensong:'Deskripsikan lagu yang ingin dibuat (tema, genre, suasana)',
+      gensong:'Ketik judul lagu atau tema untuk dicarikan liriknya',
       auto:'Tanya Dinz AI',
       chat:'Ngobrol dengan Dinz AI',
       gen:'Deskripsikan gambar yang ingin dibuat',
