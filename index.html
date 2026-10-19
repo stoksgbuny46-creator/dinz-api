@@ -6582,6 +6582,8 @@ const ICONS = {
   'dz-fakeffduo': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"9\" r=\"3\"/><circle cx=\"16\" cy=\"9\" r=\"3\"/><path d=\"M2.5 19c.8-2.8 2.6-4 5.5-4s4.7 1.2 5.5 4\"/><path d=\"M13 15.2c.9-.4 1.9-.7 3-.7 2.9 0 4.7 1.2 5.5 4\"/></svg>`,
   'dz-fakeml': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z\"/><path d=\"M8 12l4-4 4 4\"/><path d=\"M8 16l4-4 4 4\"/></svg>`,
   'dz-fakedev': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M9 10l-2 2 2 2\"/><path d=\"M15 10l2 2-2 2\"/><path d=\"M13 9l-2 6\"/></svg>`,
+  'dz-balogo': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 4v16\"/><path d=\"M4 12h16\"/></svg>`,
+  'dz-codesnap': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M10 13l-2 2 2 2\"/><path d=\"M14 13l2 2-2 2\"/></svg>`,
   'dz-removebg': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/><circle cx="12" cy="10" r="3"/><path d="M6 20c1-3 3-5 6-5s5 2 6 5"/></svg>`,
 };
 
@@ -8587,7 +8589,9 @@ const DZ_TOOLS = [
   { id:'dz-iqc', name:'IQC Maker', desc:'Buat gambar chat gaya iPhone dari teks kamu, lalu simpan ke galeri', category:'image', badge:'MAKER' },
   { id:'dz-fakeff', name:'Fake FF Maker', desc:'Buat gambar Fake Free Fire dari nama kamu, lalu simpan ke galeri', category:'image', badge:'MAKER' },
   { id:'dz-fakeffduo', name:'Fake FF Duo', desc:'Buat gambar Fake Free Fire Duo dari dua nama pemain, lalu simpan ke galeri', category:'image', badge:'MAKER' },
-  { id:'dz-fakeml', name:'Fake ML Maker', desc:'Buat gambar profil Fake Mobile Legends dengan foto, nama, dan rank pilihan kamu', category:'image', badge:'MAKER' },
+  { id:'dz-fakeml', name:'Fake Lobby ML', desc:'Buat gambar lobby Fake Mobile Legends dengan foto dan nickname pilihan kamu', category:'image', badge:'MAKER' },
+  { id:'dz-balogo', name:'BA Logo Maker', desc:'Buat logo teks gaya Blue Archive dari tulisan kamu, lalu simpan ke galeri', category:'image', badge:'MAKER' },
+  { id:'dz-codesnap', name:'Code Snap', desc:'Ubah potongan kode jadi gambar keren gaya jendela editor, siap dibagikan', category:'image', badge:'MAKER' },
   { id:'dz-fakedev', name:'Fake Dev Maker', desc:'Buat kartu profil developer palsu dengan foto, nama, dan bio, lalu simpan ke galeri', category:'image', badge:'MAKER' },
   { id:'dz-removebg', name:'Remove Background', desc:'Hapus background foto langsung di HP tanpa upload, hasil PNG transparan siap simpan', category:'image', badge:'FOTO' },
 ];
@@ -9092,16 +9096,8 @@ function getDzToolUIHTML(id){
     case 'dz-fakeml':
       return `
         <div>
-          <label class="quick-label">Nama:</label>
+          <label class="quick-label">Nickname:</label>
           <input type="text" id="dzMlName" class="dz-field" maxlength="30" autocomplete="off" placeholder="Contoh: dinz">
-        </div>
-        <div>
-          <label class="quick-label">Rank:</label>
-          <select id="dzMlRank" class="dz-field">
-            <option>Warrior</option><option>Elite</option><option>Master</option><option>Grandmaster</option>
-            <option>Epic</option><option>Legend</option><option>Mythic</option><option>Mythical Honor</option>
-            <option selected>Mythical Glory</option><option>Mythical Immortal</option>
-          </select>
         </div>
         <div>
           <label class="quick-label">Foto avatar:</label>
@@ -9112,7 +9108,7 @@ function getDzToolUIHTML(id){
           <button type="button" id="dzMlGoBtn">Buat Gambar</button>
           <button type="button" id="dzMlSaveBtn" class="dz-secondary" disabled>Simpan ke Galeri</button>
         </div>
-        <div id="dzMlMsg" class="dz-result-note">Isi nama, pilih rank dan foto, lalu tekan "Buat Gambar".</div>
+        <div id="dzMlMsg" class="dz-result-note">Isi nickname dan pilih foto, lalu tekan "Buat Gambar".</div>
         <div id="dzMlWrap" class="dz-img-wrap"><span class="dz-ph">(Gambar akan muncul di sini)</span></div>
       `;
     case 'dz-fakedev':
@@ -9136,6 +9132,32 @@ function getDzToolUIHTML(id){
         </div>
         <div id="dzDvMsg" class="dz-result-note">Isi nama, bio, dan foto, lalu tekan "Buat Gambar".</div>
         <div id="dzDvWrap" class="dz-img-wrap"><span class="dz-ph">(Gambar akan muncul di sini)</span></div>
+      `;
+    case 'dz-balogo':
+      return `
+        <div>
+          <label class="quick-label">Teks logo:</label>
+          <input type="text" id="dzBaInput" class="dz-field" maxlength="30" autocomplete="off" placeholder="Contoh: dinz">
+        </div>
+        <div class="dz-actions">
+          <button type="button" id="dzBaGoBtn">Buat Gambar</button>
+          <button type="button" id="dzBaSaveBtn" class="dz-secondary" disabled>Simpan ke Galeri</button>
+        </div>
+        <div id="dzBaMsg" class="dz-result-note">Ketik teks lalu tekan "Buat Gambar".</div>
+        <div id="dzBaWrap" class="dz-img-wrap"><span class="dz-ph">(Gambar akan muncul di sini)</span></div>
+      `;
+    case 'dz-codesnap':
+      return `
+        <div>
+          <label class="quick-label">Kode:</label>
+          <textarea id="dzCsInput" class="dz-field" maxlength="1500" style="min-height:150px;font-family:'JetBrains Mono',monospace;" placeholder="Contoh:&#10;const nama = 'dinz';&#10;console.log(nama);"></textarea>
+        </div>
+        <div class="dz-actions">
+          <button type="button" id="dzCsGoBtn">Buat Gambar</button>
+          <button type="button" id="dzCsSaveBtn" class="dz-secondary" disabled>Simpan ke Galeri</button>
+        </div>
+        <div id="dzCsMsg" class="dz-result-note">Tempel kode lalu tekan "Buat Gambar".</div>
+        <div id="dzCsWrap" class="dz-img-wrap"><span class="dz-ph">(Gambar akan muncul di sini)</span></div>
       `;
     case 'dz-removebg':
       return `
@@ -9185,6 +9207,8 @@ function bindDzToolEvents(id){
       case 'dz-fakeffduo': initDzFakeFfDuo(); break;
       case 'dz-fakeml': initDzFakeMl(); break;
       case 'dz-fakedev': initDzFakeDev(); break;
+      case 'dz-balogo': initDzBaLogo(); break;
+      case 'dz-codesnap': initDzCodeSnap(); break;
       case 'dz-removebg': initDzRemoveBg(); break;
     }
   }, 50);
@@ -9572,7 +9596,15 @@ function dzPickImageUrl(d, depth){
 }
 
 async function dzReadImageResponse(res){
-  if(!res.ok) throw new Error('Server membalas error (' + res.status + ')');
+  if(!res.ok){
+    let detail = '';
+    try{
+      const t = (await res.text()).trim();
+      try{ const j = JSON.parse(t); detail = String(j.message || j.error || j.msg || (j.result && j.result.message) || '').slice(0, 140); }
+      catch(_){ detail = t.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 100); }
+    }catch(_){}
+    throw new Error('Server membalas error (' + res.status + ')' + (detail ? ': ' + detail : ''));
+  }
   const ct = (res.headers.get('content-type') || '').toLowerCase();
   if(ct.startsWith('image/')) return { blob: await res.blob() };
   const text = await res.text();
@@ -9636,7 +9668,7 @@ async function dzGetImage(apiUrl, timeoutMs){
     }catch(_){
       // Terakhir: coba tampilkan langsung lewat <img>, tapi pastikan benar-benar gambar
       if(await dzProbeImg(apiUrl, 15000)) out = { url: apiUrl };
-      else throw new Error('API tidak mengembalikan gambar');
+      else throw new Error('API tidak mengembalikan gambar (server API down / foto tidak bisa dibaca server)');
     }
   }
   if(out.url && !out.blob && /^data:image\//i.test(out.url)){
@@ -9711,6 +9743,7 @@ function dzInitImgMaker(cfg){
     if(busy) return;
     busy = true;
     go.disabled = true; save.disabled = true;
+    let usedFb = false, fbReason = '';
     try{
       let result;
       if(typeof cfg.produce === 'function'){
@@ -9725,11 +9758,19 @@ function dzInitImgMaker(cfg){
         setMsg(cfg.loadingText || 'Memproses, tunggu sebentar...');
         let lastErr = null;
         for(const u of apiUrls){
-          try{ result = await dzGetImage(u, cfg.timeout || 20000); lastErr = null; break; }
-          catch(e){ lastErr = e; }
+          for(let attempt = 0; attempt < (apiUrls.length > 1 ? 1 : 2) && !result; attempt++){
+            try{
+              if(attempt) setMsg('Mencoba lagi...');
+              result = await dzGetImage(u, cfg.timeout || 25000);
+              lastErr = null;
+            }catch(e){ lastErr = e; }
+          }
+          if(result) break;
         }
         if(!result && typeof cfg.fallback === 'function'){
-          setMsg('Server API sedang bermasalah, membuat gambar langsung di HP...');
+          usedFb = true;
+          fbReason = (lastErr && lastErr.message) ? lastErr.message : 'API tidak merespons';
+          setMsg('API gagal (' + fbReason + '). Membuat versi lokal di HP...');
           result = await cfg.fallback();
           lastErr = null;
         }
@@ -9741,7 +9782,11 @@ function dzInitImgMaker(cfg){
       const img = document.createElement('img');
       img.className = 'dz-result-img' + (cfg.checker ? ' dz-checker' : '');
       img.alt = 'Hasil';
-      img.onload = () => { save.disabled = false; setMsg(cfg.doneText || 'Selesai! Tekan "Simpan ke Galeri".'); };
+      img.onload = () => {
+        save.disabled = false;
+        setMsg(usedFb ? ('PERHATIAN: ini versi lokal, bukan hasil asli API (' + fbReason + '). Tekan "Buat Gambar" lagi untuk coba API.')
+                      : (cfg.doneText || 'Selesai! Tekan "Simpan ke Galeri".'));
+      };
       img.onerror = () => {
         save.disabled = true;
         setMsg('Gagal menampilkan gambar. Coba lagi sebentar lagi.');
@@ -9942,6 +9987,7 @@ function initDzFakeFf(){
 
 /* ---------- Fake FF Duo, Fake ML, Fake Dev ---------- */
 const DZ_API_SNOW = 'https://api.snowping.cfd';
+const DZ_API_NEXRAY = 'https://api.nexray.eu.cc';
 const DZ_API_AZBRY = 'https://api.azbry.com';
 
 /* Foto -> JPEG maks 800px (ringan untuk diupload). Gagal -> file asli. */
@@ -9973,26 +10019,64 @@ function dzPhotoToJpegFile(file, max){
 
 /* Upload foto ke hosting gratis supaya dapat link untuk API. Coba beberapa host berurutan. */
 async function dzUploadPhoto(file){
-  try{ return await uploadImageToHost(file); }catch(_){}
-  try{
-    const fd = new FormData(); fd.append('files[]', file, file.name || 'photo.jpg');
-    const r = await fetch('https://uguu.se/upload?output=json', { method:'POST', body: fd });
-    if(r.ok){
-      const j = await r.json();
-      const u = j && j.files && j.files[0] && j.files[0].url;
-      if(u) return u;
+  const name = file.name || 'photo.jpg';
+  const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+  const textUrl = t => { t = String(t || '').trim(); return /^https?:\/\/\S+$/i.test(t) ? t : ''; };
+  const hosts = {
+    catbox: async () => {
+      const fd = new FormData(); fd.append('reqtype', 'fileupload'); fd.append('fileToUpload', file, name);
+      const r = await fetch('https://catbox.moe/user/api.php', { method:'POST', body: fd });
+      const u = textUrl(await r.text()); if(!u) throw new Error('respons tidak valid'); return u;
+    },
+    catboxProxy: async () => {
+      const fd = new FormData(); fd.append('reqtype', 'fileupload'); fd.append('fileToUpload', file, name);
+      const r = await fetch('https://corsproxy.io/?url=' + encodeURIComponent('https://catbox.moe/user/api.php'), { method:'POST', body: fd });
+      const u = textUrl(await r.text()); if(!u) throw new Error('respons tidak valid'); return u;
+    },
+    litterbox: async () => {
+      const fd = new FormData(); fd.append('reqtype', 'fileupload'); fd.append('time', '12h'); fd.append('fileToUpload', file, name);
+      const r = await fetch('https://litterbox.catbox.moe/resources/internals/api.php', { method:'POST', body: fd });
+      const u = textUrl(await r.text()); if(!u) throw new Error('respons tidak valid'); return u;
+    },
+    uguu: async () => {
+      const fd = new FormData(); fd.append('files[]', file, name);
+      const r = await fetch('https://uguu.se/upload', { method:'POST', body: fd });
+      const j = await r.json(); const u = textUrl(j && j.files && j.files[0] && j.files[0].url);
+      if(!u) throw new Error('respons tidak valid'); return u;
+    },
+    tmpfiles: async () => {
+      const fd = new FormData(); fd.append('file', file, name);
+      const r = await fetch('https://tmpfiles.org/api/v1/upload', { method:'POST', body: fd });
+      const j = await r.json(); let u = textUrl(j && j.data && j.data.url);
+      if(!u) throw new Error('respons tidak valid');
+      return u.replace('tmpfiles.org/', 'tmpfiles.org/dl/').replace('/dl/dl/', '/dl/');
+    },
+    freeimage: async () => {
+      const fd = new FormData(); fd.append('source', file, name); fd.append('type', 'file'); fd.append('action', 'upload');
+      const r = await fetch('https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5', { method:'POST', body: fd });
+      const j = await r.json(); const u = textUrl(j && j.image && j.image.url);
+      if(!u) throw new Error('respons tidak valid'); return u;
     }
-  }catch(_){}
-  try{
-    const fd = new FormData(); fd.append('file', file, file.name || 'photo.jpg');
-    const r = await fetch('https://tmpfiles.org/api/v1/upload', { method:'POST', body: fd });
-    if(r.ok){
-      const j = await r.json();
-      const u = j && j.data && j.data.url;
-      if(u) return u.replace('tmpfiles.org/', 'tmpfiles.org/dl/').replace('/dl/dl/', '/dl/');
-    }
-  }catch(_){}
-  throw new Error('Gagal upload foto');
+  };
+  const order = ['catbox', 'litterbox', 'catboxProxy', 'freeimage', 'tmpfiles', 'uguu'];
+  const errs = [];
+  const got = {};
+  await new Promise(resolve => {
+    let pending = order.length, graceTimer = null;
+    const finish = () => { clearTimeout(graceTimer); resolve(); };
+    order.forEach(k => {
+      withTimeout(hosts[k](), 25000).then(u => {
+        got[k] = u;
+        // begitu ada yang berhasil, beri waktu 5 detik untuk host lain (biar ada cadangan link)
+        if(!graceTimer) graceTimer = setTimeout(finish, 5000);
+      }).catch(e => {
+        errs.push(k + ': ' + ((e && e.message) || 'gagal'));
+      }).finally(() => { if(--pending === 0) finish(); });
+    });
+  });
+  const urls = order.filter(k => got[k]).map(k => got[k]);
+  if(!urls.length) throw new Error('Upload foto gagal di semua server (' + errs.join(', ') + '). Coba foto lain atau tempel link foto.');
+  return urls;
 }
 
 /* Pemilih foto: pilih dari galeri ATAU tempel link. prefix = Ml / Dv */
@@ -10023,16 +10107,16 @@ function dzInitAvatarPicker(prefix){
     /* Hasil: link foto (atau '' kalau belum ada). Lempar error kalau upload gagal. */
     resolveUrl: async (setMsg) => {
       if(chosen){
-        if(upCache && upCache.file === chosen) return upCache.url;
+        if(upCache && upCache.file === chosen) return upCache.urls;
         setMsg('Mengunggah foto...');
         const jpg = await dzPhotoToJpegFile(chosen, 800);
-        const u = await dzUploadPhoto(jpg);
-        upCache = { file: chosen, url: u };
-        return u;
+        const urls = await dzUploadPhoto(jpg);
+        upCache = { file: chosen, urls: urls };
+        return urls;
       }
       const u = (urlInp && urlInp.value.trim()) || '';
       if(u && !/^https?:\/\/\S+$/i.test(u)) throw new Error('Link foto harus diawali http:// atau https://');
-      return u;
+      return u ? [u] : [];
     }
   };
 }
@@ -10106,32 +10190,26 @@ function dzDrawFfDuo(n1, n2){
   return c;
 }
 
-function dzDrawFakeMl(name, rank, img){
-  const W = 1080, H = 1350, F = '"Arial Black","Helvetica Neue",Arial,sans-serif';
+function dzDrawFakeMl(name, img){
+  const W = 1080, H = 1200, F = '"Arial Black","Helvetica Neue",Arial,sans-serif';
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const ctx = c.getContext('2d');
   const g = ctx.createLinearGradient(0, 0, 0, H);
   g.addColorStop(0, '#0a1a3d'); g.addColorStop(.6, '#142e66'); g.addColorStop(1, '#2a1048');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-  const rg = ctx.createRadialGradient(W / 2, 480, 40, W / 2, 480, 520);
+  const rg = ctx.createRadialGradient(W / 2, 470, 40, W / 2, 470, 520);
   rg.addColorStop(0, 'rgba(255,200,60,.35)'); rg.addColorStop(1, 'rgba(255,200,60,0)');
   ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillStyle = '#ffd23f'; ctx.font = '900 70px ' + F; ctx.fillText('MOBILE LEGENDS', W / 2, 120);
-  ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.font = '600 34px Arial'; ctx.fillText('BANG BANG', W / 2, 185);
-  dzDrawAvatar(ctx, img, W / 2, 480, 250, '#ffd23f');
+  ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.font = '600 34px Arial'; ctx.fillText('LOBBY', W / 2, 185);
+  dzDrawAvatar(ctx, img, W / 2, 470, 250, '#ffd23f');
   ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 14;
   dzFitText(ctx, name, W - 160, 96, '900', F);
-  ctx.fillText(name, W / 2, 835);
+  ctx.fillText(name, W / 2, 825);
   ctx.shadowBlur = 0;
-  ctx.font = '800 54px Arial';
-  const rw = Math.min(W - 140, ctx.measureText(rank.toUpperCase()).width + 140);
-  const rg2 = ctx.createLinearGradient(W / 2 - rw / 2, 0, W / 2 + rw / 2, 0);
-  rg2.addColorStop(0, '#ff9f1c'); rg2.addColorStop(1, '#ffd23f');
-  ctx.fillStyle = rg2; dzRoundRect(ctx, W / 2 - rw / 2, 920, rw, 110, 55); ctx.fill();
-  ctx.fillStyle = '#2a1048'; ctx.fillText(rank.toUpperCase(), W / 2, 977);
-  ctx.fillStyle = '#ffd23f'; ctx.font = '700 60px Arial'; ctx.fillText('\u2605 \u2605 \u2605 \u2605 \u2605', W / 2, 1120);
-  ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = '600 26px Arial'; ctx.fillText('Dibuat dengan Dinz Tools', W / 2, 1290);
+  ctx.fillStyle = '#ffd23f'; ctx.font = '700 60px Arial'; ctx.fillText('\u2605 \u2605 \u2605 \u2605 \u2605', W / 2, 960);
+  ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = '600 26px Arial'; ctx.fillText('Dibuat dengan Dinz Tools', W / 2, 1130);
   return c;
 }
 
@@ -10189,22 +10267,16 @@ function initDzFakeMl(){
   const v = id => (document.getElementById(id).value || '').trim();
   const pk = dzInitAvatarPicker('Ml');
   dzInitImgMaker({
-    goBtn:'dzMlGoBtn', saveBtn:'dzMlSaveBtn', wrap:'dzMlWrap', msg:'dzMlMsg', fileName:'fakeml',
-    timeout: 20000,
+    goBtn:'dzMlGoBtn', saveBtn:'dzMlSaveBtn', wrap:'dzMlWrap', msg:'dzMlMsg', fileName:'fakelobyml',
+    timeout: 25000,
     buildUrl: async (setMsg) => {
       const name = v('dzMlName');
-      if(!name){ setMsg('Isi nama dulu ya.'); return null; }
+      if(!name){ setMsg('Isi nickname dulu ya.'); return null; }
       if(!pk.file() && !pk.url()){ setMsg('Pilih foto dari galeri atau tempel link foto dulu ya.'); return null; }
-      let av = '';
-      try{ av = await pk.resolveUrl(setMsg); }
-      catch(e){
-        if(pk.file()) return 'fallback';   // upload gagal -> buat langsung di HP
-        throw e;                           // link foto tidak valid
-      }
-      if(!av) return null;
-      return [`${DZ_API_SNOW}/api/maker/fakeml?avatar=${encodeURIComponent(av)}&name=${encodeURIComponent(name)}&rank=${encodeURIComponent(v('dzMlRank') || 'Mythical Glory')}`];
-    },
-    fallback: async () => dzCanvasToResult(dzDrawFakeMl(v('dzMlName'), v('dzMlRank') || 'Mythical Glory', await dzLoadAvatarImg(pk.file(), pk.url())))
+      const avs = await pk.resolveUrl(setMsg);
+      if(!avs.length) return null;
+      return avs.map(av => `${DZ_API_NEXRAY}/maker/fakelobyml?avatar=${encodeURIComponent(av)}&nickname=${encodeURIComponent(name)}`);
+    }
   });
 }
 
@@ -10218,16 +10290,110 @@ function initDzFakeDev(){
       const name = v('dzDvName');
       if(!name){ setMsg('Isi nama dulu ya.'); return null; }
       if(!pk.file() && !pk.url()){ setMsg('Pilih foto dari galeri atau tempel link foto dulu ya.'); return null; }
-      let av = '';
-      try{ av = await pk.resolveUrl(setMsg); }
-      catch(e){
-        if(pk.file()) return 'fallback';
-        throw e;
+      const avs = await pk.resolveUrl(setMsg);
+      if(!avs.length) return null;
+      return avs.map(av => `${DZ_API_AZBRY}/api/maker/fakedev?img=${encodeURIComponent(av)}&name=${encodeURIComponent(name)}&bio=${encodeURIComponent(v('dzDvBio') || '-')}`);
+    }
+  });
+}
+
+function dzDrawBaLogo(text){
+  const F = '"Arial Black","Helvetica Neue",Arial,sans-serif';
+  const probe = document.createElement('canvas').getContext('2d');
+  let fs = 220;
+  probe.font = 'italic 900 ' + fs + 'px ' + F;
+  while(probe.measureText(text).width > 1100 && fs > 60){ fs -= 10; probe.font = 'italic 900 ' + fs + 'px ' + F; }
+  const tw = probe.measureText(text).width;
+  const W = Math.max(900, Math.round(tw + 300)), H = 640;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2;
+  // halo di belakang teks
+  ctx.lineWidth = 26; ctx.strokeStyle = 'rgba(18,138,250,.9)';
+  ctx.beginPath(); ctx.ellipse(cx, cy, 190, 190, 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.lineWidth = 12; ctx.strokeStyle = 'rgba(40,50,80,.85)';
+  ctx.beginPath(); ctx.moveTo(cx - 230, cy + 30); ctx.lineTo(cx + 230, cy - 30); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 20, cy - 235); ctx.lineTo(cx + 20, cy + 235); ctx.stroke();
+  // teks
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = 'italic 900 ' + fs + 'px ' + F;
+  ctx.lineJoin = 'round'; ctx.lineWidth = 22; ctx.strokeStyle = '#fff'; ctx.strokeText(text, cx, cy);
+  const g = ctx.createLinearGradient(0, cy - fs / 2, 0, cy + fs / 2);
+  g.addColorStop(0, '#2aa0ff'); g.addColorStop(1, '#0a5fd6');
+  ctx.fillStyle = g; ctx.fillText(text, cx, cy);
+  return c;
+}
+
+function dzDrawCodeSnap(code){
+  const MONO = '"JetBrains Mono","Fira Code","Courier New",monospace';
+  let lines = String(code).replace(/\t/g, '  ').split(/\r?\n/).slice(0, 40);
+  while(lines.length > 1 && !lines[lines.length - 1].trim()) lines.pop();
+  const fs = 32, lh = 50, padX = 56, topBar = 90;
+  const probe = document.createElement('canvas').getContext('2d');
+  probe.font = fs + 'px ' + MONO;
+  let maxW = 0; lines.forEach(l => { maxW = Math.max(maxW, probe.measureText(l).width); });
+  const winW = Math.min(1700, Math.max(760, Math.round(maxW + padX * 2)));
+  const winH = topBar + lines.length * lh + 70;
+  const margin = 70, W = winW + margin * 2, H = winH + margin * 2;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#7c3aed'); bg.addColorStop(1, '#2563eb');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18;
+  ctx.fillStyle = '#1e1e2e'; dzRoundRect(ctx, margin, margin, winW, winH, 26); ctx.fill();
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  ['#ff5f56', '#ffbd2e', '#27c93f'].forEach((col, i) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(margin + 48 + i * 40, margin + 45, 11, 0, Math.PI * 2); ctx.fill(); });
+  ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left'; ctx.font = fs + 'px ' + MONO;
+  const KW = /^(const|let|var|function|return|if|else|for|while|import|from|export|class|new|async|await|def|print|try|catch|true|false|null|undefined|this|public|private|static|void|int|string)$/;
+  const tok = /(\/\/.*$|#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)|(\s+|.)/g;
+  lines.forEach((line, i) => {
+    let x = margin + padX; const y = margin + topBar + i * lh + 30;
+    let m; tok.lastIndex = 0;
+    while((m = tok.exec(line)) !== null){
+      const t = m[0];
+      let col = '#cdd6f4';
+      if(m[1]) col = '#6c7086';
+      else if(m[2]) col = '#a6e3a1';
+      else if(m[3]) col = '#fab387';
+      else if(m[4]){
+        if(KW.test(t)) col = '#cba6f7';
+        else if(line.charAt(tok.lastIndex) === '(') col = '#89b4fa';
       }
-      if(!av) return null;
-      return [`${DZ_API_AZBRY}/api/maker/fakedev?img=${encodeURIComponent(av)}&name=${encodeURIComponent(name)}&bio=${encodeURIComponent(v('dzDvBio') || '-')}`];
+      ctx.fillStyle = col; ctx.fillText(t, x, y);
+      x += ctx.measureText(t).width;
+      if(m[0].length === 0) tok.lastIndex++;
+    }
+  });
+  return c;
+}
+
+function initDzBaLogo(){
+  const v = () => (document.getElementById('dzBaInput').value || '').trim();
+  dzInitImgMaker({
+    goBtn:'dzBaGoBtn', saveBtn:'dzBaSaveBtn', wrap:'dzBaWrap', msg:'dzBaMsg', fileName:'balogo',
+    timeout: 25000,
+    buildUrl: (setMsg) => {
+      const t = v();
+      if(!t){ setMsg('Isi teks dulu ya.'); return null; }
+      return [`${DZ_API_NEXRAY}/maker/balogo?text=${encodeURIComponent(t)}`];
     },
-    fallback: async () => dzCanvasToResult(dzDrawFakeDev(v('dzDvName'), v('dzDvBio'), await dzLoadAvatarImg(pk.file(), pk.url())))
+    fallback: () => dzCanvasToResult(dzDrawBaLogo(v()))
+  });
+}
+
+function initDzCodeSnap(){
+  const v = () => (document.getElementById('dzCsInput').value || '').replace(/\s+$/, '');
+  dzInitImgMaker({
+    goBtn:'dzCsGoBtn', saveBtn:'dzCsSaveBtn', wrap:'dzCsWrap', msg:'dzCsMsg', fileName:'codesnap',
+    timeout: 25000,
+    buildUrl: (setMsg) => {
+      const t = v();
+      if(!t.trim()){ setMsg('Isi kodenya dulu ya.'); return null; }
+      return [`${DZ_API_NEXRAY}/maker/codesnap?code=${encodeURIComponent(t)}`];
+    },
+    fallback: () => dzCanvasToResult(dzDrawCodeSnap(v()))
   });
 }
 
