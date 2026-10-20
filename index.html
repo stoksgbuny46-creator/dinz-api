@@ -6636,6 +6636,8 @@ const ICONS = {
   'dz-balogo': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 4v16\"/><path d=\"M4 12h16\"/></svg>`,
   'dz-codesnap': `<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a1a2e\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M10 13l-2 2 2 2\"/><path d=\"M14 13l2 2-2 2\"/></svg>`,
   'dz-removebg': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/><circle cx="12" cy="10" r="3"/><path d="M6 20c1-3 3-5 6-5s5 2 6 5"/></svg>`,
+  'react-channel': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+  'web-to-apk': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="12" y1="7" x2="12" y2="14"/><polyline points="8.5,11 12,14.5 15.5,11"/><line x1="10" y1="18.5" x2="14" y2="18.5"/></svg>`,
   'ai-img-prompt': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="M21 15l-5-5L5 21"/><circle cx="17" cy="17" r="3.5" fill="#fff"/><line x1="21" y1="21" x2="19.5" y2="19.5"/></svg>`,
   'dz-ttchat': `<svg viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/><path d="M11 14.5v-5l4-.8"/><circle cx="9.8" cy="14.6" r="1.2"/><circle cx="13.8" cy="13.8" r="1.2"/></svg>`,
 };
@@ -8629,6 +8631,8 @@ const DZ_TOOLS = [
   { id:'ai-caption', name:'AI Caption', desc:'Buat 5 ide caption menarik untuk konten sosial media', category:'ai', badge:'AI' },
   { id:'prompt-generator', name:'Prompt Generator', desc:'Generate prompt AI berkualitas untuk image generation', category:'ai', badge:'AI' },
   { id:'ai-img-prompt', name:'AI Img Prompt', desc:'Cari contoh prompt gambar AI lengkap dengan preview, tinggal salin dan pakai', category:'ai', badge:'AI' },
+  { id:'web-to-apk', name:'Web to APK', desc:'Ubah website jadi aplikasi Android (APK) lengkap dengan nama, package, splash, dan orientasi', category:'developer', badge:'DEV' },
+  { id:'react-channel', name:'React Channel WA', desc:'Kirim reaksi emoji ke postingan Saluran (Channel) WhatsApp lewat link postingan', category:'utility', badge:'TOOL' },
   { id:'dz-enc-dec', name:'Text Encoder & Decoder', desc:'Encode / decode Base64, URL, Hex, HTML Entities, Binary', category:'utility', badge:'UTILITY' },
   { id:'dz-hash-gen', name:'Hash Generator', desc:'Buat checksum / hash MD5, SHA-1, SHA-256, SHA-512 instan', category:'developer', badge:'DEV' },
   { id:'dz-json-fmt', name:'JSON Formatter & Validator', desc:'Rapikan, format indentasi, dan cek validitas sintaks JSON', category:'developer', badge:'DEV' },
@@ -8788,6 +8792,61 @@ function getDzToolUIHTML(id){
           <button type="button" id="dzGo">Generate Prompt</button>
         </div>
         <textarea id="dzOut" class="dz-field" style="margin-top:10px" readonly placeholder="Prompt AI yang dihasilkan..."></textarea>
+      `;
+    case 'react-channel':
+      return `
+        <div>
+          <label class="quick-label">Link postingan Saluran WhatsApp:</label>
+          <input type="url" id="dzRcLink" class="dz-field" autocomplete="off" placeholder="https://whatsapp.com/channel/xxxx/123">
+        </div>
+        <div style="margin-top:10px;">
+          <label class="quick-label">Emoji reaksi:</label>
+          <input type="text" id="dzRcEmoji" class="dz-field" autocomplete="off" maxlength="12">
+          <div id="dzRcChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+        </div>
+        <div class="dz-actions">
+          <button type="button" id="dzRcGo">Kirim Reaksi</button>
+        </div>
+        <div id="dzRcMsg" class="dz-result-note">Tempel link postingan (bukan link saluran), pilih emoji, lalu tekan "Kirim Reaksi".</div>
+        <div id="dzRcOut" style="margin-top:12px;"></div>
+      `;
+    case 'web-to-apk':
+      return `
+        <div>
+          <label class="quick-label">URL website:</label>
+          <input type="url" id="dzWaUrl" class="dz-field" autocomplete="off" placeholder="https://contoh.vercel.app">
+        </div>
+        <div style="margin-top:10px;">
+          <label class="quick-label">Nama aplikasi:</label>
+          <input type="text" id="dzWaName" class="dz-field" autocomplete="off" placeholder="Contoh: Dinz AI">
+        </div>
+        <div style="margin-top:10px;">
+          <label class="quick-label">Package name:</label>
+          <input type="text" id="dzWaPkg" class="dz-field" autocomplete="off" autocapitalize="none" placeholder="com.dinz.app">
+        </div>
+        <div style="margin-top:10px;">
+          <label class="quick-label">Logo / ikon aplikasi (opsional):</label>
+          <div class="dz-drop" id="dzWaIcDrop"><b id="dzWaIcDropLabel">Ketuk di sini untuk Pilih Logo dari Galeri</b><input type="file" id="dzWaIcFile" accept="image/*" class="dz-hidden"></div>
+          <input type="url" id="dzWaIcUrl" class="dz-field" autocomplete="off" placeholder="atau tempel link gambar logo (https://...)" style="margin-top:8px;">
+        </div>
+        <div style="margin-top:10px;">
+          <label class="quick-label">Gambar splash / layar pembuka (opsional):</label>
+          <div class="dz-drop" id="dzWaSpDrop"><b id="dzWaSpDropLabel">Ketuk di sini untuk Pilih Gambar dari Galeri</b><input type="file" id="dzWaSpFile" accept="image/*" class="dz-hidden"></div>
+          <input type="url" id="dzWaSpUrl" class="dz-field" autocomplete="off" placeholder="atau tempel link gambar splash (https://...)" style="margin-top:8px;">
+        </div>
+        <div style="margin-top:10px;">
+          <label class="quick-label">Orientasi layar:</label>
+          <select id="dzWaOri" class="dz-field">
+            <option value="auto" selected>Auto</option>
+            <option value="portrait">Portrait (tegak)</option>
+            <option value="landscape">Landscape (mendatar)</option>
+          </select>
+        </div>
+        <div class="dz-actions">
+          <button type="button" id="dzWaGo">Buat APK</button>
+        </div>
+        <div id="dzWaMsg" class="dz-result-note">Isi data lalu tekan "Buat APK". Proses pembuatan bisa memakan waktu 1-3 menit.</div>
+        <div id="dzWaOut" style="margin-top:12px;"></div>
       `;
     case 'ai-img-prompt':
       return `
@@ -9284,6 +9343,8 @@ function bindDzToolEvents(id){
       case 'ai-caption': initAiCaption(); break;
       case 'prompt-generator': initPromptGenerator(); break;
       case 'ai-img-prompt': initAiImgPrompt(); break;
+      case 'web-to-apk': initWebToApk(); break;
+      case 'react-channel': initReactChannel(); break;
       case 'dz-enc-dec': initDzEncDec(); break;
       case 'dz-hash-gen': initDzHashGen(); break;
       case 'dz-json-fmt': initDzJsonFmt(); break;
@@ -9421,6 +9482,256 @@ function initPromptGenerator(){
     const prompt = `Create a ${style.toLowerCase()} result about: ${goal}. Include clear subject, composition, lighting, environment, details, mood, quality, and avoid unwanted artifacts.`;
     dzOut.value = prompt;
   };
+}
+
+/* ---------- React Channel WhatsApp (react.whyux-xec.my.id) ---------- */
+// Catatan: key ada di kode halaman, jadi bisa dilihat siapa pun yang membuka source situs.
+const DZ_RCH_KEYS = [
+  'e462084f2a053697dc58d24aa0d42ff14b230f2b74c6ae7fe4d4674a764d1c42',
+  '03ba12b364de7152418924027d166731148c4c23cc22916588369acb3498a2e7',
+  'e40bf7cbaca4e246a0273b48bdb56c4079f8fe537b7739c5b9225b0b96079544',
+  '4a84210413ac6675cf51c1f975a716eae3753c479818f173836bacc0eaea4e2c'
+];
+
+async function dzRcRequest(url, headers, timeoutMs){
+  const once = async (u) => {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), timeoutMs);
+    try{
+      const res = await fetch(u, { headers, signal: ctl.signal });
+      const text = await res.text();
+      let data = null;
+      try{ data = JSON.parse(text); }catch(_){}
+      return { status: res.status, ok: res.ok, data, text };
+    } finally { clearTimeout(t); }
+  };
+  try{ return await once(url); }
+  catch(err){
+    if(err.name === 'AbortError') throw err;
+    // kemungkinan diblokir CORS -> lewat proxy
+    try{ return await once('https://corsproxy.io/?url=' + encodeURIComponent(url)); }
+    catch(_){ throw new Error('Tidak bisa terhubung ke server.'); }
+  }
+}
+
+function initReactChannel(){
+  const $ = id => document.getElementById(id);
+  const linkEl = $('dzRcLink'), emoEl = $('dzRcEmoji'), chips = $('dzRcChips');
+  const goBtn = $('dzRcGo'), msg = $('dzRcMsg'), out = $('dzRcOut');
+  if(!linkEl || !emoEl || !chips || !goBtn || !msg || !out) return;
+  emoEl.value = '\u{1F44D}';
+  ['\u{1F44D}', '\u2764\uFE0F', '\u{1F602}', '\u{1F62E}', '\u{1F622}', '\u{1F64F}', '\u{1F525}', '\u{1F389}'].forEach(em => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = em;
+    b.style.cssText = 'font-size:20px;line-height:1;padding:6px 9px;background:var(--panel);border:2px solid #000;border-radius:9px;cursor:pointer;';
+    b.addEventListener('click', () => { emoEl.value = em; });
+    chips.appendChild(b);
+  });
+  let busy = false;
+
+  const msgOf = r => {
+    const d = r.data;
+    if(d && typeof d === 'object'){
+      const m = d.message || d.msg || d.error || d.result || d.status;
+      if(m != null) return typeof m === 'string' ? m : JSON.stringify(m);
+    }
+    return String(r.text || '').slice(0, 200);
+  };
+  const isFail = r => !r.ok || (r.data && typeof r.data === 'object' && (r.data.status === false || r.data.success === false || r.data.error));
+
+  const run = async () => {
+    if(busy) return;
+    const link = linkEl.value.trim();
+    const emoji = emoEl.value.trim();
+    if(!/^https?:\/\/(www\.)?whatsapp\.com\/channel\/[\w-]+\/\d+/i.test(link)){
+      msg.textContent = 'Link harus link postingan saluran, contohnya https://whatsapp.com/channel/xxxx/123 (bukan link salurannya saja).';
+      return;
+    }
+    if(!emoji){ msg.textContent = 'Pilih atau isi emoji dulu ya.'; return; }
+    busy = true; goBtn.disabled = true; out.innerHTML = '';
+    const base = 'https://react.whyux-xec.my.id/api/rch?link=' + encodeURIComponent(link) + '&emoji=' + encodeURIComponent(emoji);
+    const start = Math.floor(Math.random() * DZ_RCH_KEYS.length);
+    let last = null, done = null;
+    try{
+      for(let ki = 0; ki < DZ_RCH_KEYS.length && !done; ki++){
+        const key = DZ_RCH_KEYS[(start + ki) % DZ_RCH_KEYS.length];
+        msg.textContent = 'Mengirim reaksi... (percobaan ' + (ki + 1) + '/' + DZ_RCH_KEYS.length + ')';
+        // cara pengiriman key belum diketahui pasti -> coba berurutan: query, header x-api-key, header Bearer
+        const variants = [
+          { url: base + '&apikey=' + encodeURIComponent(key), headers: {} },
+          { url: base, headers: { 'x-api-key': key } },
+          { url: base, headers: { 'Authorization': 'Bearer ' + key } }
+        ];
+        let stopAll = false;
+        for(const v of variants){
+          let r;
+          try{ r = await dzRcRequest(v.url, v.headers, 30000); }
+          catch(e){ last = { error: e.name === 'AbortError' ? 'server terlalu lama merespons' : e.message }; continue; }
+          last = r;
+          console.log('React Channel:', r.status, r.data !== null ? r.data : r.text);
+          if(r.status === 401 || r.status === 403) continue;   // key/cara kirim ditolak -> variasi berikutnya
+          if(r.status === 429) break;                          // kena limit -> key berikutnya
+          if(!isFail(r)){ done = r; break; }
+          if(r.status === 400 || r.status === 404 || r.status === 422){ stopAll = true; break; }  // masalah di link/emoji, bukan key
+          if(/key|auth|token|limit|quota|session/i.test(msgOf(r))) break;                        // masalah di key -> key berikutnya
+          stopAll = true; break;
+        }
+        if(stopAll) break;
+      }
+      if(done){
+        msg.textContent = 'Reaksi ' + emoji + ' terkirim.';
+        const card = document.createElement('div');
+        card.style.cssText = 'border:2.5px solid #000;border-radius:12px;padding:10px;background:var(--panel);';
+        const t = document.createElement('div');
+        t.textContent = 'Respons server';
+        t.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:4px;';
+        const pre = document.createElement('div');
+        pre.textContent = (done.data !== null ? JSON.stringify(done.data) : String(done.text)).slice(0, 400);
+        pre.style.cssText = "font:11px/1.5 'JetBrains Mono',monospace;word-break:break-word;white-space:pre-wrap;";
+        card.appendChild(t); card.appendChild(pre);
+        out.appendChild(card);
+      } else {
+        const why = !last ? 'tidak ada respons' : (last.error ? last.error : ('server membalas ' + last.status + ': ' + msgOf(last)));
+        msg.textContent = 'Gagal mengirim reaksi (' + why.slice(0, 200) + ').';
+      }
+    }catch(err){
+      msg.textContent = 'Gagal: ' + (err.message || 'tidak diketahui');
+    }finally{
+      busy = false; goBtn.disabled = false;
+    }
+  };
+  goBtn.addEventListener('click', run);
+}
+
+/* ---------- Web to APK (api-cloud.my.id) ---------- */
+async function dzWaFetch(url, timeoutMs){
+  const once = async (u) => {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), timeoutMs);
+    try{
+      const res = await fetch(u, { signal: ctl.signal });
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if(res.ok && (ct.includes('android.package-archive') || ct.includes('octet-stream'))){
+        const b = await res.blob();
+        if(!b.size) throw new Error('file kosong');
+        return { blobUrl: URL.createObjectURL(b), data: null, text: '' };
+      }
+      const text = await res.text();
+      let data = null;
+      try{ data = JSON.parse(text); }catch(_){}
+      if(!res.ok){
+        const m = data && (data.message || data.error || data.msg);
+        const e = new Error('server membalas error ' + res.status + (m ? ' (' + String(m).slice(0, 100) + ')' : ''));
+        e.http = true; throw e;
+      }
+      return { blobUrl: '', data, text };
+    } finally { clearTimeout(t); }
+  };
+  try{ return await once(url); }
+  catch(err){
+    if(err.http || err.name === 'AbortError') throw err;
+    const proxies = [
+      u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+      u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+      u => 'https://corsproxy.io/?url=' + encodeURIComponent(u)
+    ];
+    try{ return await Promise.any(proxies.map(mk => once(mk(url)))); }
+    catch(_){ throw new Error('Tidak bisa terhubung ke server.'); }
+  }
+}
+
+function dzWaFindUrl(res){
+  if(res.blobUrl) return res.blobUrl;
+  const urls = [];
+  (function walk(v, dp){
+    if(v == null || dp > 6) return;
+    if(typeof v === 'string'){ (v.match(/https?:\/\/[^\s"'<>]+/g) || []).forEach(u => urls.push(u)); }
+    else if(Array.isArray(v)) v.forEach(x => walk(x, dp + 1));
+    else if(typeof v === 'object') Object.values(v).forEach(x => walk(x, dp + 1));
+  })(res.data !== null ? res.data : res.text, 0);
+  return urls.find(u => /\.apk(\?|#|$)/i.test(u))
+      || urls.find(u => /apk|download|unduh/i.test(u))
+      || urls[0] || '';
+}
+
+function initWebToApk(){
+  const $ = id => document.getElementById(id);
+  const urlEl = $('dzWaUrl'), nameEl = $('dzWaName'), pkgEl = $('dzWaPkg'), oriEl = $('dzWaOri');
+  const pkIcon = dzInitAvatarPicker('WaIc'), pkSplash = dzInitAvatarPicker('WaSp');
+  const goBtn = $('dzWaGo'), msg = $('dzWaMsg'), out = $('dzWaOut');
+  if(!urlEl || !nameEl || !pkgEl || !oriEl || !goBtn || !msg || !out) return;
+  let busy = false, tick = null;
+
+  const stop = () => { if(tick){ clearInterval(tick); tick = null; } };
+
+  const run = async () => {
+    if(busy) return;
+    let u = urlEl.value.trim();
+    if(u && !/^https?:\/\//i.test(u)) u = 'https://' + u;
+    if(!/^https?:\/\/[^\s\/]+\.[^\s\/]+/i.test(u)){ msg.textContent = 'Isi URL website yang valid dulu ya (contoh: https://situsmu.com).'; return; }
+    let host = ''; try{ host = new URL(u).hostname.replace(/^www\./, '').split('.')[0]; }catch(_){}
+    const name = nameEl.value.trim() || host || 'My App';
+    const pkg = (pkgEl.value.trim() || 'com.dinz.app').toLowerCase();
+    if(!/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/.test(pkg)){ msg.textContent = 'Package name tidak valid. Contoh yang benar: com.nama.app (huruf kecil, angka, titik, underscore).'; return; }
+
+    busy = true; goBtn.disabled = true; out.innerHTML = '';
+    try{
+      // logo & splash: foto dari galeri diunggah dulu agar jadi link publik yang bisa dibaca server pembuat APK
+      const setM = t => { msg.textContent = t; };
+      const iconUrls = (pkIcon.file() || pkIcon.url()) ? await pkIcon.resolveUrl(setM) : [];
+      const splashUrls = (pkSplash.file() || pkSplash.url()) ? await pkSplash.resolveUrl(setM) : [];
+      const icon = iconUrls[0] || '', splash = splashUrls[0] || '';
+      let api = 'https://api-cloud.my.id/tools/web2apk?url=' + encodeURIComponent(u)
+        + '&name=' + encodeURIComponent(name) + '&package=' + encodeURIComponent(pkg);
+      if(splash) api += '&splash=' + encodeURIComponent(splash);
+      // logo/ikon aplikasi dikirim terpisah dari splash (nama parameter dikirim dalam dua variasi: icon & logo)
+      if(icon) api += '&icon=' + encodeURIComponent(icon) + '&logo=' + encodeURIComponent(icon);
+      api += '&orientation=' + encodeURIComponent(oriEl.value || 'auto');
+      console.log('Web to APK request:', api);
+      const t1 = Date.now();
+      const paint2 = () => { msg.textContent = 'Membangun APK... ' + Math.floor((Date.now() - t1) / 1000) + ' detik. Jangan tutup halaman ini, bisa sampai beberapa menit.'; };
+      paint2(); tick = setInterval(paint2, 1000);
+      const res = await dzWaFetch(api, 360000);
+      const link = dzWaFindUrl(res);
+      if(!link){
+        const raw = (res.data !== null ? JSON.stringify(res.data) : String(res.text)).slice(0, 300);
+        console.log('Web to APK: respons tanpa link', res.data !== null ? res.data : res.text);
+        throw new Error('API membalas tapi tidak ada link APK. Isi respons: ' + raw);
+      }
+      msg.textContent = 'APK "' + name + '" berhasil dibuat.';
+      const card = document.createElement('div');
+      card.style.cssText = 'border:2.5px solid #000;border-radius:12px;padding:10px;background:var(--panel);';
+      const ttl = document.createElement('div');
+      ttl.textContent = name + '  \u2022  ' + pkg;
+      ttl.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:6px;word-break:break-word;';
+      const lk = document.createElement('div');
+      lk.textContent = link.startsWith('blob:') ? 'File APK siap diunduh' : link;
+      lk.style.cssText = "font:11px/1.4 'JetBrains Mono',monospace;word-break:break-all;opacity:.8;";
+      const row = document.createElement('div');
+      row.className = 'dz-actions';
+      const dl = document.createElement('button');
+      dl.type = 'button'; dl.textContent = 'Unduh APK';
+      dl.addEventListener('click', () => {
+        const a = document.createElement('a');
+        a.href = link; a.download = name.replace(/[^\w\-]+/g, '_') + '.apk'; a.target = '_blank'; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); a.remove();
+      });
+      row.appendChild(dl);
+      if(!link.startsWith('blob:')){
+        const cp = document.createElement('button');
+        cp.type = 'button'; cp.className = 'dz-secondary'; cp.textContent = 'Salin Link';
+        cp.addEventListener('click', () => dzIpCopy(link, cp));
+        row.appendChild(cp);
+      }
+      card.appendChild(ttl); card.appendChild(lk); card.appendChild(row);
+      out.appendChild(card);
+    }catch(err){
+      msg.textContent = 'Gagal: ' + (err.name === 'AbortError' ? 'server terlalu lama membangun APK' : (err.message || 'tidak diketahui')) + '. Coba lagi ya.';
+    }finally{
+      stop(); busy = false; goBtn.disabled = false;
+    }
+  };
+  goBtn.addEventListener('click', run);
 }
 
 /* ---------- AI Img Prompt (cari prompt gambar via Snowping) ---------- */
@@ -10566,7 +10877,11 @@ function initDzTtChat(){
       if(!text){ setMsg('Isi teks chat dulu ya.'); return null; }
       const avs = (pk.file() || pk.url()) ? await pk.resolveUrl(setMsg) : [];
       const base = `${DZ_API_SNOW}/api/maker/tiktokChat?username=${encodeURIComponent(user)}&text=${encodeURIComponent(text)}`;
-      if(!avs.length) return [`${base}&ppUrl=`];
+      if(!avs.length){
+        // jangan kirim ppUrl kosong (server membalas 500): pakai foto profil default, lalu coba tanpa parameter ppUrl
+        const def = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user) + '&size=256&background=random&color=fff&format=png';
+        return [`${base}&ppUrl=${encodeURIComponent(def)}`, base];
+      }
       return avs.map(av => `${base}&ppUrl=${encodeURIComponent(av)}`);
     }
   });
