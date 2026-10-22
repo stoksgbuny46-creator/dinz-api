@@ -8452,6 +8452,8 @@ function initMediaPlayers(){
     // Cari link audio (2 sumber paralel; yang tercepat dipakai duluan)
     const pickAudio = r => {
       if(!r) return '';
+      const cl = dzAudioCandidates(r);
+      if(cl.length) return cl;
       const direct = r.download || r.download_url || r.downloadUrl || r.rawLink || r.downloadLink || r.audio || r.mp3 || r.dl;
       if(direct) return direct;
       const urls = collectUrls(r).filter(u => !/open\.spotify\.com|youtube\.com|youtu\.be/i.test(u) && !/\.(jpe?g|png|webp|gif)(\?|$)|ytimg\.com|scdn\.co/i.test(u));
@@ -8462,7 +8464,15 @@ function initMediaPlayers(){
       if(cache.has(key)) return cache.get(key);
       const e = { urls: [], done: false, listeners: [] };
       const notify = () => e.listeners.slice().forEach(f => f());
-      const push = u => { if(u && !/\/undefined\.[a-z0-9]+($|\?)/i.test(u) && !e.urls.includes(u)){ e.urls.push(u); notify(); } };
+      const push = u => {
+        if(Array.isArray(u)){ u.forEach(push); return; }
+        if(u && !/\/undefined\.[a-z0-9]+($|\?)/i.test(u) && !e.urls.includes(u)){
+          // sisipkan sesuai peringkat (proxy API dulu, link langsung YouTube terakhir), tapi tidak sebelum sumber yang sedang dipakai
+          let at = e.urls.length;
+          while(at > 0 && dzAudioRank(e.urls[at - 1]) > dzAudioRank(u) && at - 1 >= srcIdx + 1) at--;
+          e.urls.splice(at, 0, u); notify();
+        }
+      };
       let pending = 0;
       const fin = () => { if(--pending === 0){ e.done = true; notify(); } };
       if(tr.spotifyUrl){
@@ -8472,7 +8482,12 @@ function initMediaPlayers(){
       }
       pending++;
       fetchJsonSafe(`https://api-cloud.my.id/downloader/play?query=${encodeURIComponent([tr.title, tr.artist].filter(Boolean).join(' '))}`, {}, 40000)
-        .then(d => push(pickAudio(d && d.result))).catch(() => {}).finally(fin);
+        .then(d => {
+          const r = d && d.result;
+          push(pickAudio(r));
+          const pg = dzFindPageUrl(r);
+          if(pg){ pending++; dzYtmp3Candidates(pg).then(push).catch(() => {}).finally(fin); }
+        }).catch(() => {}).finally(fin);
       cache.set(key, e);
       return e;
     };
@@ -8503,7 +8518,7 @@ function initMediaPlayers(){
         audio.src = url;
         audio.play().catch(err => { if(tk === token && err && err.name === 'NotSupportedError') failSource(tk); });
         // kalau 20 detik belum ada data, coba sumber lain (jika ada)
-        stallTimer = setTimeout(() => { if(tk === token && audio.readyState < 2) failSource(tk); }, 20000);
+        stallTimer = setTimeout(() => { if(tk === token && audio.readyState < 2) failSource(tk); }, 15000);
       } else if(curEntry.done){
         const u0 = curEntry.urls[0];
         if(u0 && !curEntry.triedBlob){
@@ -11785,6 +11800,64 @@ function dzCollectUrls(o, out, depth){
   return out;
 }
 
+
+/* ===== FIX AUDIO: kumpulkan SEMUA kandidat link audio (termasuk link relatif mp3Url dari API) ===== */
+const DZ_API_BASE = 'https://api-cloud.my.id';
+function dzAbsUrl(u){
+  if(typeof u !== 'string') return '';
+  u = u.trim();
+  if(!u) return '';
+  if(/^https?:\/\//i.test(u)) return u;
+  if(u.indexOf('//') === 0) return 'https:' + u;
+  if(u.charAt(0) === '/') return DZ_API_BASE + u;
+  return '';
+}
+function dzAudioRank(u){
+  if(/api-cloud\.my\.id/i.test(u)) return 0;          // proxy dari API sendiri (paling stabil)
+  if(/googlevideo\.com|videoplayback/i.test(u)) return 9; // link langsung YouTube: sering terkunci IP/expired
+  return 5;
+}
+function dzAudioCandidates(r){
+  const out = [];
+  if(!r || typeof r !== 'object') return out;
+  const IMG = /\.(jpe?g|png|webp|gif)(\?|$)|ytimg\.com|scdn\.co|googleusercontent/i;
+  const PAGE = /youtube\.com\/watch|youtu\.be\/|open\.spotify\.com/i;
+  const add = v => {
+    if(v && typeof v === 'object' && !Array.isArray(v)) v = v.url || v.link || v.download || '';
+    const u = dzAbsUrl(v);
+    if(u && !IMG.test(u) && !PAGE.test(u) && !/\/undefined\.[a-z0-9]+($|\?)/i.test(u) && out.indexOf(u) < 0) out.push(u);
+  };
+  ['mp3Url','mp3_url','mp3url','proxyUrl','proxy','stream','streamUrl','audioUrl','audio_url','audio','mp3','download','download_url','downloadUrl','downloadLink','link_download','dl','media','file','url'].forEach(k => add(r[k]));
+  // cadangan: scan semua string URL (absolut) yang terlihat seperti file audio
+  (function walk(o, d){
+    if(o == null || d > 6) return;
+    if(typeof o === 'string'){ if(/\.(mp3|m4a|opus|ogg|wav|webm)(\?|$)/i.test(o) || /videoplayback/i.test(o)) add(o); return; }
+    if(Array.isArray(o)){ o.forEach(x => walk(x, d + 1)); return; }
+    if(typeof o === 'object') Object.keys(o).forEach(k => walk(o[k], d + 1));
+  })(r, 0);
+  return out.map((u, i) => ({ u, i })).sort((a, b) => (dzAudioRank(a.u) - dzAudioRank(b.u)) || (a.i - b.i)).map(x => x.u);
+}
+function dzFindPageUrl(r){
+  let found = '';
+  (function walk(o, d){
+    if(found || o == null || d > 6) return;
+    if(typeof o === 'string'){ if(/^https?:\/\/(www\.|m\.|music\.)?(youtube\.com\/watch|youtu\.be\/)/i.test(o.trim())) found = o.trim(); return; }
+    if(Array.isArray(o)){ o.forEach(x => walk(x, d + 1)); return; }
+    if(typeof o === 'object') Object.keys(o).forEach(k => walk(o[k], d + 1));
+  })(r, 0);
+  return found;
+}
+// Cadangan: minta mp3 lewat endpoint ytmp3 pakai link YouTube hasil pencarian
+async function dzYtmp3Candidates(pageUrl){
+  if(!pageUrl) return [];
+  try{
+    const d = await fetchJsonSafe(`${DZ_API_BASE}/downloader/ytmp3?url=${encodeURIComponent(pageUrl)}`, {}, 45000);
+    let r = d && (d.result != null ? d.result : d.data != null ? d.data : d);
+    if(Array.isArray(r)) r = r[0];
+    return dzAudioCandidates(r);
+  }catch(e){ return []; }
+}
+
 function dzParseMusic(d){
   if(!d || typeof d !== 'object') return null;
   if(d.status === false || d.success === false) return null;
@@ -11793,15 +11866,9 @@ function dzParseMusic(d){
   if(!r || typeof r !== 'object') return null;
   const str = v => (typeof v === 'string' && /^https?:\/\//i.test(v)) ? v : (v && typeof v === 'object' && typeof v.url === 'string' && /^https?:\/\//i.test(v.url) ? v.url : '');
   const IMG = /\.(jpe?g|png|webp|gif)(\?|$)|ytimg\.com|scdn\.co|googleusercontent/i;
-  let audio = '';
-  for(const k of ['download','download_url','downloadUrl','downloadLink','link_download','audio','audio_url','audioUrl','mp3','dl','media','file','stream']){
-    const u = str(r[k]); if(u && !IMG.test(u)){ audio = u; break; }
-  }
+  const audios = dzAudioCandidates(r);
+  let audio = audios[0] || '';
   const all = dzCollectUrls(r).filter(u => !IMG.test(u));
-  if(!audio){
-    const nonYt = all.filter(u => !/youtube\.com|youtu\.be|open\.spotify\.com/i.test(u));
-    audio = nonYt.find(u => /\.(mp3|m4a|opus|ogg|wav|webm)(\?|$)/i.test(u)) || nonYt[0] || '';
-  }
   const page = all.find(u => /youtube\.com|youtu\.be|open\.spotify\.com/i.test(u)) || str(r.url) || str(r.link) || '';
   let thumb = '';
   for(const k of ['thumbnail','thumb','image','cover','thumbnail_url','img','poster']){
@@ -11813,7 +11880,7 @@ function dzParseMusic(d){
   const artist = pickS('artist','author','channel','uploader','singer');
   const duration = pickS('duration','durasi','timestamp','length');
   if(!audio && !page) return null;
-  return { title, artist, duration, thumb, audio, page };
+  return { title, artist, duration, thumb, audio, audios, page };
 }
 
 function dzBuildMusicCard(it){
@@ -11838,11 +11905,35 @@ function dzBuildMusicCard(it){
   }
   const note = document.createElement('div');
   note.style.cssText = 'font-size:12px; opacity:.8; margin-top:6px; display:none;';
-  if(it.audio){
-    const au = document.createElement('audio');
-    au.controls = true; au.preload = 'metadata'; au.src = it.audio;
+  let au = null;
+  const cands = (it.audios && it.audios.length ? it.audios.slice() : (it.audio ? [it.audio] : []));
+  if(cands.length || it.page){
+    au = document.createElement('audio');
+    au.controls = true; au.preload = 'metadata'; au.setAttribute('playsinline', '');
+    au.referrerPolicy = 'no-referrer';
     au.style.cssText = 'display:block; width:100%; margin-top:6px;';
-    au.addEventListener('error', () => { note.textContent = 'Audio tidak bisa diputar di sini. Coba tombol Unduh atau Buka.'; note.style.display = 'block'; });
+    let ci = 0, triedYt = false, triedBlob = false, busy = false;
+    const useUrl = u => { au.src = u; it.audio = u; };
+    const giveUp = () => { note.textContent = 'Audio tidak bisa diputar di sini. Coba tombol Unduh atau Buka.'; note.style.display = 'block'; };
+    const next = async () => {
+      if(busy) return; busy = true;
+      try{
+        ci++;
+        if(ci < cands.length){ useUrl(cands[ci]); return; }
+        if(!triedYt && it.page){
+          triedYt = true; note.textContent = 'Mencari jalur audio lain...'; note.style.display = 'block';
+          const more = (await dzYtmp3Candidates(it.page)).filter(u => cands.indexOf(u) < 0);
+          if(more.length){ more.forEach(u => cands.push(u)); note.style.display = 'none'; useUrl(cands[ci]); return; }
+        }
+        if(!triedBlob && cands.length){
+          triedBlob = true; note.textContent = 'Mengambil audio lewat jalur cadangan...'; note.style.display = 'block';
+          try{ const bl = await dzFetchBlobSmart(cands[0], 90000); au.src = URL.createObjectURL(bl); note.style.display = 'none'; return; }catch(e){}
+        }
+        giveUp();
+      } finally { busy = false; }
+    };
+    au.addEventListener('error', next);
+    if(cands.length) useUrl(cands[0]); else { ci = -1; next(); }
     card.appendChild(au);
   }
   card.appendChild(note);
@@ -11862,6 +11953,7 @@ function dzBuildMusicCard(it){
     row.appendChild(a);
   };
   if(it.audio) mk('\u2B07 Unduh', it.audio, true);
+  if(au) au.addEventListener('loadedmetadata', () => { const dl = row.querySelector('a'); if(dl && it.audio && /Unduh/.test(dl.textContent)) dl.href = it.audio; });
   if(it.page) mk('Buka sumber', it.page, false);
   if(!it.audio && it.page){ note.textContent = 'Link audio belum tersedia, buka lewat sumbernya.'; note.style.display = 'block'; }
   card.appendChild(row);
