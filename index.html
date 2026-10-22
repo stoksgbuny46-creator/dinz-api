@@ -5216,9 +5216,7 @@ input:focus,textarea:focus,select:focus,.global-search-input:focus{background-im
 <div class="hud" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i><span class="l" id="hudScroll">SCROLL 000%</span><span class="r" id="hudClock">--:--:-- WIB</span></div>
 
 <!-- ================= BACKGROUND MUSIC ================= -->
-<audio id="bgMusic" loop preload="auto">
-  <source src="https://rahmad-elaina.my.id/file/476e100c9e.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgMusic" loop preload="none" playsinline></audio>
 
 <!-- ================= NAVBAR ================= -->
 <div class="navbar">
@@ -7365,7 +7363,11 @@ async function handleDownload(e, key){
       } else {
         const audio = document.createElement('audio');
         audio.controls = true;
+        audio.preload = 'metadata';
         audio.src = parsed.mediaUrl;
+        audio.addEventListener('error', () => {
+          if(!player.querySelector('.dz-audio-err')) player.insertAdjacentHTML('beforeend', '<div class="dz-result-note dz-audio-err">Audio tidak bisa diputar di browser, pakai tombol download.</div>');
+        }, { once: true });
         player.appendChild(audio);
       }
     }
@@ -7378,7 +7380,7 @@ async function handleDownload(e, key){
       const mainBtn = document.createElement('button');
       mainBtn.className = 'download-main';
       mainBtn.textContent = parsed.isVideo ? 'Download Video Utama' : 'Download Audio MP3';
-      mainBtn.onclick = () => triggerDownload(parsed.mediaUrl, `${key}_file`);
+      mainBtn.onclick = (ev) => triggerDownload(parsed.mediaUrl, (parsed.title ? safeFileName(parsed.title) : key) + '_' + key, ev.currentTarget);
       linksDiv.appendChild(mainBtn);
     }
 
@@ -7398,7 +7400,7 @@ async function handleDownload(e, key){
         `;
         row.querySelector('a').onclick = (e) => {
           e.preventDefault();
-          triggerDownload(link.url, `${key}_${link.label.toLowerCase().replace(/\s+/g, '_')}`);
+          triggerDownload(link.url, `${key}_${link.label.toLowerCase().replace(/\s+/g, '_')}`, e.currentTarget);
         };
         linksDiv.appendChild(row);
       });
@@ -7415,16 +7417,181 @@ async function handleDownload(e, key){
   }
 }
 
-function triggerDownload(url, filename='download'){
-  if(!url) return;
-  // Buka langsung via tab baru / download trigger
+/* ============================================================
+   ENGINE SIMPAN FILE (aman untuk APK / WebView)
+   Masalah lama: file disimpan tanpa ekstensi / tipe file tidak jelas -> jadi "download.bin".
+   Sekarang: tipe file dibaca dari ISI file (magic bytes), ekstensi dipasang otomatis,
+   lalu disimpan lewat jalur terbaik: jembatan native -> menu Bagikan (Simpan ke Galeri) -> unduh biasa.
+============================================================ */
+const DZ_EXT_MIME = { png:'image/png', jpg:'image/jpeg', jpeg:'image/jpeg', gif:'image/gif', webp:'image/webp', svg:'image/svg+xml', mp4:'video/mp4', mov:'video/quicktime', webm:'video/webm', mp3:'audio/mpeg', m4a:'audio/mp4', ogg:'audio/ogg', wav:'audio/wav', pdf:'application/pdf', apk:'application/vnd.android.package-archive', zip:'application/zip' };
+const DZ_MIME_EXT = { 'image/jpeg':'jpg', 'image/png':'png', 'image/gif':'gif', 'image/webp':'webp', 'image/heic':'heic', 'image/avif':'avif', 'image/svg+xml':'svg', 'video/mp4':'mp4', 'video/quicktime':'mov', 'video/webm':'webm', 'audio/mpeg':'mp3', 'audio/mp3':'mp3', 'audio/mp4':'m4a', 'audio/x-m4a':'m4a', 'audio/ogg':'ogg', 'audio/wav':'wav', 'application/pdf':'pdf', 'application/vnd.android.package-archive':'apk', 'application/zip':'zip' };
+
+function dzNote(msg){
+  let el = document.getElementById('dzToastNote');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'dzToastNote';
+    el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:88vw;z-index:99999;background:#111;color:#fff;border:2.5px solid #000;border-radius:12px;padding:10px 14px;font:600 13px/1.4 "Space Grotesk",sans-serif;box-shadow:3px 3px 0 rgba(0,0,0,.85);text-align:center;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, 5500);
+}
+
+function dzSniffType(b){
+  if(!b || b.length < 4) return '';
+  const asc = (s, e) => String.fromCharCode.apply(null, Array.prototype.slice.call(b, s, e));
+  if(b[0] === 0x89 && asc(1, 4) === 'PNG') return 'image/png';
+  if(b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF) return 'image/jpeg';
+  if(asc(0, 4) === 'GIF8') return 'image/gif';
+  if(asc(0, 4) === 'RIFF' && asc(8, 12) === 'WEBP') return 'image/webp';
+  if(asc(0, 4) === 'RIFF' && asc(8, 12) === 'WAVE') return 'audio/wav';
+  if(b.length >= 12 && asc(4, 8) === 'ftyp'){
+    const br = asc(8, 12);
+    if(br === 'M4A ' || br === 'M4B ') return 'audio/mp4';
+    if(br === 'qt  ') return 'video/quicktime';
+    if(br === 'heic' || br === 'heix' || br === 'mif1' || br === 'msf1') return 'image/heic';
+    if(br === 'avif') return 'image/avif';
+    return 'video/mp4';
+  }
+  if(b[0] === 0x1A && b[1] === 0x45 && b[2] === 0xDF && b[3] === 0xA3) return 'video/webm';
+  if(asc(0, 3) === 'ID3') return 'audio/mpeg';
+  if(asc(0, 4) === 'OggS') return 'audio/ogg';
+  if(asc(0, 4) === '%PDF') return 'application/pdf';
+  if(b[0] === 0x50 && b[1] === 0x4B && b[2] === 3 && b[3] === 4) return 'application/zip';
+  if(b[0] === 0xFF && (b[1] & 0xE0) === 0xE0) return 'audio/mpeg';
+  const head = asc(0, Math.min(b.length, 200)).replace(/^\s+/, '').toLowerCase();
+  if(head.indexOf('<svg') === 0 || (head.indexOf('<?xml') === 0 && head.indexOf('<svg') > 0)) return 'image/svg+xml';
+  if(head.indexOf('<!doctype') === 0 || head.indexOf('<html') === 0 || head.indexOf('{') === 0 || head.indexOf('[') === 0) return 'text/error';
+  return '';
+}
+
+async function dzNormalizeBlob(blob, opts){
+  opts = opts || {};
+  let mime = opts.mime || '';
+  if(!mime){
+    try{ mime = dzSniffType(new Uint8Array(await blob.slice(0, 256).arrayBuffer())); }catch(_){ mime = ''; }
+  }
+  if(mime === 'text/error') throw new Error('Server mengirim halaman error, bukan file media.');
+  if(mime === 'application/zip' && /\.apk$/i.test(opts.hint || '')) mime = DZ_EXT_MIME.apk;
+  if(!mime){
+    const t = (blob.type || '').toLowerCase().split(';')[0].trim();
+    if(t && t !== 'application/octet-stream' && t !== 'binary/octet-stream') mime = t;
+  }
+  if(!mime){
+    const m = String(opts.hint || '').match(/\.([a-z0-9]{2,4})$/i);
+    if(m && DZ_EXT_MIME[m[1].toLowerCase()]) mime = DZ_EXT_MIME[m[1].toLowerCase()];
+  }
+  if(!mime) mime = 'application/octet-stream';
+  const ext = DZ_MIME_EXT[mime] || ((mime.split('/')[1] || 'bin').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'bin');
+  return { blob: (blob.type === mime ? blob : new Blob([blob], { type: mime })), mime: mime, ext: ext };
+}
+
+function dzBlobToBase64(blob){
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = () => reject(new Error('Gagal membaca file'));
+    r.readAsDataURL(blob);
+  });
+}
+
+function dzIsWebView(){
+  const ua = navigator.userAgent || '';
+  return /; wv\)/.test(ua) || (/Android/.test(ua) && /Version\/\d/.test(ua));
+}
+
+/* Simpan blob jadi file dengan nama + ekstensi + tipe yang benar. Mengembalikan teks status untuk pengguna. */
+async function dzSaveBlob(blob, baseName, opts){
+  opts = opts || {};
+  const n = await dzNormalizeBlob(blob, { hint: baseName, mime: opts.mime });
+  const base = String(baseName || 'file')
+    .replace(/\.(png|jpe?g|gif|webp|mp4|mov|webm|mp3|m4a|ogg|wav|pdf|apk|zip|svg|bin)$/i, '')
+    .replace(/[^\w\-. ]+/g, '').trim().slice(0, 60) || 'file';
+  const fileName = base + '.' + n.ext;
+  const isMedia = /^(image|video)\//.test(n.mime);
+
+  // 1) Jembatan native APK (kalau aplikasi menyediakan): window.DinzNative.saveFile(base64, fileName, mime)
+  const nat = window.DinzNative;
+  if(nat && typeof nat.saveFile === 'function'){
+    try{
+      nat.saveFile(await dzBlobToBase64(n.blob), fileName, n.mime);
+      return 'Tersimpan: ' + fileName + (isMedia ? ' (cek Galeri).' : ' (cek folder Download).');
+    }catch(_){}
+  }
+
+  // 2) iPhone / WebView APK: menu Bagikan -> "Simpan ke Galeri / Foto"
+  if((dzIsIOS() || dzIsWebView()) && navigator.canShare && navigator.share && typeof File === 'function'){
+    try{
+      const file = new File([n.blob], fileName, { type: n.mime });
+      if(navigator.canShare({ files: [file] })){
+        await navigator.share({ files: [file] });
+        return isMedia ? 'Di menu yang muncul, pilih "Simpan ke Galeri" / "Simpan Gambar/Video".' : 'Di menu yang muncul, pilih "Simpan ke File".';
+      }
+    }catch(e){
+      if(e && e.name === 'AbortError') return 'Penyimpanan dibatalkan.';
+    }
+  }
+
+  // 3) Unduh biasa dengan nama file + tipe yang sudah benar
+  const objUrl = URL.createObjectURL(n.blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.download = filename;
+  a.href = objUrl;
+  a.download = fileName;
+  a.rel = 'noopener';
+  a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
   a.remove();
+  setTimeout(() => URL.revokeObjectURL(objUrl), 60000);
+  return 'Disimpan sebagai ' + fileName + '. Cek folder Download' + (isMedia ? ' / Galeri' : '') + '.';
+}
+
+/* Ambil file dari link (langsung, kalau diblokir CORS lewat proxy). Hasil: Blob */
+async function dzFetchBlobSmart(url, ms, onStatus){
+  ms = ms || 120000;
+  if(/^(blob:|data:)/i.test(url)) return await (await fetch(url)).blob();
+  const tries = [url].concat(DZ_IMG_PROXIES.map(p => p(url)));
+  let lastErr = null;
+  for(let i = 0; i < tries.length; i++){
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), ms);
+    try{
+      if(i && onStatus) onStatus('Mencoba jalur lain...');
+      const res = await fetch(tries[i], { signal: ctl.signal });
+      if(!res.ok) throw new Error('status ' + res.status);
+      const b = await res.blob();
+      if(!b.size) throw new Error('file kosong');
+      const head = new Uint8Array(await b.slice(0, 64).arrayBuffer());
+      if(dzSniffType(head) === 'text/error') throw new Error('bukan file media');
+      return b;
+    }catch(e){
+      lastErr = e;
+    }finally{
+      clearTimeout(timer);
+    }
+  }
+  throw lastErr || new Error('Gagal mengambil file');
+}
+
+async function triggerDownload(url, filename, btnEl){
+  filename = filename || 'download';
+  if(!url) return;
+  if(btnEl && btnEl._dzBusy) return;
+  const old = btnEl ? btnEl.textContent : '';
+  if(btnEl){ btnEl._dzBusy = true; btnEl.textContent = 'Mengunduh...'; }
+  try{
+    dzNote('Mengunduh file...');
+    const blob = await dzFetchBlobSmart(url);
+    dzNote(await dzSaveBlob(blob, filename));
+  }catch(err){
+    dzNote('Unduh otomatis gagal, membuka link langsung...');
+    window.open(url, '_blank', 'noopener');
+  }finally{
+    if(btnEl){ btnEl._dzBusy = false; btnEl.textContent = old; }
+  }
 }
 
 /* ============================================================
@@ -7443,31 +7610,18 @@ function safeFileName(str){
 
 async function forceDownload(url, filename, btnEl, progressEl){
   const originalLabel = btnEl ? btnEl.textContent : '';
+  const say = t => { if(progressEl) progressEl.textContent = t; };
   try{
     if(btnEl){ btnEl.disabled = true; btnEl.textContent = 'Mengunduh...'; }
-    if(progressEl) progressEl.textContent = 'Sedang mengambil file...';
-
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('Gagal ambil file (status ' + res.status + ')');
-
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(blobUrl);
-
-    if(progressEl) progressEl.textContent = 'Selesai, cek folder unduhan.';
+    say('Sedang mengambil file...');
+    const blob = await dzFetchBlobSmart(url, 180000, say);
+    say(await dzSaveBlob(blob, filename));
   }catch(err){
-    if(progressEl) progressEl.textContent = 'Unduh otomatis diblokir server sumber, membuka di tab baru...';
+    say('Unduh otomatis gagal, membuka link langsung...');
     window.open(url, '_blank', 'noopener');
   }finally{
     if(btnEl){ btnEl.disabled = false; btnEl.textContent = originalLabel; }
-    setTimeout(() => { if(progressEl) progressEl.textContent = ''; }, 4000);
+    setTimeout(() => { if(progressEl) progressEl.textContent = ''; }, 6000);
   }
 }
 
@@ -8347,10 +8501,25 @@ function initMediaPlayers(){
       if(url){
         clearTimeout(stallTimer);
         audio.src = url;
-        audio.play().catch(() => {});
-        // kalau 12 detik belum ada data, coba sumber lain (jika ada)
-        stallTimer = setTimeout(() => { if(tk === token && audio.readyState < 2) failSource(tk); }, 12000);
+        audio.play().catch(err => { if(tk === token && err && err.name === 'NotSupportedError') failSource(tk); });
+        // kalau 20 detik belum ada data, coba sumber lain (jika ada)
+        stallTimer = setTimeout(() => { if(tk === token && audio.readyState < 2) failSource(tk); }, 20000);
       } else if(curEntry.done){
+        const u0 = curEntry.urls[0];
+        if(u0 && !curEntry.triedBlob){
+          curEntry.triedBlob = true; setMsg('Mencoba jalur cadangan...');
+          (async () => {
+            for(const mk of [u => u].concat(typeof CORS_PROXIES !== 'undefined' ? CORS_PROXIES : [])){
+              try{
+                const r = await fetch(mk(u0)); if(!r.ok) continue;
+                const b = await r.blob(); if(tk !== token) return; if(b.size < 5000) continue;
+                audio.src = URL.createObjectURL(b); audio.play().catch(() => {}); return;
+              }catch(e){}
+            }
+            if(tk === token){ setBuf(false); setMsg('Lagu ini tidak bisa diputar. Coba lagu lain.'); }
+          })();
+          return;
+        }
         setBuf(false);
         setMsg('Lagu ini tidak bisa diputar. Coba lagu lain.');
       } else {
@@ -8398,6 +8567,8 @@ function initMediaPlayers(){
       const tr = queue[i];
       clearTimeout(stallTimer);
       audio.pause();
+      // buka kunci autoplay (Safari/iOS): play() harus dipanggil langsung dari tap, sebelum menunggu API
+      audio.src = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA=='; audio.play().catch(() => {});
       showTrack(tr);
       setMsg('');
       setBuf(true);
@@ -8455,8 +8626,9 @@ function initMediaPlayers(){
       ui.miniBar.style.width = (pct * 100).toFixed(1) + '%';
       if(!seeking){ ui.seek.value = Math.round(pct * 1000); ui.cur.textContent = tm(audio.currentTime); }
     });
-    audio.addEventListener('error', () => { if(idx >= 0) failSource(token); });
+    audio.addEventListener('error', () => { if(idx >= 0 && !/^data:audio/.test(audio.src)) failSource(token); });
     audio.addEventListener('ended', () => {
+      if(/^data:audio/.test(audio.src)) return;
       if(repeatOn && !shuffleOn && queue.length === 1){ audio.currentTime = 0; audio.play().catch(() => {}); return; }
       goNext(true);
     });
@@ -9301,10 +9473,12 @@ function getDzToolUIHTML(id){
           <input type="file" id="dzRmFile" accept="image/*" class="dz-hidden">
         </div>
         <div class="dz-actions">
-          <button type="button" id="dzRmGoBtn">Hapus Background</button>
+          <button type="button" id="dzRmCamBtn" class="dz-secondary">Ambil Foto</button>
+          <input type="file" id="dzRmCam" accept="image/*" capture="environment" class="dz-hidden">
+          <button type="button" id="dzRmGoBtn">Proses Ulang</button>
           <button type="button" id="dzRmSaveBtn" class="dz-secondary" disabled>Simpan ke Galeri</button>
         </div>
-        <div id="dzRmMsg" class="dz-result-note">Pilih foto dari galeri, lalu tekan "Hapus Background".</div>
+        <div id="dzRmMsg" class="dz-result-note">Pilih foto dari galeri atau ambil foto. Background langsung dihapus otomatis.</div>
         <div id="dzRmWrap" class="dz-img-wrap"><span class="dz-ph">(Hasil akan muncul di sini)</span></div>
       `;
     case 'dz-ttchat':
@@ -9484,33 +9658,32 @@ function initPromptGenerator(){
   };
 }
 
-/* ---------- React Channel WhatsApp (react.whyux-xec.my.id) ---------- */
-// Catatan: key ada di kode halaman, jadi bisa dilihat siapa pun yang membuka source situs.
-const DZ_RCH_KEYS = [
-  'e462084f2a053697dc58d24aa0d42ff14b230f2b74c6ae7fe4d4674a764d1c42',
-  '03ba12b364de7152418924027d166731148c4c23cc22916588369acb3498a2e7',
-  'e40bf7cbaca4e246a0273b48bdb56c4079f8fe537b7739c5b9225b0b96079544',
-  '4a84210413ac6675cf51c1f975a716eae3753c479818f173836bacc0eaea4e2c'
-];
-
-async function dzRcRequest(url, headers, timeoutMs){
-  const once = async (u) => {
-    const ctl = new AbortController();
-    const t = setTimeout(() => ctl.abort(), timeoutMs);
-    try{
-      const res = await fetch(u, { headers, signal: ctl.signal });
-      const text = await res.text();
-      let data = null;
-      try{ data = JSON.parse(text); }catch(_){}
-      return { status: res.status, ok: res.ok, data, text };
-    } finally { clearTimeout(t); }
-  };
-  try{ return await once(url); }
-  catch(err){
-    if(err.name === 'AbortError') throw err;
-    // kemungkinan diblokir CORS -> lewat proxy
-    try{ return await once('https://corsproxy.io/?url=' + encodeURIComponent(url)); }
-    catch(_){ throw new Error('Tidak bisa terhubung ke server.'); }
+/* ---------- React Channel WhatsApp: satu provider + satu API key ---------- */
+// Provider tunggal: reactionwa.online. Untuk keamanan produksi, pindahkan API key
+// ke backend/server milik sendiri agar tidak terlihat di source HTML.
+const DZ_RCH_API = 'https://apiv2.reactionwa.online/api/v2/react';
+const DZ_RCH_KEY = 'BERRY-RCH-s488dmV/Im9CYK9RksIKzHB+PKpqxaGBeDje9boybZoMiEoWLc1EmGG2TA9yTgBOCa9RT56a35exUMwqJG06QTO39LJvF7IWZCVq3FKzME50TUNgJH4=';
+async function dzRcSend(url, reaction){
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 30000);
+  try {
+    const res = await fetch(DZ_RCH_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': DZ_RCH_KEY },
+      body: JSON.stringify({ url, reaction }),
+      signal: ctl.signal
+    });
+    const j = await res.json().catch(() => null);
+    if (res.ok && j && (j.success === true || j.status === 'success' || j.status === true)) return { ok:true, j };
+    const detail = j && (j.error || j.message) ? (j.error || j.message) : `Provider membalas HTTP ${res.status}`;
+    if (/domain|origin|referer|akses ditolak|not allowed|forbidden/i.test(String(detail))) {
+      return { ok:false, error:'Provider menolak domain halaman ini. Gunakan hosting/domain yang diizinkan provider atau minta API key yang sesuai.', domainRestricted:true };
+    }
+    return { ok:false, error:detail };
+  } catch (e) {
+    return { ok:false, error:e.name === 'AbortError' ? 'Provider terlalu lama merespons.' : 'Permintaan gagal (jaringan/CORS). API provider harus mengizinkan domain halaman ini.' };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -9529,73 +9702,36 @@ function initReactChannel(){
   });
   let busy = false;
 
-  const msgOf = r => {
-    const d = r.data;
-    if(d && typeof d === 'object'){
-      const m = d.message || d.msg || d.error || d.result || d.status;
-      if(m != null) return typeof m === 'string' ? m : JSON.stringify(m);
-    }
-    return String(r.text || '').slice(0, 200);
-  };
-  const isFail = r => !r.ok || (r.data && typeof r.data === 'object' && (r.data.status === false || r.data.success === false || r.data.error));
-
   const run = async () => {
     if(busy) return;
-    const link = linkEl.value.trim();
-    const emoji = emoEl.value.trim();
-    if(!/^https?:\/\/(www\.)?whatsapp\.com\/channel\/[\w-]+\/\d+/i.test(link)){
-      msg.textContent = 'Link harus link postingan saluran, contohnya https://whatsapp.com/channel/xxxx/123 (bukan link salurannya saja).';
-      return;
-    }
-    if(!emoji){ msg.textContent = 'Pilih atau isi emoji dulu ya.'; return; }
+    const m = linkEl.value.trim().match(/(?:https?:\/\/)?(?:www\.)?whatsapp\.com\/channel\/([A-Za-z0-9_-]+)\/(\d+)/i);
+    const emojis = (emoEl.value.match(/\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?/gu) || []).slice(0, 5).join(', ');
+    if(!m){ msg.textContent = 'Link harus link postingan saluran, contohnya https://whatsapp.com/channel/xxxx/123 (bukan link salurannya saja).'; return; }
+    if(!emojis){ msg.textContent = 'Pilih atau isi emoji dulu ya (maks 5, pisah koma).'; return; }
     busy = true; goBtn.disabled = true; out.innerHTML = '';
-    const base = 'https://react.whyux-xec.my.id/api/rch?link=' + encodeURIComponent(link) + '&emoji=' + encodeURIComponent(emoji);
-    const start = Math.floor(Math.random() * DZ_RCH_KEYS.length);
-    let last = null, done = null;
+    const target = 'https://whatsapp.com/channel/' + m[1] + '/' + m[2];
+    const t0 = Date.now(); let data = null, lastErr = '';
     try{
-      for(let ki = 0; ki < DZ_RCH_KEYS.length && !done; ki++){
-        const key = DZ_RCH_KEYS[(start + ki) % DZ_RCH_KEYS.length];
-        msg.textContent = 'Mengirim reaksi... (percobaan ' + (ki + 1) + '/' + DZ_RCH_KEYS.length + ')';
-        // cara pengiriman key belum diketahui pasti -> coba berurutan: query, header x-api-key, header Bearer
-        const variants = [
-          { url: base + '&apikey=' + encodeURIComponent(key), headers: {} },
-          { url: base, headers: { 'x-api-key': key } },
-          { url: base, headers: { 'Authorization': 'Bearer ' + key } }
-        ];
-        let stopAll = false;
-        for(const v of variants){
-          let r;
-          try{ r = await dzRcRequest(v.url, v.headers, 30000); }
-          catch(e){ last = { error: e.name === 'AbortError' ? 'server terlalu lama merespons' : e.message }; continue; }
-          last = r;
-          console.log('React Channel:', r.status, r.data !== null ? r.data : r.text);
-          if(r.status === 401 || r.status === 403) continue;   // key/cara kirim ditolak -> variasi berikutnya
-          if(r.status === 429) break;                          // kena limit -> key berikutnya
-          if(!isFail(r)){ done = r; break; }
-          if(r.status === 400 || r.status === 404 || r.status === 422){ stopAll = true; break; }  // masalah di link/emoji, bukan key
-          if(/key|auth|token|limit|quota|session/i.test(msgOf(r))) break;                        // masalah di key -> key berikutnya
-          stopAll = true; break;
-        }
-        if(stopAll) break;
-      }
-      if(done){
-        msg.textContent = 'Reaksi ' + emoji + ' terkirim.';
-        const card = document.createElement('div');
-        card.style.cssText = 'border:2.5px solid #000;border-radius:12px;padding:10px;background:var(--panel);';
-        const t = document.createElement('div');
-        t.textContent = 'Respons server';
-        t.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:4px;';
-        const pre = document.createElement('div');
-        pre.textContent = (done.data !== null ? JSON.stringify(done.data) : String(done.text)).slice(0, 400);
-        pre.style.cssText = "font:11px/1.5 'JetBrains Mono',monospace;word-break:break-word;white-space:pre-wrap;";
-        card.appendChild(t); card.appendChild(pre);
-        out.appendChild(card);
-      } else {
-        const why = !last ? 'tidak ada respons' : (last.error ? last.error : ('server membalas ' + last.status + ': ' + msgOf(last)));
-        msg.textContent = 'Gagal mengirim reaksi (' + why.slice(0, 200) + ').';
-      }
+      msg.textContent = 'Mengirim reaksi melalui satu provider...';
+      const r = await dzRcSend(target, emojis);
+      if(r.ok){
+        const j = r.j, task = (j.data && j.data.task) || {};
+        data = { time: (Date.now() - t0) + 'ms', data: { target, emojis: task.reaction_code || emojis, usage_today: j.usage_today ?? null, limit: j.limit || 50 } };
+      } else lastErr = r.error;
+      if(!data) throw new Error(lastErr || 'provider gagal memproses permintaan');
+      msg.textContent = 'Reaksi ' + emojis + ' masuk antrean.';
+      const d = data.data || {};
+      const card = document.createElement('div');
+      card.style.cssText = 'border:2.5px solid #000;border-radius:12px;padding:10px;background:var(--panel);font:12px/1.6 "JetBrains Mono",monospace;word-break:break-word;';
+      card.textContent = ['Emoji: ' + (d.emojis || emojis), 'Target: ' + (d.target || ''), 'Pemakaian hari ini: ' + (d.usage_today ?? '-') + ' / ' + (d.limit ?? '-'), 'Waktu: ' + (data.time || '-')].join('\n');
+      card.style.whiteSpace = 'pre-wrap';
+      out.appendChild(card);
     }catch(err){
-      msg.textContent = 'Gagal: ' + (err.message || 'tidak diketahui');
+      const detail = err.name === 'AbortError' ? 'server terlalu lama merespons' : (err.message || 'tidak diketahui');
+      msg.textContent = 'Gagal: ' + detail;
+      if(/domain halaman ini|domain|origin|akses ditolak/i.test(detail)) {
+        out.textContent = 'Perbaikan: jalankan halaman dari domain yang diizinkan oleh penyedia API, atau gunakan API key milikmu yang mengizinkan domain hosting ini. Batas domain tidak bisa diperbaiki dari HTML saja.';
+      }
     }finally{
       busy = false; goBtn.disabled = false;
     }
@@ -9711,10 +9847,18 @@ function initWebToApk(){
       row.className = 'dz-actions';
       const dl = document.createElement('button');
       dl.type = 'button'; dl.textContent = 'Unduh APK';
-      dl.addEventListener('click', () => {
-        const a = document.createElement('a');
-        a.href = link; a.download = name.replace(/[^\w\-]+/g, '_') + '.apk'; a.target = '_blank'; a.rel = 'noopener';
-        document.body.appendChild(a); a.click(); a.remove();
+      dl.addEventListener('click', async () => {
+        const fname = name.replace(/[^\w\-]+/g, '_') + '.apk';
+        const old = dl.textContent;
+        dl.disabled = true; dl.textContent = 'Menyiapkan...';
+        try{
+          const blob = await dzFetchBlobSmart(link, 180000);
+          msg.textContent = await dzSaveBlob(blob, fname, { mime: 'application/vnd.android.package-archive' });
+        }catch(_){
+          const a = document.createElement('a');
+          a.href = link; a.download = fname; a.target = '_blank'; a.rel = 'noopener';
+          document.body.appendChild(a); a.click(); a.remove();
+        }finally{ dl.disabled = false; dl.textContent = old; }
       });
       row.appendChild(dl);
       if(!link.startsWith('blob:')){
@@ -10265,32 +10409,15 @@ function dzIsIOS(){
 
 async function dzSaveImageState(state, baseName){
   if(!state) return 'Belum ada gambar.';
-  if(!state.blob){
+  let blob = state.blob;
+  if(!blob && state.url){
+    try{ blob = await dzFetchBlobSmart(state.url, 30000); }catch(_){ blob = null; }
+  }
+  if(!blob){
     window.open(state.url, '_blank');
     return 'Gambar dibuka di tab baru. Tekan lama gambar lalu pilih "Simpan gambar".';
   }
-  const type = state.blob.type || 'image/png';
-  const ext = (type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '') || 'png';
-  const fileName = `${baseName}_${Date.now()}.${ext}`;
-  // iPhone / iPad: share sheet -> "Simpan Gambar" masuk ke Foto
-  if(dzIsIOS() && navigator.canShare && typeof File === 'function'){
-    try{
-      const file = new File([state.blob], fileName, { type });
-      if(navigator.canShare({ files: [file] })){
-        await navigator.share({ files: [file] });
-        return 'Pilih "Simpan Gambar" di menu yang muncul untuk menyimpan ke Foto.';
-      }
-    }catch(e){
-      if(e && e.name === 'AbortError') return 'Penyimpanan dibatalkan.';
-    }
-  }
-  const a = document.createElement('a');
-  a.href = state.objUrl;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  return `Gambar disimpan sebagai ${fileName}. Cek folder Download / Galeri.`;
+  return await dzSaveBlob(blob, `${baseName}_${Date.now()}`);
 }
 
 /* Pola umum untuk semua tool pembuat gambar.
@@ -11040,12 +11167,12 @@ function dzLoadRmLib(){
   return dzRmLibPromise;
 }
 
-function dzRmConfig(device, progress){
+function dzRmConfig(device, progress, noWorker){
   return {
     publicPath: DZ_RMBG_DATA,
     model: DZ_RMBG_MODEL,
     device: device,
-    proxyToWorker: true,
+    proxyToWorker: !noWorker,
     output: { format: 'image/png', quality: 0.9 },
     progress: progress
   };
@@ -11071,8 +11198,10 @@ function initDzRemoveBg(){
   let previewUrl = '';
 
   drop.onclick = () => fileInp.click();
-  fileInp.onchange = () => {
-    const f = fileInp.files && fileInp.files[0];
+  const goBtnEl = document.getElementById('dzRmGoBtn');
+  const camInp = document.getElementById('dzRmCam');
+  const camBtn = document.getElementById('dzRmCamBtn');
+  const useFile = (f) => {
     if(!f) return;
     if(!/^image\//.test(f.type)){
       chosen = null;
@@ -11089,8 +11218,13 @@ function initDzRemoveBg(){
     pv.alt = 'Foto dipilih';
     pv.src = previewUrl;
     wrap.appendChild(pv);
-    msg.textContent = 'Foto siap. Tekan "Hapus Background".';
+    msg.textContent = 'Foto diterima, menghapus background otomatis...';
+    // langsung proses tanpa perlu menekan tombol lagi
+    setTimeout(() => { if(goBtnEl && !goBtnEl.disabled) goBtnEl.click(); }, 80);
   };
+  fileInp.onchange = () => { const f = fileInp.files && fileInp.files[0]; fileInp.value = ''; useFile(f); };
+  if(camInp) camInp.onchange = () => { const f = camInp.files && camInp.files[0]; camInp.value = ''; useFile(f); };
+  if(camBtn && camInp) camBtn.onclick = () => camInp.click();
 
   dzInitImgMaker({
     goBtn:'dzRmGoBtn', saveBtn:'dzRmSaveBtn', wrap:'dzRmWrap', msg:'dzRmMsg', fileName:'removebg',
@@ -11115,15 +11249,17 @@ function initDzRemoveBg(){
           }
         }catch(_){}
       };
-      let blob;
-      try{
-        // WebGPU kalau HP mendukung = paling cepat; kalau gagal otomatis turun ke CPU
-        blob = await remove(small, dzRmConfig(navigator.gpu ? 'gpu' : 'cpu', onProgress));
-      }catch(err){
-        if(!navigator.gpu) throw err;
-        setMsg('Mencoba mode CPU...');
-        blob = await remove(small, dzRmConfig('cpu', onProgress));
+      let blob = null;
+      // WebGPU kalau ada = paling cepat; gagal -> CPU; gagal lagi -> mode kompatibel tanpa worker (WebView)
+      const attempts = (navigator.gpu ? [['gpu', false], ['cpu', false]] : [['cpu', false]]).concat([['cpu', true]]);
+      let lastErr = null;
+      for(let i = 0; i < attempts.length && !blob; i++){
+        try{
+          if(i) setMsg('Mencoba mode lain...');
+          blob = await remove(small, dzRmConfig(attempts[i][0], onProgress, attempts[i][1]));
+        }catch(err){ lastErr = err; blob = null; }
       }
+      if(!blob) throw lastErr || new Error('Gagal menghapus background');
       if(!blob || !blob.size) throw new Error('Hasil kosong, coba foto lain');
       return { blob: blob, objUrl: URL.createObjectURL(blob) };
     }
@@ -11715,7 +11851,13 @@ function dzBuildMusicCard(it){
   const mk = (label, href, dl) => {
     const a = document.createElement('a');
     a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = label;
-    if(dl) a.setAttribute('download', (it.title || 'lagu').replace(/[^\w\-]+/g, '_').slice(0, 50) + '.mp3');
+    if(dl) a.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      try{
+        const b = await dzFetchBlobSmart(href, 120000);
+        dzNote(await dzSaveBlob(b, (it.title || 'lagu').replace(/[^\w\-]+/g, '_').slice(0, 50)));
+      }catch(_){ window.open(href, '_blank', 'noopener'); }
+    });
     a.style.cssText = 'color:#4da3ff; text-decoration:none; font-weight:600;';
     row.appendChild(a);
   };
@@ -11845,10 +11987,15 @@ function aiFsRenderMediaReply(bubble, type, items){
 
       const dl = document.createElement('a');
       dl.href = it.url;
-      dl.download = (it.caption || 'gambar').replace(/[^\w\-]+/g, '_').slice(0, 40) + '.jpg';
-      dl.target = '_blank';
       dl.rel = 'noopener noreferrer';
       dl.textContent = '⬇ Simpan gambar';
+      dl.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        try{
+          const b = await dzFetchBlobSmart(it.url, 60000);
+          dzNote(await dzSaveBlob(b, (it.caption || 'gambar').replace(/[^\w\-]+/g, '_').slice(0, 40)));
+        }catch(_){ window.open(it.url, '_blank', 'noopener'); }
+      });
       dl.style.cssText = 'display:inline-block; font-size:13px; color:#4da3ff; text-decoration:none; margin-top:4px;';
       wrap.appendChild(dl);
     }
@@ -12223,6 +12370,55 @@ function initIntroAndMusic(){
   const musicBtn = document.getElementById('musicToggleBtn');
   if(!overlay || !enterBtn) return;
 
+  /* ---- musik latar: daftar sumber + cadangan (tambah URL mp3 lain di sini) ---- */
+  const BG_SRCS = ['https://rahmad-elaina.my.id/file/476e100c9e.mp3'];
+  let bgIdx = 0, bgDead = false;
+  /* cadangan: kalau mp3 mati/diblokir, putar musik ambient buatan WebAudio supaya tetap ada suara */
+  let actx = null, synthTimer = null, synthOn = false, synthGain = null;
+  const CH = [[220,261.6,329.6],[174.6,220,261.6],[261.6,329.6,392],[196,246.9,293.7]];
+  const synthStart = () => {
+    try{
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      actx.resume();
+      synthGain = synthGain || actx.createGain(); synthGain.gain.value = 0.5; synthGain.connect(actx.destination);
+      let step = 0;
+      const chord = () => {
+        const now = actx.currentTime;
+        CH[step++ % CH.length].forEach(f => {
+          const o = actx.createOscillator(), g = actx.createGain();
+          o.type = 'triangle'; o.frequency.value = f;
+          g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(0.07, now + 1); g.gain.linearRampToValueAtTime(0, now + 3.4);
+          o.connect(g); g.connect(synthGain); o.start(now); o.stop(now + 3.5);
+        });
+      };
+      chord(); clearInterval(synthTimer); synthTimer = setInterval(chord, 3000);
+      synthOn = true; if(musicBtn){ musicBtn.classList.add('on'); musicBtn.title = 'Musik latar (mode cadangan)'; }
+    }catch(e){ console.warn('Musik cadangan gagal:', e); }
+  };
+  const synthStop = () => { clearInterval(synthTimer); synthOn = false; if(musicBtn) musicBtn.classList.remove('on'); };
+  const bgLoad = () => {
+    if(!music) return false;
+    if(bgIdx >= BG_SRCS.length){ bgDead = true; synthStart(); return false; }
+    music.src = BG_SRCS[bgIdx]; music.load(); return true;
+  };
+  const bgPlay = () => {
+    if(!music || bgDead) return;
+    if(!music.getAttribute('src') && !bgLoad()) return;
+    music.play().catch(err => {
+      if(err && (err.name === 'NotAllowedError' || err.name === 'AbortError')) return;
+      console.warn('Musik gagal diputar:', err);
+      bgIdx++; if(bgLoad()) bgPlay();
+    });
+  };
+  if(music){
+    music.addEventListener('error', () => {
+      console.error('Sumber musik gagal dimuat:', BG_SRCS[bgIdx]);
+      bgIdx++; if(bgLoad()) music.play().catch(()=>{});
+    });
+    // pemutar lagu / video dipakai -> musik latar berhenti biar tidak tumpang tindih
+    window.addEventListener('dz:mediaplay', () => { if(!music.paused) music.pause(); if(synthOn) synthStop(); });
+  }
+
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const steps = ['Menyiapkan tampilan...', 'Memuat aset...', 'Menata komponen...', 'Hampir siap...', 'Siap!'];
   const DURATION = reduced ? 250 : 3600;
@@ -12303,7 +12499,7 @@ function initIntroAndMusic(){
     /* Audio remains user-gesture initiated, preserving the old behavior. */
     if(music){
       music.volume = 0.55;
-      music.play().catch(err => console.warn('Musik gagal diputar otomatis:', err));
+      bgPlay();
     }
 
     /* Reveal the real website slightly after the exit motion begins. */
@@ -12322,15 +12518,13 @@ function initIntroAndMusic(){
   enterBtn.addEventListener('click', enterSite);
 
   if(musicBtn && music){
-    const syncToggle=()=>musicBtn.classList.toggle('on',!music.paused);
+    const syncToggle=()=>musicBtn.classList.toggle('on',!music.paused || synthOn);
     music.addEventListener('play',syncToggle);
     music.addEventListener('pause',syncToggle);
-    music.addEventListener('error',()=>{
-      syncToggle();
-      console.error('Sumber musik gagal dimuat, cek URL di tag <audio>.');
-    });
+    music.addEventListener('error',()=>{ if(!bgDead) syncToggle(); });
     musicBtn.addEventListener('click',()=>{
-      if(music.paused) music.play().catch(err=>console.warn('Musik gagal diputar:',err));
+      if(bgDead){ synthOn ? synthStop() : synthStart(); return; }
+      if(music.paused) bgPlay();
       else music.pause();
     });
   }
@@ -16888,5 +17082,6 @@ document.addEventListener('click',function(e){
 
 
 </body>
+
 </html>
 
