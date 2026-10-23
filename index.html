@@ -9673,30 +9673,24 @@ function initPromptGenerator(){
   };
 }
 
-/* ---------- React Channel WhatsApp: satu provider + satu API key ---------- */
-// Provider tunggal: reactionwa.online. Untuk keamanan produksi, pindahkan API key
-// ke backend/server milik sendiri agar tidak terlihat di source HTML.
-const DZ_RCH_API = 'https://apiv2.reactionwa.online/api/v2/react';
-const DZ_RCH_KEY = 'BERRY-RCH-s488dmV/Im9CYK9RksIKzHB+PKpqxaGBeDje9boybZoMiEoWLc1EmGG2TA9yTgBOCa9RT56a35exUMwqJG06QTO39LJvF7IWZCVq3FKzME50TUNgJH4=';
+/* ---------- React Channel WhatsApp: api.jerexd.my.id (GET) ---------- */
+// Untuk keamanan produksi, pindahkan API key ke backend/proxy milik sendiri
+// agar tidak terlihat di source HTML.
+const DZ_RCH_API = 'https://api.jerexd.my.id/api/whatsapp/reactch';
+const DZ_RCH_KEY = 'SZ6lj06NRjNR3ueJ';
 async function dzRcSend(url, reaction){
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 30000);
   try {
-    const res = await fetch(DZ_RCH_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': DZ_RCH_KEY },
-      body: JSON.stringify({ url, reaction }),
-      signal: ctl.signal
-    });
+    const qs = 'apikey=' + encodeURIComponent(DZ_RCH_KEY) + '&url=' + encodeURIComponent(url) + '&reaction=' + encodeURIComponent(reaction);
+    const res = await fetch(DZ_RCH_API + '?' + qs, { method: 'GET', signal: ctl.signal });
     const j = await res.json().catch(() => null);
-    if (res.ok && j && (j.success === true || j.status === 'success' || j.status === true)) return { ok:true, j };
-    const detail = j && (j.error || j.message) ? (j.error || j.message) : `Provider membalas HTTP ${res.status}`;
-    if (/domain|origin|referer|akses ditolak|not allowed|forbidden/i.test(String(detail))) {
-      return { ok:false, error:'Provider menolak domain halaman ini. Gunakan hosting/domain yang diizinkan provider atau minta API key yang sesuai.', domainRestricted:true };
-    }
-    return { ok:false, error:detail };
+    const failed = !j || j.status === false || j.success === false || /^(error|fail|failed)$/i.test(String(j.status || '')) || j.error;
+    if (res.ok && !failed) return { ok:true, j };
+    const detail = j && (j.error || j.message || j.msg) ? (j.error || j.message || j.msg) : `API membalas HTTP ${res.status}`;
+    return { ok:false, error:String(detail) };
   } catch (e) {
-    return { ok:false, error:e.name === 'AbortError' ? 'Provider terlalu lama merespons.' : 'Permintaan gagal (jaringan/CORS). API provider harus mengizinkan domain halaman ini.' };
+    return { ok:false, error:e.name === 'AbortError' ? 'API terlalu lama merespons.' : 'Permintaan gagal (jaringan/CORS). API harus mengizinkan domain halaman ini.' };
   } finally {
     clearTimeout(timer);
   }
@@ -9720,25 +9714,30 @@ function initReactChannel(){
   const run = async () => {
     if(busy) return;
     const m = linkEl.value.trim().match(/(?:https?:\/\/)?(?:www\.)?whatsapp\.com\/channel\/([A-Za-z0-9_-]+)\/(\d+)/i);
-    const emojis = (emoEl.value.match(/\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?/gu) || []).slice(0, 5).join(', ');
+    const emojiList = (emoEl.value.match(/\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?/gu) || []).slice(0, 5);
+    const emojis = emojiList.join(', ');
     if(!m){ msg.textContent = 'Link harus link postingan saluran, contohnya https://whatsapp.com/channel/xxxx/123 (bukan link salurannya saja).'; return; }
     if(!emojis){ msg.textContent = 'Pilih atau isi emoji dulu ya (maks 5, pisah koma).'; return; }
     busy = true; goBtn.disabled = true; out.innerHTML = '';
     const target = 'https://whatsapp.com/channel/' + m[1] + '/' + m[2];
     const t0 = Date.now(); let data = null, lastErr = '';
     try{
-      msg.textContent = 'Mengirim reaksi melalui satu provider...';
-      const r = await dzRcSend(target, emojis);
-      if(r.ok){
-        const j = r.j, task = (j.data && j.data.task) || {};
-        data = { time: (Date.now() - t0) + 'ms', data: { target, emojis: task.reaction_code || emojis, usage_today: j.usage_today ?? null, limit: j.limit || 50 } };
-      } else lastErr = r.error;
-      if(!data) throw new Error(lastErr || 'provider gagal memproses permintaan');
-      msg.textContent = 'Reaksi ' + emojis + ' masuk antrean.';
+      msg.textContent = 'Mengirim reaksi...';
+      let sent = [];
+      for(const em of emojiList){
+        const r = await dzRcSend(target, em);
+        if(r.ok) sent.push(em); else { lastErr = r.error; break; }
+      }
+      if(sent.length){
+        data = { time: (Date.now() - t0) + 'ms', data: { target, emojis: sent.join(', ') } };
+        if(lastErr) data.data.warn = 'Sebagian gagal: ' + lastErr;
+      }
+      if(!data) throw new Error(lastErr || 'API gagal memproses permintaan');
+      msg.textContent = 'Reaksi ' + (data.data.emojis || emojis) + ' terkirim.';
       const d = data.data || {};
       const card = document.createElement('div');
       card.style.cssText = 'border:2.5px solid #000;border-radius:12px;padding:10px;background:var(--panel);font:12px/1.6 "JetBrains Mono",monospace;word-break:break-word;';
-      card.textContent = ['Emoji: ' + (d.emojis || emojis), 'Target: ' + (d.target || ''), 'Pemakaian hari ini: ' + (d.usage_today ?? '-') + ' / ' + (d.limit ?? '-'), 'Waktu: ' + (data.time || '-')].join('\n');
+      card.textContent = ['Emoji: ' + (d.emojis || emojis), 'Target: ' + (d.target || ''), 'Waktu: ' + (data.time || '-')].concat(d.warn ? [d.warn] : []).join('\n');
       card.style.whiteSpace = 'pre-wrap';
       out.appendChild(card);
     }catch(err){
