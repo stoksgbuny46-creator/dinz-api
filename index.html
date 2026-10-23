@@ -8988,7 +8988,7 @@ function getDzToolUIHTML(id){
         </div>
         <div style="margin-top:10px;">
           <label class="quick-label">Emoji reaksi:</label>
-          <input type="text" id="dzRcEmoji" class="dz-field" autocomplete="off" maxlength="12">
+          <input type="text" id="dzRcEmoji" class="dz-field" autocomplete="off">
           <div id="dzRcChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
         </div>
         <div class="dz-actions">
@@ -9714,38 +9714,21 @@ function initReactChannel(){
   const run = async () => {
     if(busy) return;
     const m = linkEl.value.trim().match(/(?:https?:\/\/)?(?:www\.)?whatsapp\.com\/channel\/([A-Za-z0-9_-]+)\/(\d+)/i);
-    const emojiList = (emoEl.value.match(/\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?/gu) || []).slice(0, 5);
+    const emojiList = (emoEl.value.match(/\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?/gu) || []);
     const emojis = emojiList.join(', ');
     if(!m){ msg.textContent = 'Link harus link postingan saluran, contohnya https://whatsapp.com/channel/xxxx/123 (bukan link salurannya saja).'; return; }
-    if(!emojis){ msg.textContent = 'Pilih atau isi emoji dulu ya (maks 5, pisah koma).'; return; }
+    if(!emojis){ msg.textContent = 'Pilih atau isi emoji dulu ya.'; return; }
     busy = true; goBtn.disabled = true; out.innerHTML = '';
     const target = 'https://whatsapp.com/channel/' + m[1] + '/' + m[2];
     const t0 = Date.now(); let data = null, lastErr = '';
     try{
       msg.textContent = 'Mengirim reaksi...';
-      let sent = [];
-      for(const em of emojiList){
-        const r = await dzRcSend(target, em);
-        if(r.ok) sent.push(em); else { lastErr = r.error; break; }
-      }
-      if(sent.length){
-        data = { time: (Date.now() - t0) + 'ms', data: { target, emojis: sent.join(', ') } };
-        if(lastErr) data.data.warn = 'Sebagian gagal: ' + lastErr;
-      }
-      if(!data) throw new Error(lastErr || 'API gagal memproses permintaan');
-      msg.textContent = 'Reaksi ' + (data.data.emojis || emojis) + ' terkirim.';
-      const d = data.data || {};
-      const card = document.createElement('div');
-      card.style.cssText = 'border:2.5px solid #000;border-radius:12px;padding:10px;background:var(--panel);font:12px/1.6 "JetBrains Mono",monospace;word-break:break-word;';
-      card.textContent = ['Emoji: ' + (d.emojis || emojis), 'Target: ' + (d.target || ''), 'Waktu: ' + (data.time || '-')].concat(d.warn ? [d.warn] : []).join('\n');
-      card.style.whiteSpace = 'pre-wrap';
-      out.appendChild(card);
+      const r = await dzRcSend(target, emojiList.join(','));
+      if(!r.ok) throw new Error(r.error || 'API gagal memproses permintaan');
+      msg.textContent = 'Berhasil! Reaksi ' + emojis + ' sudah terkirim ke postingan saluran.';
     }catch(err){
       const detail = err.name === 'AbortError' ? 'server terlalu lama merespons' : (err.message || 'tidak diketahui');
       msg.textContent = 'Gagal: ' + detail;
-      if(/domain halaman ini|domain|origin|akses ditolak/i.test(detail)) {
-        out.textContent = 'Perbaikan: jalankan halaman dari domain yang diizinkan oleh penyedia API, atau gunakan API key milikmu yang mengizinkan domain hosting ini. Batas domain tidak bisa diperbaiki dari HTML saja.';
-      }
     }finally{
       busy = false; goBtn.disabled = false;
     }
